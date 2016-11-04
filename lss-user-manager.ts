@@ -250,22 +250,30 @@ class LssUserManager extends polymer.Base {
         return Promise.resolve(null);
     };
 
-    authenticateAndGetUserAsync(): Promise<User> {
+     authenticateAndGetUserAsync(): Promise<User> {
         return this.fetchAccessTokenAsync()
-            .catch(error => {
-                if (error === "Not authenticated")
-                    this.redirectToLogin(document.location.href);
-                return Promise.reject(new Error("Redirecting.."));
-            })
             .then(token => {
                 return Promise.resolve(this._user);
+            },error => {
+                if (error === "Not authenticated") {
+                    this.redirectToLogin(document.location.href);
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() =>{
+                            resolve();
+                        }, 10000000); });
+                }
             });
     };
 
     authenticateAsync(): Promise<void> {
         return this.fetchAccessTokenAsync()
-            .catch(error => this.redirectToLogin(document.location.href))
-            .then(token => { return Promise.resolve(null); });
+            .then(token => { return Promise.resolve(null); }, error => {
+                    this.redirectToLogin(document.location.href);
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() =>{
+                            resolve();
+                        }, 10000000); });
+            });
     };
 }
 
