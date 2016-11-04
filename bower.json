@@ -1,6 +1,6 @@
 {
   "name": "user-manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A polymer user manager for Leavitt OAuth2",
   "authors": [
     "Leavitt Software Solutions"
