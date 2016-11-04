@@ -1,4 +1,4 @@
-﻿@component("lg-environment")
+﻿@component("lss-environment")
 class LssEnvironment extends polymer.Base {
 
     isDev(): boolean {

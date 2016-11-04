@@ -25,7 +25,7 @@ var LssEnvironment = (function (_super) {
         return false;
     };
     LssEnvironment = __decorate([
-        component("lg-environment")
+        component("lss-environment")
     ], LssEnvironment);
     return LssEnvironment;
 }(polymer.Base));

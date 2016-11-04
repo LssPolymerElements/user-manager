@@ -18,10 +18,10 @@ var LssApiService = (function (_super) {
     }
     LssApiService.prototype.attached = function () {
         this.userManager = this.requestInstance("UserManager");
-        this.lgEnvironment = this.requestInstance("LgEnvironment");
+        this.lssEnvironment = this.$.lssEnvironment;
     };
     LssApiService.prototype.createUri = function (urlPath) {
-        return (this.lgEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri) + urlPath;
+        return (this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri) + urlPath;
     };
     LssApiService.prototype.postAsync = function (urlPath, body, appName) {
         var _this = this;
@@ -180,7 +180,7 @@ var LssApiService = (function (_super) {
             type: LssEnvironment,
             notify: true
         })
-    ], LssApiService.prototype, "lgEnvironment", void 0);
+    ], LssApiService.prototype, "lssEnvironment", void 0);
     __decorate([
         property()
     ], LssApiService.prototype, "isLoading", void 0);
