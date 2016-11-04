@@ -1,6 +1,6 @@
 {
   "name": "user-manager",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A polymer user manager for Leavitt OAuth2",
   "authors": [
     "Leavitt Software Solutions"
@@ -21,6 +21,7 @@
     "node_modules",
     "bower_components",
     "*.ts",
+    "!*.d.ts",
     "package.json",
     "tsconfig.json",
     ".gitignore",
