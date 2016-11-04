@@ -2,7 +2,7 @@
 /// <reference types="es6-promise" />
 declare var fetch: any;
 declare var jwt_decode: any;
-declare class UserManager extends polymer.Base {
+declare class LssUserManager extends polymer.Base {
     private loginUrl;
     private localStorageKey;
     private accessToken;

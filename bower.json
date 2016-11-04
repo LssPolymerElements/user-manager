@@ -1,5 +1,5 @@
 {
-  "name": "user-manager",
+  "name": "leavitt-user-manager",
   "version": "1.0.3",
   "description": "A polymer user manager for Leavitt OAuth2",
   "authors": [
@@ -10,7 +10,7 @@
     "leavitt software",
     "lss"
   ],
-  "main": "user-manager.html",
+  "main": "lss-user-manager.html",
   "repository": {
     "type": "git",
     "url": "git://github.com/LssPolymerElements/user-manager.git"

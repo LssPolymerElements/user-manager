@@ -10,28 +10,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 /// <reference path="./user.ts" />
-var UserManager = (function (_super) {
-    __extends(UserManager, _super);
-    function UserManager() {
+var LssUserManager = (function (_super) {
+    __extends(LssUserManager, _super);
+    function LssUserManager() {
         _super.apply(this, arguments);
         this.loginUrl = "https://login.leavitt.com/oauth/";
         this.localStorageKey = "LgUser";
     }
-    Object.defineProperty(UserManager.prototype, "user", {
+    Object.defineProperty(LssUserManager.prototype, "user", {
         get: function () { return this._user; },
         enumerable: true,
         configurable: true
     });
-    UserManager.prototype.attached = function () {
+    LssUserManager.prototype.attached = function () {
         if (this.shouldValidateOnLoad) {
             this.authenticateAndGetUserAsync().then();
         }
     };
-    UserManager.prototype.redirectToLogin = function (continueUrl) {
+    LssUserManager.prototype.redirectToLogin = function (continueUrl) {
         document.location.href = this.updateQueryString("continue", continueUrl, this.loginUrl);
     };
     ;
-    UserManager.prototype.getHashParametersFromUrl = function () {
+    LssUserManager.prototype.getHashParametersFromUrl = function () {
         var hashParams = new Array();
         if (window.location.hash) {
             var hash = window.location.hash.substring(1);
@@ -49,11 +49,11 @@ var UserManager = (function (_super) {
         return hashParams;
     };
     ;
-    UserManager.prototype.clearHashFromUrl = function () {
+    LssUserManager.prototype.clearHashFromUrl = function () {
         document.location.hash = "";
     };
     ;
-    UserManager.prototype.getLocalTokens = function () {
+    LssUserManager.prototype.getLocalTokens = function () {
         //First type and get tokens from URL
         var hashParameters = this.getHashParametersFromUrl();
         if (hashParameters.length > 0) {
@@ -81,12 +81,12 @@ var UserManager = (function (_super) {
         }
     };
     ;
-    UserManager.prototype.decodeAccessToken = function (accessToken) {
+    LssUserManager.prototype.decodeAccessToken = function (accessToken) {
         if (accessToken === null || typeof accessToken === "undefined")
             return null;
         return jwt_decode(accessToken);
     };
-    UserManager.prototype.isTokenValid = function (accessToken) {
+    LssUserManager.prototype.isTokenValid = function (accessToken) {
         if (accessToken === null || accessToken === "" || typeof accessToken === "undefined")
             return false;
         var decodedToken = this.decodeAccessToken(accessToken);
@@ -97,7 +97,7 @@ var UserManager = (function (_super) {
         return (expirationDate > currentDate && decodedToken.iss === "https://oauth2.leavitt.com/");
     };
     ;
-    UserManager.prototype.createUserFromToken = function (refreshToken, accessToken) {
+    LssUserManager.prototype.createUserFromToken = function (refreshToken, accessToken) {
         var decodedToken = this.decodeAccessToken(accessToken);
         var expirationDate = new Date(0);
         expirationDate.setUTCSeconds(decodedToken.exp);
@@ -109,7 +109,7 @@ var UserManager = (function (_super) {
         return new User(decodedToken.given_name, decodedToken.family_name, expirationDate, this.personId, decodedToken.role, refreshToken, accessToken, decodedToken.unique_name, decodedToken.unique_name, decodedToken.RefreshTokenId);
     };
     ;
-    UserManager.prototype.getAccessTokenFromApiAsync = function (refreshToken) {
+    LssUserManager.prototype.getAccessTokenFromApiAsync = function (refreshToken) {
         var body = {
             grant_type: "refresh_token",
             refresh_token: refreshToken
@@ -135,7 +135,7 @@ var UserManager = (function (_super) {
             });
         }).then(function (json) { return Promise.resolve(json.access_token); });
     };
-    UserManager.prototype.fetchAccessTokenAsync = function () {
+    LssUserManager.prototype.fetchAccessTokenAsync = function () {
         var _this = this;
         this.getLocalTokens();
         ////valid local tokens
@@ -160,7 +160,7 @@ var UserManager = (function (_super) {
         return Promise.reject("Not authenticated");
     };
     ;
-    UserManager.prototype.updateQueryString = function (key, value, url) {
+    LssUserManager.prototype.updateQueryString = function (key, value, url) {
         if (!url)
             url = window.location.href;
         var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi");
@@ -189,7 +189,7 @@ var UserManager = (function (_super) {
                 return url;
         }
     };
-    UserManager.prototype.logoutAsync = function () {
+    LssUserManager.prototype.logoutAsync = function () {
         this.accessToken = null;
         this.refreshToken = null;
         localStorage.removeItem(this.localStorageKey);
@@ -197,7 +197,7 @@ var UserManager = (function (_super) {
         return Promise.resolve(null);
     };
     ;
-    UserManager.prototype.authenticateAndGetUserAsync = function () {
+    LssUserManager.prototype.authenticateAndGetUserAsync = function () {
         var _this = this;
         return this.fetchAccessTokenAsync()
             .catch(function (error) {
@@ -209,7 +209,7 @@ var UserManager = (function (_super) {
         });
     };
     ;
-    UserManager.prototype.authenticateAsync = function () {
+    LssUserManager.prototype.authenticateAsync = function () {
         var _this = this;
         return this.fetchAccessTokenAsync()
             .catch(function (error) { return _this.redirectToLogin(document.location.href); })
@@ -221,19 +221,19 @@ var UserManager = (function (_super) {
             type: Array,
             notify: true
         })
-    ], UserManager.prototype, "roles", void 0);
+    ], LssUserManager.prototype, "roles", void 0);
     __decorate([
         property({
             type: String,
             notify: true
         })
-    ], UserManager.prototype, "fullname", void 0);
+    ], LssUserManager.prototype, "fullname", void 0);
     __decorate([
         property({
             type: String,
             notify: true
         })
-    ], UserManager.prototype, "firstName", void 0);
+    ], LssUserManager.prototype, "firstName", void 0);
     __decorate([
         property({
             type: Boolean,
@@ -241,17 +241,17 @@ var UserManager = (function (_super) {
             value: true,
             reflectToAttribute: true
         })
-    ], UserManager.prototype, "shouldValidateOnLoad", void 0);
+    ], LssUserManager.prototype, "shouldValidateOnLoad", void 0);
     __decorate([
         property({
             value: 0,
             type: Number,
             notify: true
         })
-    ], UserManager.prototype, "personId", void 0);
-    UserManager = __decorate([
-        component("user-manager")
-    ], UserManager);
-    return UserManager;
+    ], LssUserManager.prototype, "personId", void 0);
+    LssUserManager = __decorate([
+        component("lss-user-manager")
+    ], LssUserManager);
+    return LssUserManager;
 }(polymer.Base));
-UserManager.register();
+LssUserManager.register();

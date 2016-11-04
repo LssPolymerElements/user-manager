@@ -2,8 +2,8 @@
 declare var fetch: any;
 declare var jwt_decode: any;
 
-@component("user-manager")
-class UserManager extends polymer.Base {
+@component("lss-user-manager")
+class LssUserManager extends polymer.Base { 
 
     private loginUrl = "https://login.leavitt.com/oauth/";
     private localStorageKey = "LgUser";
@@ -268,4 +268,4 @@ class UserManager extends polymer.Base {
     };
 }
 
-UserManager.register();
+LssUserManager.register();
