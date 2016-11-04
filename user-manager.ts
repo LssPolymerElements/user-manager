@@ -1,23 +1,6 @@
 ﻿/// <reference path="./node_modules/@types/es6-promise/index.d.ts" />
-
 declare var fetch: any;
 declare var jwt_decode: any;
-
-interface ITokenDto {
-    IsActiveEmployee: string;
-    RefreshTokenId: string;
-    aud: string;
-    birthdate: string;
-    exp: number;
-    family_name: string;
-    gender: string;
-    given_name: string;
-    iss: string;
-    nameid: string;
-    nbf: number;
-    role: Array<string>;
-    unique_name: string;
-}
 
 @component("user-manager")
 class UserManager extends polymer.Base {
@@ -286,28 +269,3 @@ class UserManager extends polymer.Base {
 }
 
 UserManager.register();
-class User {
-
-    constructor(public firstName?: string, public lastName?: string, public expirationDate?: Date, public personId?: Number, public roles?: Array<string>, public refreshToken?: string, public accessToken?: string, public username?: string, public fullName?: string, public refreshTokenId?: string) { }
-
-    clearToken() {
-        this.expirationDate = new Date(Date.now());
-        this.refreshToken = null;
-        this.accessToken = null;
-    };
-
-    saveToLocalStorage(localStorageKey: string) {
-        const data = JSON.stringify(this);
-        localStorage.setItem(localStorageKey, data);
-    };
-                
-    static fromLocalStorage(localStorageKey: string): User {
-        const data = JSON.parse(localStorage.getItem(localStorageKey));
-        if (data == null || data.refreshToken == null) {
-            return null;
-        }
-
-
-        return new User(data.firstName, data.lastName, data.expirationDate, data.personId, data.roles, data.refreshToken, data.accessToken, data.username, data.fullName, data.refreshTokenId);
-    };
-}

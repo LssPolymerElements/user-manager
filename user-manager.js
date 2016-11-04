@@ -1,4 +1,3 @@
-/// <reference path="./node_modules/@types/es6-promise/index.d.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+/// <reference path="./node_modules/@types/es6-promise/index.d.ts" />
 var UserManager = (function (_super) {
     __extends(UserManager, _super);
     function UserManager() {
@@ -255,37 +255,3 @@ var UserManager = (function (_super) {
     return UserManager;
 }(polymer.Base));
 UserManager.register();
-var User = (function () {
-    function User(firstName, lastName, expirationDate, personId, roles, refreshToken, accessToken, username, fullName, refreshTokenId) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.expirationDate = expirationDate;
-        this.personId = personId;
-        this.roles = roles;
-        this.refreshToken = refreshToken;
-        this.accessToken = accessToken;
-        this.username = username;
-        this.fullName = fullName;
-        this.refreshTokenId = refreshTokenId;
-    }
-    User.prototype.clearToken = function () {
-        this.expirationDate = new Date(Date.now());
-        this.refreshToken = null;
-        this.accessToken = null;
-    };
-    ;
-    User.prototype.saveToLocalStorage = function (localStorageKey) {
-        var data = JSON.stringify(this);
-        localStorage.setItem(localStorageKey, data);
-    };
-    ;
-    User.fromLocalStorage = function (localStorageKey) {
-        var data = JSON.parse(localStorage.getItem(localStorageKey));
-        if (data == null || data.refreshToken == null) {
-            return null;
-        }
-        return new User(data.firstName, data.lastName, data.expirationDate, data.personId, data.roles, data.refreshToken, data.accessToken, data.username, data.fullName, data.refreshTokenId);
-    };
-    ;
-    return User;
-}());
