@@ -1,0 +1,38 @@
+{
+  "name": "lss-api-service",
+  "version": "1.0.0",
+  "description": "A polymer compenent to aid in communicating with LSS's RESTful apis.",
+  "authors": [
+    "Leavitt Software Solutions"
+  ],
+  "keywords": [
+    "polymer",
+    "leavitt software",
+    "lss"
+  ],
+  "main": "lss-api-service.html",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/LssPolymerElements/api-service.git"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "homepage": "https://github.com/LssPolymerElements/api-service",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "package.json",
+    "tsconfig.json",
+    ".gitignore",
+    ".vscode"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "polymer-ts": "^0.1.26",
+    "lss-user-manager": "*",
+    "lss-inject": "*"
+  },
+  "devDependencies": {
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}
