@@ -23,7 +23,7 @@ class LssApiService extends polymer.Base {
 
     attached() {
         this.userManager = this.requestInstance("UserManager");
-        this.lgEnvironment = this.requestInstance("LgEnvironment");
+        this.lgEnvironment = this.$.lssEnvironment;
     }
     private createUri(urlPath: string): string {
         return (this.lgEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri) + urlPath;
