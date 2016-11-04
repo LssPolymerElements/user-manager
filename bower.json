@@ -1,0 +1,28 @@
+{
+  "name": "user-manager",
+  "version": "1.0.0",
+  "description": "A polymer user manager for Leavitt OAuth2",
+  "authors": [
+    "Leavitt Software Solutions"
+  ],
+  "keywords": [
+    "polymer",
+    "leavitt software",
+    "lss"
+  ],
+  "main": "user-manager.html",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/LssPolymerElements/user-manager.git"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "homepage": "https://github.com/LssPolymerElements/user-manager",
+  "ignore": [],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0"   
+  },
+  "devDependencies": {
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}
