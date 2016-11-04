@@ -1,3 +1,3 @@
 # user-manager
 
-To install use: `bower install LssPolymerElements-user-manager`
+To install use: `bower install --save LssPolymerElements-user-manager`
