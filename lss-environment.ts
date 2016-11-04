@@ -1,5 +1,5 @@
 ﻿@component("lg-environment")
-class LssLgEnvironment extends polymer.Base {
+class LssEnvironment extends polymer.Base {
 
     isDev(): boolean {
 
@@ -16,4 +16,4 @@ class LssLgEnvironment extends polymer.Base {
         return false;
     }
 }
-LssLgEnvironment.register();
+LssEnvironment.register();

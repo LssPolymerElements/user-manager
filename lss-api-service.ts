@@ -10,10 +10,10 @@ class LssApiService extends polymer.Base {
     userManager: LssUserManager; 
 
     @property({
-        type: LssLgEnvironment,
+        type: LssEnvironment,
         notify: true
     })
-    lgEnvironment: LssLgEnvironment;
+    lgEnvironment: LssEnvironment;
 
     @property()
     isLoading: boolean;

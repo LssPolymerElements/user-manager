@@ -177,7 +177,7 @@ var LssApiService = (function (_super) {
     ], LssApiService.prototype, "userManager", void 0);
     __decorate([
         property({
-            type: LssLgEnvironment,
+            type: LssEnvironment,
             notify: true
         })
     ], LssApiService.prototype, "lgEnvironment", void 0);
