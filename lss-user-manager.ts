@@ -255,6 +255,7 @@ class LssUserManager extends polymer.Base {
             .catch(error => {
                 if (error === "Not authenticated")
                     this.redirectToLogin(document.location.href);
+                return Promise.reject(new Error("Redirecting.."));
             })
             .then(token => {
                 return Promise.resolve(this._user);

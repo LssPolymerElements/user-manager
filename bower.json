@@ -20,8 +20,6 @@
   "ignore": [
     "node_modules",
     "bower_components",
-    "*.ts",
-    "!*.d.ts",
     "package.json",
     "tsconfig.json",
     ".gitignore",
