@@ -19,7 +19,8 @@
   "homepage": "https://github.com/LssPolymerElements/user-manager",
   "ignore": [],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.1.0"   
+    "polymer": "Polymer/polymer#^1.1.0",
+    "polymer-ts": "^0.1.26"   
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0",
