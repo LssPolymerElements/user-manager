@@ -15,6 +15,12 @@ class LssApiService extends polymer.Base {
     })
     lssEnvironment: LssEnvironment;
 
+    @property({
+        type: String,
+        notify: true
+    })
+    BaseUrl: string;
+
     @property()
     isLoading: boolean;
 
@@ -24,9 +30,11 @@ class LssApiService extends polymer.Base {
     attached() {
         this.userManager = this.requestInstance("UserManager");
         this.lssEnvironment = this.$.lssEnvironment;
+        this.BaseUrl = this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri;
     }
+
     private createUri(urlPath: string): string {
-        return (this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri) + urlPath;
+        return this.BaseUrl + urlPath;
     }
 
     postAsync<T>(urlPath: string, body: Object, appName: string = "General"): Promise<T> {
