@@ -7,7 +7,7 @@ class LssApiService extends polymer.Base {
         type: LssUserManager,
         notify: true
     })
-    userManager: LssUserManager; 
+    userManager: LssUserManager;
 
     @property({
         type: LssEnvironment,
@@ -37,9 +37,18 @@ class LssApiService extends polymer.Base {
         return this.baseUrl + urlPath;
     }
 
-    postAsync<T>(urlPath: string, body: Object, appName: string = "General"): Promise<T> {
+    postAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<T> {
         return this.userManager.authenticateAndGetUserAsync()
             .then(o => {
+
+                //Add in the odata model info if it not already on the object
+                if (body._odataInfo && !body["@odata.type"]) {
+                    if (body._odataInfo.type) {
+                        body["@odata.type"] = body._odataInfo.type;
+                    }
+                    delete body._odataInfo;
+                }
+
                 return fetch(this.createUri(urlPath),
                     {
                         method: "POST",
@@ -81,9 +90,18 @@ class LssApiService extends polymer.Base {
             });
     }
 
-    patchAsync(urlPath: string, body: Object, appName: string = "General"): Promise<void> {
+    patchAsync(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<void> {
         return this.userManager.authenticateAndGetUserAsync()
             .then(o => {
+
+                //Add in the odata model info if it not already on the object
+                if (body._odataInfo && !body["@odata.type"]) {
+                    if (body._odataInfo.type) {
+                        body["@odata.type"] = body._odataInfo.type;
+                    }
+                    delete body._odataInfo;
+                }
+
                 return fetch(this.createUri(urlPath),
                     {
                         method: "PATCH",
@@ -168,7 +186,7 @@ class LssApiService extends polymer.Base {
             });
     }
 
-    getAsync<T>(urlPath: string, appName: string = "General"): Promise<GetResult<T>> {
+    getAsync<T extends IODataDto>(urlPath: string, appName: string = "General"): Promise<GetResult<T>> {
         return this.userManager.authenticateAndGetUserAsync().then(o => {
             return fetch(this.createUri(urlPath),
                 {

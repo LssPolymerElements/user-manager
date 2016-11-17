@@ -1,17 +1,33 @@
 var GetResult = (function () {
     function GetResult(json) {
-        this.data = json.value;
+        var _this = this;
+        this.data = json.value.map(function (o) {
+            return _this.convertOdataInfo(o);
+        });
     }
     GetResult.prototype.count = function () {
         return this.data.length;
     };
     GetResult.prototype.firstOrDefault = function () {
-        if (this.count() > 0)
-            return this.data[0];
+        if (this.count() > 0) {
+            return this.convertOdataInfo(this.data[0]);
+        }
         return null;
     };
     GetResult.prototype.toList = function () {
         return this.data;
+    };
+    GetResult.prototype.convertOdataInfo = function (item) {
+        if (item["@odata.type"]) {
+            if (!item._odataInfo) {
+                item._odataInfo = new ODataModelInfo();
+            }
+            item._odataInfo.type = item["@odata.type"];
+            delete item["@odata.type"];
+            var parts = item._odataInfo.type.split(".");
+            item._odataInfo.shortType = parts[parts.length - 1];
+        }
+        return item;
     };
     return GetResult;
 }());

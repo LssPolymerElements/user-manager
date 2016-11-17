@@ -19,15 +19,23 @@ var LssApiService = (function (_super) {
     LssApiService.prototype.attached = function () {
         this.userManager = this.requestInstance("UserManager");
         this.lssEnvironment = this.$.lssEnvironment;
+        this.baseUrl = this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri;
     };
     LssApiService.prototype.createUri = function (urlPath) {
-        return (this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri) + urlPath;
+        return this.baseUrl + urlPath;
     };
     LssApiService.prototype.postAsync = function (urlPath, body, appName) {
         var _this = this;
         if (appName === void 0) { appName = "General"; }
         return this.userManager.authenticateAndGetUserAsync()
             .then(function (o) {
+            //Add in the odata model info if it not already on the object
+            if (body._odataInfo && !body["@odata.type"]) {
+                if (body._odataInfo.type) {
+                    body["@odata.type"] = body._odataInfo.type;
+                }
+                delete body._odataInfo;
+            }
             return fetch(_this.createUri(urlPath), {
                 method: "POST",
                 body: JSON.stringify(body),
@@ -67,6 +75,13 @@ var LssApiService = (function (_super) {
         if (appName === void 0) { appName = "General"; }
         return this.userManager.authenticateAndGetUserAsync()
             .then(function (o) {
+            //Add in the odata model info if it not already on the object
+            if (body._odataInfo && !body["@odata.type"]) {
+                if (body._odataInfo.type) {
+                    body["@odata.type"] = body._odataInfo.type;
+                }
+                delete body._odataInfo;
+            }
             return fetch(_this.createUri(urlPath), {
                 method: "PATCH",
                 body: JSON.stringify(body),
@@ -181,6 +196,12 @@ var LssApiService = (function (_super) {
             notify: true
         })
     ], LssApiService.prototype, "lssEnvironment", void 0);
+    __decorate([
+        property({
+            type: String,
+            notify: true
+        })
+    ], LssApiService.prototype, "baseUrl", void 0);
     __decorate([
         property()
     ], LssApiService.prototype, "isLoading", void 0);
