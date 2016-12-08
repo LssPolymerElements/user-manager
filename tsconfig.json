@@ -5,7 +5,13 @@
     "target": "es5",
     "noImplicitAny": false,
     "experimentalDecorators": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+     //"strictNullChecks": true,
+      "lib": [
+      "es2015.promise",
+      "dom",
+      "es5"
+    ]
  },
   "compileOnSave": true,
   "exclude": [
