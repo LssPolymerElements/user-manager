@@ -1,0 +1,40 @@
+<dom-module id="x-demo">
+    <template>
+        <lss-user-manager id="manager" person-id="{{personId}}" fullname="{{name}}" first-name="{{firstName}}" should-validate-on-load="{{shouldLoad}}"
+            roles="{{roles}}"></lss-user-manager>
+        <paper-button raised on-tap="logoutClicked">Logout</paper-button>
+        <paper-button raised on-tap="getUserObject">GetUserAsync()</paper-button>
+        <h2>name: [[name]]</h2>
+        <h2>firstName: [[firstName]]</h2>
+        <h2>shouldValidateOnLoad: [[shouldLoad]]</h2>
+        <h2>personId: [[personId]]</h2>
+
+        <h1>My Roles </h1>
+        <ol>
+            <template is="dom-repeat" items="[[roles]]">
+                <li>[[item]]</li>
+            </template>
+        </ol>
+    </template>
+    <script>
+      Polymer({
+        is: 'x-demo',
+        properties: {
+          foo: {
+            type: String,
+            value: "Hello world!"
+          }
+        },
+        logoutClicked: function(e) {
+            console.log("logout clicked");
+            this.$.manager.logoutAsync();
+            location.reload();           
+        },
+        getUserObject: function(e) {
+            this.$.manager.authenticateAndGetUserAsync().then(function(user){
+                console.log(user);
+            });
+        }        
+      });
+    </script>
+</dom-module>
