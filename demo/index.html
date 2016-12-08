@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
     <title>user-manager demo</title>
-    <script>
+       <script>
 
         // setup Polymer options
         window.Polymer = { lazyRegister: true, dom: 'shadow' };
@@ -51,7 +51,7 @@
             } else {
                 // polyfill Promises
                 var e = document.createElement('script');
-                e.src = '/bower_components/es6-promise/es6-promise.min.js';
+                e.src = '/bower_components/bluebird/js/browser/bluebird.min.js';
                 document.head.appendChild(e);
                 console.log("Promise Polyfill loaded");
             }
@@ -78,20 +78,15 @@
                     navigator.serviceWorker.register('/service-worker.js');
                 });
         }
+        
+        
+
 
     </script>
-
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="../../polymer/polymer.html">
-    <link rel="import" href="../../paper-button/paper-button.html">
-    <link rel="import" href="../lss-user-manager.html">
     <link rel="import" href="demo1.html">
-    <style>
-
-    </style>
 </head>
 
-<body unresolved>
+<body>
     <x-demo></x-demo>  
 </body>
 
