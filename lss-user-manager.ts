@@ -3,14 +3,9 @@ declare var fetch: any;
 declare var jwt_decode: any;
 
 @component("lss-user-manager")
-class LssUserManager extends polymer.Base { 
-
+class LssUserManager extends polymer.Base {
     private loginUrl = "https://login.leavitt.com/oauth/";
     private localStorageKey = "LgUser";
-    private accessToken: string;
-    private refreshToken: string;
-    private _user: User;
-    get user(): User { return this._user; }
 
     @property({
         type: Array,
@@ -45,9 +40,9 @@ class LssUserManager extends polymer.Base {
     })
     personId: Number;
 
-    attached() {
+    async attached() {
         if (this.shouldValidateOnLoad) {
-            this.authenticateAndGetUserAsync().then();
+            await this.authenticateAndGetUserAsync();
         }
     }
 
@@ -78,60 +73,39 @@ class LssUserManager extends polymer.Base {
         document.location.hash = "";
     };
 
-    private getLocalTokens() {
-        //First type and get tokens from URL
+    private getTokenfromUrl(tokenName: string): string | null {
         const hashParameters = this.getHashParametersFromUrl();
-
-        if (hashParameters.length > 0) {
-            const accessTokenArray = hashParameters.filter(value => value.key === "accessToken");
-            if (accessTokenArray.length === 0) {
-                this.accessToken = "";
-            } else {
-                this.accessToken = accessTokenArray[0].value || "";
-            }
-            this.refreshToken = hashParameters.filter(value => value.key === "refreshToken")[0].value;
-            this.clearHashFromUrl();
-
+        const accessTokenArray = hashParameters.filter(value => value.key === tokenName);
+        if (accessTokenArray.length === 0) {
+            return null;
         } else {
-            //Fallback get tokens from localstorage if user has been here before
-            const localStorageUser = User.fromLocalStorage(this.localStorageKey);
-            if (localStorageUser != null) {
-                this.set("roles", localStorageUser.roles);
-                this.set("fullname", localStorageUser.fullName);
-                this.set("firstName", localStorageUser.firstName);
-                this.set("personId", localStorageUser.personId);
-                this.accessToken = localStorageUser.accessToken;
-                this.refreshToken = localStorageUser.refreshToken;
-            }
+            return accessTokenArray[0].value;
         }
-    };
+    }
 
     private decodeAccessToken(accessToken: string): ITokenDto {
-        if (accessToken === null || typeof accessToken === "undefined")
-            return null;
-
         return jwt_decode(accessToken) as ITokenDto;
     }
 
-    private isTokenValid(accessToken: string): boolean {
-        if (accessToken === null || accessToken === "" || typeof accessToken === "undefined")
-            return false;
+    private createUserFromToken(refreshToken: string, accessToken: string): User | null {
+        var decodedToken;
 
-        const decodedToken = this.decodeAccessToken(accessToken);
+        try {
+            decodedToken = this.decodeAccessToken(accessToken);
+        } catch (error) {
+            // Invalid JWT token format
+            return null;
+        }
+
         const expirationDate = new Date(0);
         expirationDate.setUTCSeconds(decodedToken.exp);
         let currentDate = new Date();
         currentDate.setSeconds(currentDate.getSeconds() + 30);
-        return (expirationDate > currentDate && decodedToken.iss === "https://oauth2.leavitt.com/");
-    };
+        if (!(expirationDate > currentDate && decodedToken.iss === "https://oauth2.leavitt.com/")) {
+            //Access token expired or not from a valid issuer
+            return null;
+        }
 
-    private createUserFromToken(refreshToken: string, accessToken: string): User {
-        const decodedToken = this.decodeAccessToken(accessToken);
-
-        const expirationDate = new Date(0);
-        expirationDate.setUTCSeconds(decodedToken.exp);
-
-       
         this.set("roles", decodedToken.role);
         this.set("fullname", decodedToken.unique_name);
         this.set("firstName", decodedToken.given_name);
@@ -150,63 +124,82 @@ class LssUserManager extends polymer.Base {
             decodedToken.RefreshTokenId);
     };
 
-    private getAccessTokenFromApiAsync(refreshToken: string): Promise<string> {
+    private async getAccessTokenFromApiAsync(refreshToken: string): Promise<string> {
         const body = {
             grant_type: "refresh_token",
             refresh_token: refreshToken
         };
 
-        return fetch("https://oauth2.leavitt.com/token", {
+        var response = await fetch("https://oauth2.leavitt.com/token", {
             method: "POST",
             body: JSON.stringify(body),
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             }
-        }).then(response => {
-            if (response.status === 200)
-                return response.json();
+        });
 
-            return response.json()
-                .catch(error => {
-                    return Promise.reject("The server sent back invalid JSON.");
-                }).then(json => {
-                    if (json.error) {
-                        return Promise.reject(json.error);
-                    }
-                    return Promise.reject("Not authenticated");
-                });
-
-        }).then(json => { return Promise.resolve(json.access_token) });
-
-    }
-
-    private fetchAccessTokenAsync(): Promise<string> {
-
-        this.getLocalTokens();
-
-        ////valid local tokens
-        if (this.accessToken != null && this.isTokenValid(this.accessToken)) {
-
-            this._user = this.createUserFromToken(this.refreshToken, this.accessToken);
-            this.user.saveToLocalStorage(this.localStorageKey);
-            return Promise.resolve(this.accessToken);
+        var json;
+        try {
+            json = await response.json();
+        } catch (error) {
+            return Promise.reject("The server sent back invalid JSON.");
         }
 
-        if (this.refreshToken != null) {
+        if (response.status === 200 && json.access_token) {
+            return Promise.resolve(json.access_token);
+        }
 
-            return this.getAccessTokenFromApiAsync(this.refreshToken).then(token => {
-                this.accessToken = token;
-                if (this.isTokenValid(this.accessToken)) {
-                    this._user = this.createUserFromToken(this.refreshToken, this.accessToken);
-                    this.user.saveToLocalStorage(this.localStorageKey);
-                    return Promise.resolve(this.accessToken);
+        if (json.error) {
+            return Promise.reject(json.error);
+        }
+        return Promise.reject("Not authenticated");
+    }
+
+    private async getUserAsync(): Promise<User> {
+
+        var accessToken = this.getTokenfromUrl("accessToken");
+        var refreshToken = this.getTokenfromUrl("refreshToken");
+
+        if (accessToken || refreshToken) {
+            this.clearHashFromUrl();
+        }
+        else {
+            //Fallback get tokens from localstorage if the tokens are not in the URL
+            const localStorageUser = User.fromLocalStorage(this.localStorageKey);
+            if (localStorageUser != null) {
+                this.set("roles", localStorageUser.roles);
+                this.set("fullname", localStorageUser.fullName);
+                this.set("firstName", localStorageUser.firstName);
+                this.set("personId", localStorageUser.personId);
+                accessToken = localStorageUser.accessToken;
+                refreshToken = localStorageUser.refreshToken;
+            }
+        }
+
+        ////valid local tokens
+        if (accessToken != null) {
+            var user = this.createUserFromToken(refreshToken || "", accessToken);
+            if (user != null) {
+                user.saveToLocalStorage(this.localStorageKey);
+                return Promise.resolve(user);
+            }
+        }
+
+        if (refreshToken != null) {
+
+            try {
+                accessToken = await this.getAccessTokenFromApiAsync(refreshToken);
+                var user = this.createUserFromToken(refreshToken || "", accessToken);
+                if (user != null) {
+                    user.saveToLocalStorage(this.localStorageKey);
+                    return Promise.resolve(user);
                 }
+                return Promise.reject("Not authenticated");
 
-                return Promise.reject("Not authenticated");
-            }).catch(o => {
-                return Promise.reject("Not authenticated");
-            });
+            } catch (error) {
+                return Promise.reject(error);
+            }
         }
 
         return Promise.reject("Not authenticated");
@@ -241,39 +234,44 @@ class LssUserManager extends polymer.Base {
         }
     }
 
-    logoutAsync(): Promise<void> {
-        this.accessToken = null;
-        this.refreshToken = null;
+    logoutAsync(): Promise<null> {
         localStorage.removeItem(this.localStorageKey);
 
         //TODO:  POST TO API TO EXPIRE REFRESH TOKEN
         return Promise.resolve(null);
     };
 
-     authenticateAndGetUserAsync(): Promise<User> {
-        return this.fetchAccessTokenAsync()
-            .then(token => {
-                return Promise.resolve(this._user);
-            },error => {
-                if (error === "Not authenticated") {
-                    this.redirectToLogin(document.location.href);
-                    return new Promise((resolve, reject) => {
-                        setTimeout(() =>{
-                            resolve();
-                        }, 10000000); });
-                }
-            });
+    async authenticateAndGetUserAsync(): Promise<User | null> {
+        try {
+            var user = await this.getUserAsync();
+            return Promise.resolve(user);
+        } catch (error) {
+            if (error === "Not authenticated") {
+                this.redirectToLogin(document.location.href);
+                //Wait for the redirect to happen
+                return new Promise<User>((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve();
+                    }, 10000000);
+                });
+            }
+            return Promise.resolve(null);
+        }
     };
 
-    authenticateAsync(): Promise<void> {
-        return this.fetchAccessTokenAsync()
-            .then(token => { return Promise.resolve(null); }, error => {
-                    this.redirectToLogin(document.location.href);
-                    return new Promise((resolve, reject) => {
-                        setTimeout(() =>{
-                            resolve();
-                        }, 10000000); });
+    async authenticateAsync(): Promise<string | null> {
+        try {
+            await this.getUserAsync();
+            return Promise.resolve(null);
+        } catch (error) {
+            this.redirectToLogin(document.location.href);
+            //Wait for the redirect to happen
+            return new Promise<string>((resolve, reject) => {
+                setTimeout(() => {
+                    resolve();
+                }, 10000000);
             });
+        }
     };
 }
 
