@@ -265,7 +265,7 @@ class LssUserManager extends polymer.Base {
             });
     };
 
-    authenticateAsync(): Promise<void> {
+    authenticateAsync(): Promise<string> {
         return this.fetchAccessTokenAsync()
             .then(token => { return Promise.resolve(null); }, error => {
                     this.redirectToLogin(document.location.href);

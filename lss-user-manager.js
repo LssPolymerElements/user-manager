@@ -200,20 +200,31 @@ var LssUserManager = (function (_super) {
     LssUserManager.prototype.authenticateAndGetUserAsync = function () {
         var _this = this;
         return this.fetchAccessTokenAsync()
-            .catch(function (error) {
-            if (error === "Not authenticated")
-                _this.redirectToLogin(document.location.href);
-        })
             .then(function (token) {
             return Promise.resolve(_this._user);
+        }, function (error) {
+            if (error === "Not authenticated") {
+                _this.redirectToLogin(document.location.href);
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        resolve();
+                    }, 10000000);
+                });
+            }
         });
     };
     ;
     LssUserManager.prototype.authenticateAsync = function () {
         var _this = this;
         return this.fetchAccessTokenAsync()
-            .catch(function (error) { return _this.redirectToLogin(document.location.href); })
-            .then(function (token) { return Promise.resolve(null); });
+            .then(function (token) { return Promise.resolve(null); }, function (error) {
+            _this.redirectToLogin(document.location.href);
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    resolve();
+                }, 10000000);
+            });
+        });
     };
     ;
     __decorate([
