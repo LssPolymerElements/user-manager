@@ -357,3 +357,4 @@ LssUserManager = __decorate([
     component("lss-user-manager")
 ], LssUserManager);
 LssUserManager.register();
+//# sourceMappingURL=lss-user-manager.js.map
