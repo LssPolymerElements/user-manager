@@ -6,6 +6,7 @@
     "noImplicitAny": false,
     "experimentalDecorators": true,
     "moduleResolution": "node",
+    "sourceMap": true,
      //"strictNullChecks": true,
       "lib": [
       "es2015.promise",
@@ -15,6 +16,7 @@
  },
   "compileOnSave": true,
   "exclude": [
-    "build"
+    "build",
+    "node_modules"
   ]
 }
