@@ -1,6 +1,6 @@
 {
   "name": "lss-user-manager",
-  "version": "1.0.5",
+  "version": "2.0.1",
   "description": "A polymer user manager for Leavitt OAuth2",
   "authors": [
     "Leavitt Software Solutions"
@@ -23,10 +23,14 @@
     "package.json",
     "tsconfig.json",
     ".gitignore",
-    ".vscode"],
+    ".vscode"
+  ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.1.0",
-    "polymer-ts": "^0.1.26"   
+    "polymer-ts": "^0.1.26",
+    "paper-button": "PolymerElements/paper-button#^1.0.14",
+    "fetch": "^2.0.1",
+    "bluebird": "^3.4.6"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0",

@@ -6,7 +6,10 @@
   "dependencies": {
     "@types/es6-promise": "0.0.32"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.18.2",
+    "gulp": "^3.9.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

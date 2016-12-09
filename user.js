@@ -23,7 +23,7 @@ var User = (function () {
     };
     ;
     User.fromLocalStorage = function (localStorageKey) {
-        var data = JSON.parse(localStorage.getItem(localStorageKey));
+        var data = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
         if (data == null || data.refreshToken == null) {
             return null;
         }
@@ -32,3 +32,4 @@ var User = (function () {
     ;
     return User;
 }());
+//# sourceMappingURL=user.js.map

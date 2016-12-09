@@ -5,3 +5,4 @@ var HashParameter = (function () {
     }
     return HashParameter;
 }());
+//# sourceMappingURL=HashParameter.js.map
