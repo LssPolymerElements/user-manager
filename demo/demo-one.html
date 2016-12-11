@@ -1,0 +1,45 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../lss-user-manager/lss-user-manager.html">
+<link rel="import" href="../../lss-inject/lss-provider-behavior.html">
+<link rel="import" href="../lss-api-service.html">
+<link rel="import" href="../ODataDto.html">
+
+<dom-module id="demo-one">
+    <template>
+        <lss-user-manager id="userManager"></lss-user-manager>
+        <lss-api-service id="service"></lss-api-service>
+
+        <h1>lss-api-service Fruits CRUD Demo</h1>
+        <paper-button id="getButton" raised>Get Top 5 Fruits</paper-button>
+        <paper-button id="createButton" raised>Post a new random fruit</paper-button>
+        <div style="color:red;margin:16px">Error: [[error]]</div>
+      
+            <template is="dom-repeat" items="[[fruits]]">                
+                <div style="margin:16px;padding:8px;border:1px dashed green;width:350px; display: inline-block;">
+                <pre>
+ _  [[item.Name]]
+//\ [[item.Id]]
+V  \
+ \  \_
+  \,'.`-.
+   |\ `. `.       
+   ( \  `. `-.                        _,.-:\
+    \ \   `.  `-._             __..--' ,-';/
+     \ `.   `-.   `-..___..---'   _.--' ,'/
+      `. `.    `-._        __..--'    ,' /
+        `. `-_     ``--..''       _.-' ,'
+          `-_ `-.___        __,--'   ,'
+             `-.__  `----"""    __.-'
+                  `--..____..--'
+                </pre>
+                    <paper-button object-id$="[[item.Id]]" on-tap="deleteFruit" raised>Delete</paper-button>
+                    <paper-button object-id$="[[item.Id]]" on-tap="patchFruit" raised>Patch Random Name</paper-button>
+                
+                </div>
+            </template>
+        
+    </template>
+    <script src="demo-one.js">
+    </script>
+</dom-module>
