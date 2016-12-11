@@ -31,3 +31,4 @@ var GetResult = (function () {
     };
     return GetResult;
 }());
+//# sourceMappingURL=GetResult.js.map

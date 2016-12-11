@@ -5,3 +5,4 @@ var ODataDto = (function () {
     }
     return ODataDto;
 }());
+//# sourceMappingURL=ODataDto.js.map

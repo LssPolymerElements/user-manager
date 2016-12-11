@@ -12,7 +12,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var LssEnvironment = (function (_super) {
     __extends(LssEnvironment, _super);
     function LssEnvironment() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     LssEnvironment.prototype.isDev = function () {
         if (document == null || document.location == null || document.location.host == null)
@@ -24,9 +24,10 @@ var LssEnvironment = (function (_super) {
             return true;
         return false;
     };
-    LssEnvironment = __decorate([
-        component("lss-environment")
-    ], LssEnvironment);
     return LssEnvironment;
 }(polymer.Base));
+LssEnvironment = __decorate([
+    component("lss-environment")
+], LssEnvironment);
 LssEnvironment.register();
+//# sourceMappingURL=lss-environment.js.map

@@ -11,11 +11,10 @@ class GetResult<T extends IODataDto> {
         return this.data.length;
     }
 
-    firstOrDefault(): T {
+    firstOrDefault(): T | null {
         if (this.count() > 0) {
             return this.convertOdataInfo(this.data[0]);
         }
-
         return null;
     }
 
