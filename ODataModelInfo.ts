@@ -1,6 +1,6 @@
 interface IODataModelInfo {
-    type: string;
-    shortType: string;
+    type: string | null;
+    shortType: string | null;
 }
 
 class ODataModelInfo implements IODataModelInfo {
@@ -8,6 +8,6 @@ class ODataModelInfo implements IODataModelInfo {
         this.type = null;
         this.shortType = null;
     }
-    type: string;
-    shortType: string;
+    type: string | null;
+    shortType: string | null;
 }

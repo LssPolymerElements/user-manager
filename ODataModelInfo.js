@@ -5,3 +5,4 @@ var ODataModelInfo = (function () {
     }
     return ODataModelInfo;
 }());
+//# sourceMappingURL=ODataModelInfo.js.map
