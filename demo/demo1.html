@@ -1,7 +1,7 @@
-    <link rel="import" href="../../polymer/polymer.html">
-    <link rel="import" href="../../paper-button/paper-button.html">
-    <link rel="import" href="../lss-user-manager.html">
-    
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../lss-user-manager.html">
+
 <dom-module id="x-demo">
     <template>
         <lss-user-manager id="manager" person-id="{{personId}}" fullname="{{name}}" first-name="{{firstName}}" should-validate-on-load="{{shouldLoad}}"
@@ -21,24 +21,28 @@
         </ol>
     </template>
     <script>
-      Polymer({
-        is: 'x-demo',
-        properties: {
-          foo: {
-            type: String,
-            value: "Hello world!"
-          }
-        },
-        logoutClicked: function(e) {
-            console.log("logout clicked");
-            this.$.manager.logoutAsync();
-            location.reload();           
-        },
-        getUserObject: function(e) {
-            this.$.manager.authenticateAndGetUserAsync().then(function(user){
-                console.log(user);
-            });
-        }        
-      });
+        Polymer({
+            is: 'x-demo',
+            properties: {
+                foo: {
+                    type: String,
+                    value: "Hello world!"
+                },
+                shouldLoad: {
+                    type: Boolean,
+                    value: true
+                },
+            },
+            logoutClicked: function (e) {
+                console.log("logout clicked");
+                this.$.manager.logoutAsync();
+                location.reload();
+            },
+            getUserObject: function (e) {
+                this.$.manager.authenticateAndGetUserAsync().then(function (user) {
+                    console.log(user);
+                });
+            }
+        });
     </script>
 </dom-module>
