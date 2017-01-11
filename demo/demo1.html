@@ -8,6 +8,7 @@
             roles="{{roles}}"></lss-user-manager>
         <paper-button raised on-tap="logoutClicked">Logout</paper-button>
         <paper-button raised on-tap="getUserObject">GetUserAsync()</paper-button>
+        <paper-button raised on-tap="callMultiple">Call GetUserAsync Multiple Times</paper-button>
         <h2>name: [[name]]</h2>
         <h2>firstName: [[firstName]]</h2>
         <h2>shouldValidateOnLoad: [[shouldLoad]]</h2>
@@ -42,6 +43,11 @@
                 this.$.manager.authenticateAndGetUserAsync().then(function (user) {
                     console.log(user);
                 });
+            },
+            callMultiple: function (e) {
+                this.$.manager.authenticateAndGetUserAsync().then(function () { console.log("1 done"); });
+                this.$.manager.authenticateAndGetUserAsync().then(function () { console.log("2 done"); });
+                this.$.manager.authenticateAndGetUserAsync().then(function () { console.log("3 done"); });
             }
         });
     </script>
