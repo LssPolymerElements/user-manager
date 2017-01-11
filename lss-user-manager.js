@@ -51,6 +51,7 @@ var LssUserManager = (function (_super) {
         var _this = _super.apply(this, arguments) || this;
         _this.loginUrl = "https://login.leavitt.com/oauth/";
         _this.localStorageKey = "LgUser";
+        _this.getUserAsyncPromise = null;
         return _this;
     }
     LssUserManager.prototype.attached = function () {
@@ -265,16 +266,24 @@ var LssUserManager = (function (_super) {
     ;
     LssUserManager.prototype.authenticateAndGetUserAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var user, error_3;
+            var getUserAsyncPromise, user, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.getUserAsync()];
+                        if (this.getUserAsyncPromise != null) {
+                            return [2 /*return*/, this.getUserAsyncPromise];
+                        }
+                        _a.label = 1;
                     case 1:
-                        user = _a.sent();
-                        return [2 /*return*/, Promise.resolve(user)];
+                        _a.trys.push([1, 3, , 4]);
+                        getUserAsyncPromise = this.getUserAsync();
+                        this.getUserAsyncPromise = getUserAsyncPromise;
+                        return [4 /*yield*/, this.getUserAsyncPromise];
                     case 2:
+                        user = _a.sent();
+                        this.getUserAsyncPromise = null;
+                        return [2 /*return*/, getUserAsyncPromise];
+                    case 3:
                         error_3 = _a.sent();
                         if (error_3 === "Not authenticated") {
                             this.redirectToLogin(document.location.href);
@@ -286,7 +295,7 @@ var LssUserManager = (function (_super) {
                                 })];
                         }
                         return [2 /*return*/, Promise.resolve(null)];
-                    case 3: return [2 /*return*/];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
