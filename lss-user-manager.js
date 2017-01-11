@@ -271,7 +271,6 @@ var LssUserManager = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         if (this.getUserAsyncPromise != null) {
-                            console.log("reused getUserAsyncPromise");
                             return [2 /*return*/, this.getUserAsyncPromise];
                         }
                         _a.label = 1;

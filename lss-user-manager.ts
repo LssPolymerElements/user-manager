@@ -245,7 +245,6 @@ class LssUserManager extends polymer.Base {
 
     async authenticateAndGetUserAsync(): Promise<User | null> {
         if (this.getUserAsyncPromise != null) {
-            console.log("reused getUserAsyncPromise")
             return this.getUserAsyncPromise;
         }
 
