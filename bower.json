@@ -1,6 +1,6 @@
 {
   "name": "lss-user-manager",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A polymer user manager for Leavitt OAuth2",
   "authors": [
     "Leavitt Software Solutions"
