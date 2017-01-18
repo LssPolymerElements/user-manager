@@ -169,6 +169,9 @@ var LssUserManager = (function (_super) {
                             return [2 /*return*/, Promise.resolve(json.access_token)];
                         }
                         if (json.error) {
+                            if (json.error === "unauthorized_client") {
+                                return [2 /*return*/, Promise.reject("Not authenticated")];
+                            }
                             return [2 /*return*/, Promise.reject(json.error)];
                         }
                         return [2 /*return*/, Promise.reject("Not authenticated")];

@@ -151,6 +151,10 @@ class LssUserManager extends polymer.Base {
         }
 
         if (json.error) {
+            if (json.error === "unauthorized_client") {
+                return Promise.reject("Not authenticated");
+            }
+
             return Promise.reject(json.error);
         }
         return Promise.reject("Not authenticated");
