@@ -49,8 +49,8 @@ var LssUserManager = (function (_super) {
     __extends(LssUserManager, _super);
     function LssUserManager() {
         var _this = _super.apply(this, arguments) || this;
-        _this.loginUrl = "https://login.leavitt.com/oauth/";
         _this.localStorageKey = "LgUser";
+        _this.lastIssuer = null;
         _this.getUserAsyncPromise = null;
         return _this;
     }
@@ -71,7 +71,8 @@ var LssUserManager = (function (_super) {
         });
     };
     LssUserManager.prototype.redirectToLogin = function (continueUrl) {
-        document.location.href = this.updateQueryString("continue", continueUrl, this.loginUrl);
+        //console.log("REDIRECT!");
+        document.location.href = this.updateQueryString("continue", continueUrl, this.redirectUrl);
     };
     ;
     LssUserManager.prototype.getHashParametersFromUrl = function () {
@@ -118,11 +119,12 @@ var LssUserManager = (function (_super) {
             // Invalid JWT token format
             return null;
         }
+        this.lastIssuer = decodedToken.iss;
         var expirationDate = new Date(0);
         expirationDate.setUTCSeconds(decodedToken.exp);
         var currentDate = new Date();
         currentDate.setSeconds(currentDate.getSeconds() + 30);
-        if (!(expirationDate > currentDate && decodedToken.iss === "https://oauth2.leavitt.com/")) {
+        if (!(expirationDate > currentDate && this.userManagerIssuers.some(function (o) { return o.Issurer === decodedToken.iss; }))) {
             //Access token expired or not from a valid issuer
             return null;
         }
@@ -134,100 +136,146 @@ var LssUserManager = (function (_super) {
         return new User(decodedToken.given_name, decodedToken.family_name, expirationDate, this.personId, decodedToken.role, refreshToken, accessToken, decodedToken.unique_name, decodedToken.unique_name, decodedToken.RefreshTokenId);
     };
     ;
-    LssUserManager.prototype.getAccessTokenFromApiAsync = function (refreshToken) {
+    LssUserManager.prototype.getAccessTokenFromApiAsync = function (refreshToken, uri) {
         return __awaiter(this, void 0, void 0, function () {
-            var body, response, json, error_1;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        body = {
-                            grant_type: "refresh_token",
-                            refresh_token: refreshToken
-                        };
-                        return [4 /*yield*/, fetch("https://oauth2.leavitt.com/token", {
-                                method: "POST",
-                                body: JSON.stringify(body),
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Accept": "application/json"
-                                }
-                            })];
-                    case 1:
-                        response = _a.sent();
-                        _a.label = 2;
-                    case 2:
-                        _a.trys.push([2, 4, , 5]);
-                        return [4 /*yield*/, response.json()];
-                    case 3:
-                        json = _a.sent();
-                        return [3 /*break*/, 5];
-                    case 4:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, Promise.reject("The server sent back invalid JSON.")];
-                    case 5:
-                        if (response.status === 200 && json.access_token) {
-                            return [2 /*return*/, Promise.resolve(json.access_token)];
-                        }
-                        if (json.error) {
-                            if (json.error === "unauthorized_client") {
-                                return [2 /*return*/, Promise.reject("Not authenticated")];
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var body, response, json, error_1;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    body = {
+                                        grant_type: "refresh_token",
+                                        refresh_token: refreshToken
+                                    };
+                                    return [4 /*yield*/, fetch(uri, {
+                                            method: "POST",
+                                            body: JSON.stringify(body),
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                                "Accept": "application/json"
+                                            }
+                                        })];
+                                case 1:
+                                    response = _a.sent();
+                                    _a.label = 2;
+                                case 2:
+                                    _a.trys.push([2, 4, , 5]);
+                                    return [4 /*yield*/, response.json()];
+                                case 3:
+                                    json = _a.sent();
+                                    return [3 /*break*/, 5];
+                                case 4:
+                                    error_1 = _a.sent();
+                                    reject("The server sent back invalid JSON.");
+                                    return [2 /*return*/];
+                                case 5:
+                                    if (response.status === 200 && json.access_token) {
+                                        resolve(json.access_token);
+                                        return [2 /*return*/];
+                                    }
+                                    if (json.error) {
+                                        if (json.error === "unauthorized_client") {
+                                            reject("Not authenticated");
+                                            return [2 /*return*/];
+                                        }
+                                        reject(json.error);
+                                        return [2 /*return*/];
+                                    }
+                                    reject("Not authenticated");
+                                    return [2 /*return*/];
                             }
-                            return [2 /*return*/, Promise.reject(json.error)];
-                        }
-                        return [2 /*return*/, Promise.reject("Not authenticated")];
-                }
+                        });
+                    }); })];
             });
         });
     };
     LssUserManager.prototype.getUserAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var accessToken, refreshToken, localStorageUser, user, user, error_2;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        accessToken = this.getTokenfromUrl("accessToken");
-                        refreshToken = this.getTokenfromUrl("refreshToken");
-                        if (accessToken || refreshToken) {
-                            this.clearHashFromUrl();
-                        }
-                        else {
-                            localStorageUser = User.fromLocalStorage(this.localStorageKey);
-                            if (localStorageUser != null) {
-                                this.set("roles", localStorageUser.roles);
-                                this.set("fullname", localStorageUser.fullName);
-                                this.set("firstName", localStorageUser.firstName);
-                                this.set("personId", localStorageUser.personId);
-                                accessToken = localStorageUser.accessToken;
-                                refreshToken = localStorageUser.refreshToken;
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var _this = this;
+                        var accessToken, refreshToken, localStorageUser, user, hasToken, issuers, _i, issuers_1, issuer, error_2, user, error_3;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    accessToken = this.getTokenfromUrl("accessToken");
+                                    refreshToken = this.getTokenfromUrl("refreshToken");
+                                    if (accessToken || refreshToken) {
+                                        this.clearHashFromUrl();
+                                    }
+                                    else {
+                                        localStorageUser = User.fromLocalStorage(this.localStorageKey);
+                                        if (localStorageUser != null) {
+                                            this.set("roles", localStorageUser.roles);
+                                            this.set("fullname", localStorageUser.fullName);
+                                            this.set("firstName", localStorageUser.firstName);
+                                            this.set("personId", localStorageUser.personId);
+                                            accessToken = localStorageUser.accessToken;
+                                            refreshToken = localStorageUser.refreshToken;
+                                        }
+                                    }
+                                    ////valid local tokens
+                                    if (accessToken != null) {
+                                        user = this.createUserFromToken(refreshToken || "", accessToken);
+                                        if (user != null) {
+                                            user.saveToLocalStorage(this.localStorageKey);
+                                            resolve(user);
+                                            return [2 /*return*/];
+                                        }
+                                    }
+                                    if (!(refreshToken != null))
+                                        return [3 /*break*/, 9];
+                                    _a.label = 1;
+                                case 1:
+                                    _a.trys.push([1, 8, , 9]);
+                                    hasToken = false;
+                                    issuers = this.userManagerIssuers;
+                                    if (this.lastIssuer != null) {
+                                        issuers = issuers.filter(function (o) { return o.Issurer === _this.lastIssuer; });
+                                    }
+                                    _i = 0, issuers_1 = issuers;
+                                    _a.label = 2;
+                                case 2:
+                                    if (!(_i < issuers_1.length))
+                                        return [3 /*break*/, 7];
+                                    issuer = issuers_1[_i];
+                                    if (hasToken)
+                                        return [2 /*return*/];
+                                    _a.label = 3;
+                                case 3:
+                                    _a.trys.push([3, 5, , 6]);
+                                    return [4 /*yield*/, this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri)];
+                                case 4:
+                                    accessToken = _a.sent();
+                                    hasToken = true;
+                                    return [3 /*break*/, 6];
+                                case 5:
+                                    error_2 = _a.sent();
+                                    return [3 /*break*/, 6];
+                                case 6:
+                                    _i++;
+                                    return [3 /*break*/, 2];
+                                case 7:
+                                    user = this.createUserFromToken(refreshToken || "", accessToken);
+                                    if (user != null) {
+                                        user.saveToLocalStorage(this.localStorageKey);
+                                        return [2 /*return*/, Promise.resolve(user)];
+                                    }
+                                    reject("Not authenticated");
+                                    return [2 /*return*/];
+                                case 8:
+                                    error_3 = _a.sent();
+                                    reject(error_3);
+                                    return [2 /*return*/];
+                                case 9:
+                                    reject("Not authenticated");
+                                    return [2 /*return*/];
                             }
-                        }
-                        ////valid local tokens
-                        if (accessToken != null) {
-                            user = this.createUserFromToken(refreshToken || "", accessToken);
-                            if (user != null) {
-                                user.saveToLocalStorage(this.localStorageKey);
-                                return [2 /*return*/, Promise.resolve(user)];
-                            }
-                        }
-                        if (!(refreshToken != null))
-                            return [3 /*break*/, 4];
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, this.getAccessTokenFromApiAsync(refreshToken)];
-                    case 2:
-                        accessToken = _a.sent();
-                        user = this.createUserFromToken(refreshToken || "", accessToken);
-                        if (user != null) {
-                            user.saveToLocalStorage(this.localStorageKey);
-                            return [2 /*return*/, Promise.resolve(user)];
-                        }
-                        return [2 /*return*/, Promise.reject("Not authenticated")];
-                    case 3:
-                        error_2 = _a.sent();
-                        return [2 /*return*/, Promise.reject(error_2)];
-                    case 4: return [2 /*return*/, Promise.reject("Not authenticated")];
-                }
+                        });
+                    }); })];
             });
         });
     };
@@ -269,7 +317,7 @@ var LssUserManager = (function (_super) {
     ;
     LssUserManager.prototype.authenticateAndGetUserAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var getUserAsyncPromise, user, error_3;
+            var getUserAsyncPromise, user, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -287,8 +335,8 @@ var LssUserManager = (function (_super) {
                         this.getUserAsyncPromise = null;
                         return [2 /*return*/, getUserAsyncPromise];
                     case 3:
-                        error_3 = _a.sent();
-                        if (error_3 === "Not authenticated") {
+                        error_4 = _a.sent();
+                        if (error_4 === "Not authenticated") {
                             this.redirectToLogin(document.location.href);
                             //Wait for the redirect to happen
                             return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -306,7 +354,7 @@ var LssUserManager = (function (_super) {
     ;
     LssUserManager.prototype.authenticateAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var error_4;
+            var error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -316,7 +364,7 @@ var LssUserManager = (function (_super) {
                         _a.sent();
                         return [2 /*return*/, Promise.resolve(null)];
                     case 2:
-                        error_4 = _a.sent();
+                        error_5 = _a.sent();
                         this.redirectToLogin(document.location.href);
                         //Wait for the redirect to happen
                         return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -332,6 +380,13 @@ var LssUserManager = (function (_super) {
     ;
     return LssUserManager;
 }(polymer.Base));
+__decorate([
+    property({
+        type: String,
+        notify: true,
+        value: "https://login.leavitt.com/oauth/"
+    })
+], LssUserManager.prototype, "redirectUrl", void 0);
 __decorate([
     property({
         type: Array,
@@ -350,6 +405,13 @@ __decorate([
         notify: true
     })
 ], LssUserManager.prototype, "firstName", void 0);
+__decorate([
+    property({
+        type: Array,
+        value: [new userManagerIssuer("https://oauth2.leavitt.com/", "https://oauth2.leavitt.com/token"),
+            new userManagerIssuer("https://loginapi.unitedvalley.com/", "https://loginapi.unitedvalley.com/Token")]
+    })
+], LssUserManager.prototype, "userManagerIssuers", void 0);
 __decorate([
     property({
         type: Boolean,
