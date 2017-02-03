@@ -238,7 +238,8 @@ class LssUserManager extends polymer.Base {
                     var user = this.createUserFromToken(refreshToken || "", accessToken);
                     if (user != null) {
                         user.saveToLocalStorage(this.localStorageKey);
-                        return Promise.resolve(user);
+                        resolve(user);
+                        return;
                     }
                     reject("Not authenticated");
                     return;

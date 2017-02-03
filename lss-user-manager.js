@@ -263,7 +263,8 @@ var LssUserManager = (function (_super) {
                                     user = this.createUserFromToken(refreshToken || "", accessToken);
                                     if (user != null) {
                                         user.saveToLocalStorage(this.localStorageKey);
-                                        return [2 /*return*/, Promise.resolve(user)];
+                                        resolve(user);
+                                        return [2 /*return*/];
                                     }
                                     reject("Not authenticated");
                                     return [2 /*return*/];
