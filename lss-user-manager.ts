@@ -225,7 +225,7 @@ class LssUserManager extends polymer.Base {
                     }
                     for (let issuer of issuers) {
                         if (hasToken)
-                            return;
+                            break;
 
                         try {
                             accessToken = await this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri);

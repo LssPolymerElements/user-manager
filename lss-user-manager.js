@@ -244,7 +244,7 @@ var LssUserManager = (function (_super) {
                                         return [3 /*break*/, 7];
                                     issuer = issuers_1[_i];
                                     if (hasToken)
-                                        return [2 /*return*/];
+                                        return [3 /*break*/, 7];
                                     _a.label = 3;
                                 case 3:
                                     _a.trys.push([3, 5, , 6]);
