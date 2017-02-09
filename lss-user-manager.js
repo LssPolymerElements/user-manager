@@ -95,7 +95,8 @@ var LssUserManager = (function (_super) {
     };
     ;
     LssUserManager.prototype.clearHashFromUrl = function () {
-        document.location.hash = "";
+        if (document.location.hash && document.location.hash.indexOf("refreshToken") > -1)
+            document.location.hash = "";
     };
     ;
     LssUserManager.prototype.getTokenfromUrl = function (tokenName) {
@@ -263,7 +264,7 @@ var LssUserManager = (function (_super) {
     LssUserManager.prototype.logoutAsync = function () {
         localStorage.removeItem(this.localStorageKey);
         //TODO:  POST TO API TO EXPIRE REFRESH TOKEN
-        return Promise.resolve(null);
+        return Promise.resolve();
     };
     ;
     LssUserManager.prototype.authenticateAndGetUserAsync = function () {

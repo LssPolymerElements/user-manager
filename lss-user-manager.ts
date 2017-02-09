@@ -240,11 +240,11 @@ class LssUserManager extends polymer.Base {
         return Promise.reject("Not authenticated");
     };
 
-    logoutAsync(): Promise<null> {
+    logoutAsync(): Promise<void> {
         localStorage.removeItem(this.localStorageKey);
 
         //TODO:  POST TO API TO EXPIRE REFRESH TOKEN
-        return Promise.resolve(null);
+        return Promise.resolve();
     };
 
     getUserAsyncPromise: Promise<User> = null;
