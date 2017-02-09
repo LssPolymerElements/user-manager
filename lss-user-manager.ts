@@ -85,7 +85,8 @@ class LssUserManager extends polymer.Base {
     };
 
     private clearHashFromUrl() {
-        document.location.hash = "";
+        if (document.location.hash && document.location.hash.indexOf("refreshToken") > -1)
+            document.location.hash = "";
     };
 
     private getTokenfromUrl(tokenName: string): string | null {
