@@ -143,114 +143,100 @@ class LssUserManager extends polymer.Base {
     };
 
     private async getAccessTokenFromApiAsync(refreshToken: string, uri: string): Promise<string> {
-        return new Promise<string>(async (resolve, reject) => {
-            const body = {
-                grant_type: "refresh_token",
-                refresh_token: refreshToken
-            };
+        const body = {
+            grant_type: "refresh_token",
+            refresh_token: refreshToken
+        };
 
-            var response = await fetch(uri, {
-                method: "POST",
-                body: JSON.stringify(body),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                }
-            });
-
-            var json;
-            try {
-                json = await response.json();
-            } catch (error) {
-                reject("The server sent back invalid JSON.");
-                return;
+        var response = await fetch(uri, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             }
-
-            if (response.status === 200 && json.access_token) {
-                resolve(json.access_token);
-                return;
-            }
-
-            if (json.error) {
-                if (json.error === "unauthorized_client") {
-                    reject("Not authenticated");
-                    return;
-                }
-
-                reject(json.error);
-                return;
-            }
-            reject("Not authenticated");
         });
+
+        var json;
+        try {
+            json = await response.json();
+        } catch (error) {
+            return Promise.reject("The server sent back invalid JSON.");
+        }
+
+        if (response.status === 200 && json.access_token) {
+            return Promise.resolve(json.access_token);
+        }
+
+        if (json.error) {
+            if (json.error === "unauthorized_client") {
+                return Promise.reject("Not authenticated");
+            }
+
+            return Promise.reject(json.error);
+        }
+        return Promise.reject("Not authenticated");
     }
 
     private async getUserAsync(): Promise<User> {
-        return new Promise<User>(async (resolve, reject) => {
 
+        var accessToken = this.getTokenfromUrl("accessToken");
+        var refreshToken = this.getTokenfromUrl("refreshToken");
 
-            var accessToken = this.getTokenfromUrl("accessToken");
-            var refreshToken = this.getTokenfromUrl("refreshToken");
-
-            if (accessToken || refreshToken) {
+        if (!accessToken && !refreshToken) {
+            //Fallback get tokens from localstorage if the tokens are not in the URL
+            const localStorageUser = User.fromLocalStorage(this.localStorageKey);
+            if (localStorageUser != null) {
+                this.set("roles", localStorageUser.roles);
+                this.set("fullname", localStorageUser.fullName);
+                this.set("firstName", localStorageUser.firstName);
+                this.set("personId", localStorageUser.personId);
+                accessToken = localStorageUser.accessToken;
+                refreshToken = localStorageUser.refreshToken;
+            }
+        }
+        ////valid local tokens
+        if (accessToken != null) {
+            var user = this.createUserFromToken(refreshToken || "", accessToken);
+            if (user != null) {
+                user.saveToLocalStorage(this.localStorageKey);
                 this.clearHashFromUrl();
+                return Promise.resolve(user);
             }
-            else {
-                //Fallback get tokens from localstorage if the tokens are not in the URL
-                const localStorageUser = User.fromLocalStorage(this.localStorageKey);
-                if (localStorageUser != null) {
-                    this.set("roles", localStorageUser.roles);
-                    this.set("fullname", localStorageUser.fullName);
-                    this.set("firstName", localStorageUser.firstName);
-                    this.set("personId", localStorageUser.personId);
-                    accessToken = localStorageUser.accessToken;
-                    refreshToken = localStorageUser.refreshToken;
+        }
+        if (refreshToken != null) {
+
+            try {
+                var hasToken = false;
+                var issuers = this.userManagerIssuers;
+                if (this.lastIssuer != null) {
+                    issuers = issuers.filter(o => o.Issurer === this.lastIssuer)
                 }
-            }
-            ////valid local tokens
-            if (accessToken != null) {
+                for (let issuer of issuers) {
+                    if (hasToken)
+                        break;
+
+                    try {
+                        accessToken = await this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri);
+                        hasToken = true;
+                    } catch (error) {
+                    }
+                }
+
                 var user = this.createUserFromToken(refreshToken || "", accessToken);
                 if (user != null) {
                     user.saveToLocalStorage(this.localStorageKey);
-                    resolve(user);
-                    return;
+                    this.clearHashFromUrl();
+                    return Promise.resolve(user);
+
                 }
+                return Promise.reject("Not authenticated");
+
+            } catch (error) {
+                return Promise.reject(error);
             }
-            if (refreshToken != null) {
-
-                try {
-                    var hasToken = false;
-                    var issuers = this.userManagerIssuers;
-                    if (this.lastIssuer != null) {
-                        issuers = issuers.filter(o => o.Issurer === this.lastIssuer)
-                    }
-                    for (let issuer of issuers) {
-                        if (hasToken)
-                            break;
-
-                        try {
-                            accessToken = await this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri);
-                            hasToken = true;
-                        } catch (error) {
-                        }
-                    }
-
-
-                    var user = this.createUserFromToken(refreshToken || "", accessToken);
-                    if (user != null) {
-                        user.saveToLocalStorage(this.localStorageKey);
-                        resolve(user);
-                        return;
-                    }
-                    reject("Not authenticated");
-                    return;
-
-                } catch (error) {
-                    reject(error);
-                    return;
-                }
-            }
-            reject("Not authenticated");
-        });
+        }
+        return Promise.reject("Not authenticated");
     };
 
     logoutAsync(): Promise<null> {
@@ -263,44 +249,31 @@ class LssUserManager extends polymer.Base {
     getUserAsyncPromise: Promise<User> = null;
 
     async authenticateAndGetUserAsync(): Promise<User | null> {
-        if (this.getUserAsyncPromise != null) {
-            return this.getUserAsyncPromise;
-        }
-
-        try {
-            var getUserAsyncPromise = this.getUserAsync();
-            this.getUserAsyncPromise = getUserAsyncPromise;
-            var user = await this.getUserAsyncPromise;
-            this.getUserAsyncPromise = null;
-            return getUserAsyncPromise;
-        } catch (error) {
-            if (error === "Not authenticated") {
-                this.redirectToLogin(document.location.href);
-                //Wait for the redirect to happen
-                return new Promise<User>((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve();
-                    }, 10000000);
-                });
+        return new Promise<User | null>(async (resolve, reject) => {
+            try {
+                var user = await this.getUserAsync();
+                return resolve(user);
+            } catch (error) {
+                if (error === "Not authenticated") {
+                    this.redirectToLogin(document.location.href);
+                    return;  //Wait for the redirect to happen with a unreturned promise
+                }
+                return reject(error);
             }
-            return Promise.resolve(null);
-        }
-    };
+        });
+    }
 
     async authenticateAsync(): Promise<string | null> {
-        try {
-            await this.getUserAsync();
-            return Promise.resolve(null);
-        } catch (error) {
-            this.redirectToLogin(document.location.href);
-            //Wait for the redirect to happen
-            return new Promise<string>((resolve, reject) => {
-                setTimeout(() => {
-                    resolve();
-                }, 10000000);
-            });
-        }
-    };
+        return new Promise<string | null>(async (resolve, reject) => {
+            try {
+                await this.getUserAsync();
+                return resolve("Authenicated");
+            } catch (error) {
+                this.redirectToLogin(document.location.href);
+                return;  //Wait for the redirect to happen with a unreturned promise
+            }
+        });
+    }
 }
 
 LssUserManager.register();

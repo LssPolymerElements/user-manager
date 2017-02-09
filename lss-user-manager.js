@@ -139,145 +139,123 @@ var LssUserManager = (function (_super) {
     ;
     LssUserManager.prototype.getAccessTokenFromApiAsync = function (refreshToken, uri) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
+            var body, response, json, error_1;
             return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var body, response, json, error_1;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    body = {
-                                        grant_type: "refresh_token",
-                                        refresh_token: refreshToken
-                                    };
-                                    return [4 /*yield*/, fetch(uri, {
-                                            method: "POST",
-                                            body: JSON.stringify(body),
-                                            headers: {
-                                                "Content-Type": "application/json",
-                                                "Accept": "application/json"
-                                            }
-                                        })];
-                                case 1:
-                                    response = _a.sent();
-                                    _a.label = 2;
-                                case 2:
-                                    _a.trys.push([2, 4, , 5]);
-                                    return [4 /*yield*/, response.json()];
-                                case 3:
-                                    json = _a.sent();
-                                    return [3 /*break*/, 5];
-                                case 4:
-                                    error_1 = _a.sent();
-                                    reject("The server sent back invalid JSON.");
-                                    return [2 /*return*/];
-                                case 5:
-                                    if (response.status === 200 && json.access_token) {
-                                        resolve(json.access_token);
-                                        return [2 /*return*/];
-                                    }
-                                    if (json.error) {
-                                        if (json.error === "unauthorized_client") {
-                                            reject("Not authenticated");
-                                            return [2 /*return*/];
-                                        }
-                                        reject(json.error);
-                                        return [2 /*return*/];
-                                    }
-                                    reject("Not authenticated");
-                                    return [2 /*return*/];
+                switch (_a.label) {
+                    case 0:
+                        body = {
+                            grant_type: "refresh_token",
+                            refresh_token: refreshToken
+                        };
+                        return [4 /*yield*/, fetch(uri, {
+                                method: "POST",
+                                body: JSON.stringify(body),
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Accept": "application/json"
+                                }
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
+                        return [4 /*yield*/, response.json()];
+                    case 3:
+                        json = _a.sent();
+                        return [3 /*break*/, 5];
+                    case 4:
+                        error_1 = _a.sent();
+                        return [2 /*return*/, Promise.reject("The server sent back invalid JSON.")];
+                    case 5:
+                        if (response.status === 200 && json.access_token) {
+                            return [2 /*return*/, Promise.resolve(json.access_token)];
+                        }
+                        if (json.error) {
+                            if (json.error === "unauthorized_client") {
+                                return [2 /*return*/, Promise.reject("Not authenticated")];
                             }
-                        });
-                    }); })];
+                            return [2 /*return*/, Promise.reject(json.error)];
+                        }
+                        return [2 /*return*/, Promise.reject("Not authenticated")];
+                }
             });
         });
     };
     LssUserManager.prototype.getUserAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
+            var accessToken, refreshToken, localStorageUser, user, hasToken, issuers, _i, issuers_1, issuer, error_2, user, error_3;
             return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var _this = this;
-                        var accessToken, refreshToken, localStorageUser, user, hasToken, issuers, _i, issuers_1, issuer, error_2, user, error_3;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    accessToken = this.getTokenfromUrl("accessToken");
-                                    refreshToken = this.getTokenfromUrl("refreshToken");
-                                    if (accessToken || refreshToken) {
-                                        this.clearHashFromUrl();
-                                    }
-                                    else {
-                                        localStorageUser = User.fromLocalStorage(this.localStorageKey);
-                                        if (localStorageUser != null) {
-                                            this.set("roles", localStorageUser.roles);
-                                            this.set("fullname", localStorageUser.fullName);
-                                            this.set("firstName", localStorageUser.firstName);
-                                            this.set("personId", localStorageUser.personId);
-                                            accessToken = localStorageUser.accessToken;
-                                            refreshToken = localStorageUser.refreshToken;
-                                        }
-                                    }
-                                    ////valid local tokens
-                                    if (accessToken != null) {
-                                        user = this.createUserFromToken(refreshToken || "", accessToken);
-                                        if (user != null) {
-                                            user.saveToLocalStorage(this.localStorageKey);
-                                            resolve(user);
-                                            return [2 /*return*/];
-                                        }
-                                    }
-                                    if (!(refreshToken != null))
-                                        return [3 /*break*/, 9];
-                                    _a.label = 1;
-                                case 1:
-                                    _a.trys.push([1, 8, , 9]);
-                                    hasToken = false;
-                                    issuers = this.userManagerIssuers;
-                                    if (this.lastIssuer != null) {
-                                        issuers = issuers.filter(function (o) { return o.Issurer === _this.lastIssuer; });
-                                    }
-                                    _i = 0, issuers_1 = issuers;
-                                    _a.label = 2;
-                                case 2:
-                                    if (!(_i < issuers_1.length))
-                                        return [3 /*break*/, 7];
-                                    issuer = issuers_1[_i];
-                                    if (hasToken)
-                                        return [3 /*break*/, 7];
-                                    _a.label = 3;
-                                case 3:
-                                    _a.trys.push([3, 5, , 6]);
-                                    return [4 /*yield*/, this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri)];
-                                case 4:
-                                    accessToken = _a.sent();
-                                    hasToken = true;
-                                    return [3 /*break*/, 6];
-                                case 5:
-                                    error_2 = _a.sent();
-                                    return [3 /*break*/, 6];
-                                case 6:
-                                    _i++;
-                                    return [3 /*break*/, 2];
-                                case 7:
-                                    user = this.createUserFromToken(refreshToken || "", accessToken);
-                                    if (user != null) {
-                                        user.saveToLocalStorage(this.localStorageKey);
-                                        resolve(user);
-                                        return [2 /*return*/];
-                                    }
-                                    reject("Not authenticated");
-                                    return [2 /*return*/];
-                                case 8:
-                                    error_3 = _a.sent();
-                                    reject(error_3);
-                                    return [2 /*return*/];
-                                case 9:
-                                    reject("Not authenticated");
-                                    return [2 /*return*/];
+                switch (_a.label) {
+                    case 0:
+                        accessToken = this.getTokenfromUrl("accessToken");
+                        refreshToken = this.getTokenfromUrl("refreshToken");
+                        if (!accessToken && !refreshToken) {
+                            localStorageUser = User.fromLocalStorage(this.localStorageKey);
+                            if (localStorageUser != null) {
+                                this.set("roles", localStorageUser.roles);
+                                this.set("fullname", localStorageUser.fullName);
+                                this.set("firstName", localStorageUser.firstName);
+                                this.set("personId", localStorageUser.personId);
+                                accessToken = localStorageUser.accessToken;
+                                refreshToken = localStorageUser.refreshToken;
                             }
-                        });
-                    }); })];
+                        }
+                        ////valid local tokens
+                        if (accessToken != null) {
+                            user = this.createUserFromToken(refreshToken || "", accessToken);
+                            if (user != null) {
+                                user.saveToLocalStorage(this.localStorageKey);
+                                this.clearHashFromUrl();
+                                return [2 /*return*/, Promise.resolve(user)];
+                            }
+                        }
+                        if (!(refreshToken != null))
+                            return [3 /*break*/, 9];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 8, , 9]);
+                        hasToken = false;
+                        issuers = this.userManagerIssuers;
+                        if (this.lastIssuer != null) {
+                            issuers = issuers.filter(function (o) { return o.Issurer === _this.lastIssuer; });
+                        }
+                        _i = 0, issuers_1 = issuers;
+                        _a.label = 2;
+                    case 2:
+                        if (!(_i < issuers_1.length))
+                            return [3 /*break*/, 7];
+                        issuer = issuers_1[_i];
+                        if (hasToken)
+                            return [3 /*break*/, 7];
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri)];
+                    case 4:
+                        accessToken = _a.sent();
+                        hasToken = true;
+                        return [3 /*break*/, 6];
+                    case 5:
+                        error_2 = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 6:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 7:
+                        user = this.createUserFromToken(refreshToken || "", accessToken);
+                        if (user != null) {
+                            user.saveToLocalStorage(this.localStorageKey);
+                            this.clearHashFromUrl();
+                            return [2 /*return*/, Promise.resolve(user)];
+                        }
+                        return [2 /*return*/, Promise.reject("Not authenticated")];
+                    case 8:
+                        error_3 = _a.sent();
+                        return [2 /*return*/, Promise.reject(error_3)];
+                    case 9: return [2 /*return*/, Promise.reject("Not authenticated")];
+                }
             });
         });
     };
@@ -290,67 +268,57 @@ var LssUserManager = (function (_super) {
     ;
     LssUserManager.prototype.authenticateAndGetUserAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var getUserAsyncPromise, user, error_4;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (this.getUserAsyncPromise != null) {
-                            return [2 /*return*/, this.getUserAsyncPromise];
-                        }
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        getUserAsyncPromise = this.getUserAsync();
-                        this.getUserAsyncPromise = getUserAsyncPromise;
-                        return [4 /*yield*/, this.getUserAsyncPromise];
-                    case 2:
-                        user = _a.sent();
-                        this.getUserAsyncPromise = null;
-                        return [2 /*return*/, getUserAsyncPromise];
-                    case 3:
-                        error_4 = _a.sent();
-                        if (error_4 === "Not authenticated") {
-                            this.redirectToLogin(document.location.href);
-                            //Wait for the redirect to happen
-                            return [2 /*return*/, new Promise(function (resolve, reject) {
-                                    setTimeout(function () {
-                                        resolve();
-                                    }, 10000000);
-                                })];
-                        }
-                        return [2 /*return*/, Promise.resolve(null)];
-                    case 4: return [2 /*return*/];
-                }
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var user, error_4;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    return [4 /*yield*/, this.getUserAsync()];
+                                case 1:
+                                    user = _a.sent();
+                                    return [2 /*return*/, resolve(user)];
+                                case 2:
+                                    error_4 = _a.sent();
+                                    if (error_4 === "Not authenticated") {
+                                        this.redirectToLogin(document.location.href);
+                                        return [2 /*return*/]; //Wait for the redirect to happen with a unreturned promise
+                                    }
+                                    return [2 /*return*/, reject(error_4)];
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); })];
             });
         });
     };
-    ;
     LssUserManager.prototype.authenticateAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var error_5;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.getUserAsync()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/, Promise.resolve(null)];
-                    case 2:
-                        error_5 = _a.sent();
-                        this.redirectToLogin(document.location.href);
-                        //Wait for the redirect to happen
-                        return [2 /*return*/, new Promise(function (resolve, reject) {
-                                setTimeout(function () {
-                                    resolve();
-                                }, 10000000);
-                            })];
-                    case 3: return [2 /*return*/];
-                }
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var error_5;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    return [4 /*yield*/, this.getUserAsync()];
+                                case 1:
+                                    _a.sent();
+                                    return [2 /*return*/, resolve("Authenicated")];
+                                case 2:
+                                    error_5 = _a.sent();
+                                    this.redirectToLogin(document.location.href);
+                                    return [2 /*return*/]; //Wait for the redirect to happen with a unreturned promise
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); })];
             });
         });
     };
-    ;
     return LssUserManager;
 }(polymer.Base));
 __decorate([
