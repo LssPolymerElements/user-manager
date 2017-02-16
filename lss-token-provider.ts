@@ -17,7 +17,11 @@ class LssTokenProvider extends polymer.Base implements ITokenProvider {
     }
 
     attached() {
-        this.userManager = this.requestInstance("UserManager");
+        try {
+            this.userManager = this.requestInstance("UserManager");
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 LssTokenProvider.register();
