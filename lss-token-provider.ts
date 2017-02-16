@@ -20,7 +20,7 @@ class LssTokenProvider extends polymer.Base implements ITokenProvider {
         try {
             this.userManager = this.requestInstance("UserManager");
         } catch (error) {
-            console.log(error);
+            console.log("Default Lss User Manager not found. If other ITokenProvider is used ignore this message.");
         }
     }
 }
