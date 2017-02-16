@@ -4,10 +4,10 @@ class LssApiService extends polymer.Base {
     requestInstance: (key: string) => any;
 
     @property({
-        type: LssUserManager,
+        type: Object,
         notify: true
     })
-    userManager: LssUserManager;
+    tokenProvider: ITokenProvider;
 
     @property({
         type: LssEnvironment,
@@ -24,11 +24,28 @@ class LssApiService extends polymer.Base {
     @property()
     isLoading: boolean;
 
-    baseProductionUri = "https://api2.leavitt.com/";
+    @property({
+        type: String,
+        value: "https://api2.leavitt.com/",
+        notify: true
+    })
+    baseProductionUri: string;
+
+    @property({
+        type: String,
+        value: "https://devapi2.leavitt.com/",
+        notify: true
+    })
     baseDevUri = "https://devapi2.leavitt.com/";
 
     attached() {
-        this.userManager = this.requestInstance("UserManager");
+        try {
+            this.tokenProvider = this.requestInstance("TokenProvider");
+        } catch (error) {
+            console.log("Token Provider not found. Service will use default lss-token-provider.");
+            this.tokenProvider = new LssTokenProvider();
+        }
+
         this.lssEnvironment = this.$.lssEnvironment;
         this.baseUrl = this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri;
     }
@@ -39,8 +56,8 @@ class LssApiService extends polymer.Base {
 
     async postAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<T | null> {
 
-        var user = await this.userManager.authenticateAndGetUserAsync();
-        if (user === null) {
+        var token = await this.tokenProvider.getTokenAsync();
+        if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
 
@@ -60,7 +77,7 @@ class LssApiService extends polymer.Base {
                     body: JSON.stringify(body),
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${user.accessToken}`,
+                        "Authorization": `Bearer ${token}`,
                         "X-LGAppName": appName
                     }
                 });
@@ -94,8 +111,8 @@ class LssApiService extends polymer.Base {
     }
 
     async patchAsync(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<void> {
-        var user = await this.userManager.authenticateAndGetUserAsync();
-        if (user === null) {
+        var token = await this.tokenProvider.getTokenAsync();
+        if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
 
@@ -115,7 +132,7 @@ class LssApiService extends polymer.Base {
                     body: JSON.stringify(body),
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${user.accessToken}`,
+                        "Authorization": `Bearer ${token}`,
                         "X-LGAppName": appName
                     }
                 });
@@ -151,8 +168,8 @@ class LssApiService extends polymer.Base {
 
     async deleteAsync(urlPath: string, appName: string = "General"): Promise<void> {
 
-        var user = await this.userManager.authenticateAndGetUserAsync();
-        if (user === null) {
+        var token = await this.tokenProvider.getTokenAsync();
+        if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
 
@@ -163,7 +180,7 @@ class LssApiService extends polymer.Base {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${user.accessToken}`,
+                        "Authorization": `Bearer ${token}`,
                         "X-LGAppName": appName
                     }
                 });
@@ -202,8 +219,8 @@ class LssApiService extends polymer.Base {
 
     async getAsync<T extends IODataDto>(urlPath: string, appName: string = "General"): Promise<GetResult<T>> {
 
-        var user = await this.userManager.authenticateAndGetUserAsync();
-        if (user === null) {
+        var token = await this.tokenProvider.getTokenAsync();
+        if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
 
@@ -215,7 +232,7 @@ class LssApiService extends polymer.Base {
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                        "Authorization": `Bearer ${user.accessToken}`,
+                        "Authorization": `Bearer ${token}`,
                         "X-LGAppName": appName
                     }
 
