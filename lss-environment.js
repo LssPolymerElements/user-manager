@@ -12,7 +12,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var LssEnvironment = (function (_super) {
     __extends(LssEnvironment, _super);
     function LssEnvironment() {
-        return _super.apply(this, arguments) || this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     LssEnvironment.prototype.isDev = function () {
         if (document == null || document.location == null || document.location.host == null)

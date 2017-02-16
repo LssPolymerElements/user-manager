@@ -14,7 +14,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
@@ -47,13 +47,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var LssApiService = (function (_super) {
     __extends(LssApiService, _super);
     function LssApiService() {
-        var _this = _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.baseProductionUri = "https://api2.leavitt.com/";
         _this.baseDevUri = "https://devapi2.leavitt.com/";
         return _this;
     }
     LssApiService.prototype.attached = function () {
-        this.userManager = this.requestInstance("UserManager");
+        try {
+            this.tokenProvider = this.requestInstance("TokenProvider");
+        }
+        catch (error) {
+            console.log("Token Provider not found. Service will use default lss-token-provider.");
+            this.tokenProvider = this.$.lssTokenProvider;
+        }
         this.lssEnvironment = this.$.lssEnvironment;
         this.baseUrl = this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri;
     };
@@ -63,13 +69,13 @@ var LssApiService = (function (_super) {
     LssApiService.prototype.postAsync = function (urlPath, body, appName) {
         if (appName === void 0) { appName = "General"; }
         return __awaiter(this, void 0, void 0, function () {
-            var user, response, error_1, json, error_2;
+            var token, response, error_1, json, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.userManager.authenticateAndGetUserAsync()];
+                    case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
                     case 1:
-                        user = _a.sent();
-                        if (user === null) {
+                        token = _a.sent();
+                        if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
                         //Add in the odata model info if it not already on the object
@@ -87,7 +93,7 @@ var LssApiService = (function (_super) {
                                 body: JSON.stringify(body),
                                 headers: {
                                     "Content-Type": "application/json",
-                                    "Authorization": "Bearer " + user.accessToken,
+                                    "Authorization": "Bearer " + token,
                                     "X-LGAppName": appName
                                 }
                             })];
@@ -131,13 +137,13 @@ var LssApiService = (function (_super) {
     LssApiService.prototype.patchAsync = function (urlPath, body, appName) {
         if (appName === void 0) { appName = "General"; }
         return __awaiter(this, void 0, void 0, function () {
-            var user, response, error_3, json, error_4;
+            var token, response, error_3, json, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.userManager.authenticateAndGetUserAsync()];
+                    case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
                     case 1:
-                        user = _a.sent();
-                        if (user === null) {
+                        token = _a.sent();
+                        if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
                         //Add in the odata model info if it not already on the object
@@ -155,7 +161,7 @@ var LssApiService = (function (_super) {
                                 body: JSON.stringify(body),
                                 headers: {
                                     "Content-Type": "application/json",
-                                    "Authorization": "Bearer " + user.accessToken,
+                                    "Authorization": "Bearer " + token,
                                     "X-LGAppName": appName
                                 }
                             })];
@@ -198,13 +204,13 @@ var LssApiService = (function (_super) {
     LssApiService.prototype.deleteAsync = function (urlPath, appName) {
         if (appName === void 0) { appName = "General"; }
         return __awaiter(this, void 0, void 0, function () {
-            var user, response, error_5, json, error_6;
+            var token, response, error_5, json, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.userManager.authenticateAndGetUserAsync()];
+                    case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
                     case 1:
-                        user = _a.sent();
-                        if (user === null) {
+                        token = _a.sent();
+                        if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
                         _a.label = 2;
@@ -214,7 +220,7 @@ var LssApiService = (function (_super) {
                                 method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json",
-                                    "Authorization": "Bearer " + user.accessToken,
+                                    "Authorization": "Bearer " + token,
                                     "X-LGAppName": appName
                                 }
                             })];
@@ -261,13 +267,13 @@ var LssApiService = (function (_super) {
     LssApiService.prototype.getAsync = function (urlPath, appName) {
         if (appName === void 0) { appName = "General"; }
         return __awaiter(this, void 0, void 0, function () {
-            var user, response, error_7, json, error_8;
+            var token, response, error_7, json, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.userManager.authenticateAndGetUserAsync()];
+                    case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
                     case 1:
-                        user = _a.sent();
-                        if (user === null) {
+                        token = _a.sent();
+                        if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
                         _a.label = 2;
@@ -278,7 +284,7 @@ var LssApiService = (function (_super) {
                                 headers: {
                                     "Content-Type": "application/json",
                                     "Accept": "application/json",
-                                    "Authorization": "Bearer " + user.accessToken,
+                                    "Authorization": "Bearer " + token,
                                     "X-LGAppName": appName
                                 }
                             })];
@@ -312,10 +318,10 @@ var LssApiService = (function (_super) {
 }(polymer.Base));
 __decorate([
     property({
-        type: LssUserManager,
+        type: Object,
         notify: true
     })
-], LssApiService.prototype, "userManager", void 0);
+], LssApiService.prototype, "tokenProvider", void 0);
 __decorate([
     property({
         type: LssEnvironment,
