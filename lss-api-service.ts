@@ -36,7 +36,7 @@ class LssApiService extends polymer.Base {
         value: "https://devapi2.leavitt.com/",
         notify: true
     })
-    baseDevUri = "https://devapi2.leavitt.com/";
+    baseDevUri: string;
 
     attached() {
         try {
