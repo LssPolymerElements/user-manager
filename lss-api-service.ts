@@ -43,7 +43,7 @@ class LssApiService extends polymer.Base {
             this.tokenProvider = this.requestInstance("TokenProvider");
         } catch (error) {
             console.log("Token Provider not found. Service will use default lss-token-provider.");
-            this.tokenProvider = new LssTokenProvider();
+            this.tokenProvider = this.$.lssTokenProvider;
         }
 
         this.lssEnvironment = this.$.lssEnvironment;
