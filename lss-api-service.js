@@ -62,6 +62,7 @@ var LssApiService = (function (_super) {
             console.log("Token Provider not found. Service will use default lss-token-provider.");
             this.tokenProvider = this.$.lssTokenProvider;
         }
+        this.lssEnvironment = this.$.lssEnvironment;
     };
     LssApiService.prototype.environmentHandler = function () {
         this.baseUrl = this.$.lssEnvironment.isDev ? this.baseDevUri : this.baseProductionUri;
