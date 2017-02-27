@@ -16,6 +16,11 @@ class LssApiService extends polymer.Base {
     lssEnvironment: LssEnvironment;
 
     @property({
+        type: Boolean
+    })
+    isDev: boolean;
+
+    @property({
         type: String,
         notify: true
     })
@@ -45,9 +50,11 @@ class LssApiService extends polymer.Base {
             console.log("Token Provider not found. Service will use default lss-token-provider.");
             this.tokenProvider = this.$.lssTokenProvider;
         }
+    }
 
-        this.lssEnvironment = this.$.lssEnvironment;
-        this.baseUrl = this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri;
+    @observe("isDev")
+    environmentHandler() {
+        this.baseUrl = this.$.lssEnvironment.isDev ? this.baseDevUri : this.baseProductionUri;
     }
 
     private createUri(urlPath: string): string {

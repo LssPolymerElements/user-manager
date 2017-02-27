@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -47,10 +52,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var LssApiService = (function (_super) {
     __extends(LssApiService, _super);
     function LssApiService() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.baseProductionUri = "https://api2.leavitt.com/";
-        _this.baseDevUri = "https://devapi2.leavitt.com/";
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     LssApiService.prototype.attached = function () {
         try {
@@ -60,8 +62,9 @@ var LssApiService = (function (_super) {
             console.log("Token Provider not found. Service will use default lss-token-provider.");
             this.tokenProvider = this.$.lssTokenProvider;
         }
-        this.lssEnvironment = this.$.lssEnvironment;
-        this.baseUrl = this.lssEnvironment.isDev() ? this.baseDevUri : this.baseProductionUri;
+    };
+    LssApiService.prototype.environmentHandler = function () {
+        this.baseUrl = this.$.lssEnvironment.isDev ? this.baseDevUri : this.baseProductionUri;
     };
     LssApiService.prototype.createUri = function (urlPath) {
         return this.baseUrl + urlPath;
@@ -330,6 +333,11 @@ __decorate([
 ], LssApiService.prototype, "lssEnvironment", void 0);
 __decorate([
     property({
+        type: Boolean
+    })
+], LssApiService.prototype, "isDev", void 0);
+__decorate([
+    property({
         type: String,
         notify: true
     })
@@ -337,6 +345,23 @@ __decorate([
 __decorate([
     property()
 ], LssApiService.prototype, "isLoading", void 0);
+__decorate([
+    property({
+        type: String,
+        value: "https://api2.leavitt.com/",
+        notify: true
+    })
+], LssApiService.prototype, "baseProductionUri", void 0);
+__decorate([
+    property({
+        type: String,
+        value: "https://devapi2.leavitt.com/",
+        notify: true
+    })
+], LssApiService.prototype, "baseDevUri", void 0);
+__decorate([
+    observe("isDev")
+], LssApiService.prototype, "environmentHandler", null);
 LssApiService = __decorate([
     behavior(LssRequesterBehavior),
     component("lss-api-service")
