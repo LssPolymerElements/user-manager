@@ -1,6 +1,6 @@
 {
   "name": "lss-api-service",
-  "version": "3.0.4",
+  "version": "4.0.1",
   "description": "A polymer compenent to aid in communicating with LSS's RESTful apis.",
   "authors": [
     "Leavitt Software Solutions"
