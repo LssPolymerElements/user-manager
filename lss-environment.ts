@@ -24,7 +24,7 @@ class LssEnvironment extends polymer.Base {
         this.set("isDev", this.isDevelopmentHanlder());
     }
 
-    isDevelopmentHanlder(): Boolean {
+    isDevelopmentHandler(): Boolean {
         if (document == null || document.location == null || document.location.host == null)
             return true;
 
