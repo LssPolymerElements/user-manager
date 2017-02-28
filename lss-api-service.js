@@ -334,7 +334,8 @@ __decorate([
 ], LssApiService.prototype, "lssEnvironment", void 0);
 __decorate([
     property({
-        type: Boolean
+        type: Boolean,
+        notify: true
     })
 ], LssApiService.prototype, "isDev", void 0);
 __decorate([
