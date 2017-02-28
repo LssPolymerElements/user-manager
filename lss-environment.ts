@@ -21,7 +21,7 @@ class LssEnvironment extends polymer.Base {
     isDev: Boolean
 
     reevaluate() {
-        this.set("isDev", this.isDevelopmentHanlder());
+        this.set("isDev", this.isDevelopmentHandler());
     }
 
     isDevelopmentHandler(): Boolean {

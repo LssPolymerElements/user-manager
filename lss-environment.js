@@ -20,9 +20,9 @@ var LssEnvironment = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     LssEnvironment.prototype.reevaluate = function () {
-        this.set("isDev", this.isDevelopmentHanlder());
+        this.set("isDev", this.isDevelopmentHandler());
     };
-    LssEnvironment.prototype.isDevelopmentHanlder = function () {
+    LssEnvironment.prototype.isDevelopmentHandler = function () {
         if (document == null || document.location == null || document.location.host == null)
             return true;
         var host = document.location.host;
