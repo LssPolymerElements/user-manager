@@ -16,7 +16,8 @@ class LssApiService extends polymer.Base {
     lssEnvironment: LssEnvironment;
 
     @property({
-        type: Boolean
+        type: Boolean,
+        notify: true
     })
     isDev: boolean;
 
