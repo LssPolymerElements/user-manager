@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,7 +19,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
@@ -48,7 +53,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var LssUserManager = (function (_super) {
     __extends(LssUserManager, _super);
     function LssUserManager() {
-        var _this = _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.localStorageKey = "LgUser";
         _this.lastIssuer = null;
         _this.getUserAsyncPromise = null;
@@ -59,8 +64,7 @@ var LssUserManager = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this.shouldValidateOnLoad)
-                            return [3 /*break*/, 2];
+                        if (!this.shouldValidateOnLoad) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.authenticateAndGetUserAsync()];
                     case 1:
                         _a.sent();
@@ -212,8 +216,7 @@ var LssUserManager = (function (_super) {
                                 return [2 /*return*/, Promise.resolve(user)];
                             }
                         }
-                        if (!(refreshToken != null))
-                            return [3 /*break*/, 9];
+                        if (!(refreshToken != null)) return [3 /*break*/, 9];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 8, , 9]);
@@ -225,8 +228,7 @@ var LssUserManager = (function (_super) {
                         _i = 0, issuers_1 = issuers;
                         _a.label = 2;
                     case 2:
-                        if (!(_i < issuers_1.length))
-                            return [3 /*break*/, 7];
+                        if (!(_i < issuers_1.length)) return [3 /*break*/, 7];
                         issuer = issuers_1[_i];
                         if (hasToken)
                             return [3 /*break*/, 7];

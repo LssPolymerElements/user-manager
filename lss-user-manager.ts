@@ -1,5 +1,4 @@
 ﻿/// <reference path="./user.ts" />
-declare var fetch: any;
 declare var jwt_decode: any;
 
 @component("lss-user-manager")

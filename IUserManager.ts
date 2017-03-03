@@ -1,5 +1,4 @@
 ﻿/// <reference path="./user.ts" />
-declare var fetch: any;
 
 interface IUserManager {
 
