@@ -19,11 +19,11 @@ var User = (function () {
     ;
     User.prototype.saveToLocalStorage = function (localStorageKey) {
         var data = JSON.stringify(this);
-        localStorage.setItem(localStorageKey, data);
+        window.localStorage.setItem(localStorageKey, data);
     };
     ;
     User.fromLocalStorage = function (localStorageKey) {
-        var data = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
+        var data = JSON.parse(window.localStorage.getItem(localStorageKey) || "{}");
         if (data == null || data.refreshToken == null) {
             return null;
         }
