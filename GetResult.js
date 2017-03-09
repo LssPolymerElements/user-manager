@@ -1,9 +1,15 @@
 var GetResult = (function () {
     function GetResult(json) {
         var _this = this;
-        this.data = json.value.map(function (o) {
-            return _this.convertOdataInfo(o);
-        });
+        if (Array.isArray(json.value)) {
+            this.data = json.value.map(function (o) {
+                return _this.convertOdataInfo(o);
+            });
+        }
+        else {
+            this.data = [];
+            this.data.push(json.value);
+        }
     }
     GetResult.prototype.count = function () {
         return this.data.length;

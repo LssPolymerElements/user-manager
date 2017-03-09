@@ -2,9 +2,16 @@ class GetResult<T extends IODataDto> {
     private data: Array<T>;
 
     constructor(json: any) {
-        this.data = json.value.map(o => {
-            return this.convertOdataInfo(o);
-        });
+
+        if (Array.isArray(json.value)) {
+            this.data = json.value.map(o => {
+                return this.convertOdataInfo(o);
+            });
+        }
+        else {
+            this.data = [];
+            this.data.push(json.value);
+        }
     }
 
     count(): number {
