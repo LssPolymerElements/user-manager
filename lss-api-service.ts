@@ -51,6 +51,12 @@ class LssApiService extends polymer.Base {
     })
     AppNameKey: string;
 
+    @property({
+        value: {
+            "Content-Type": "application/json",
+        }
+    })
+    headers: any
     attached() {
         try {
             this.tokenProvider = this.requestInstance("TokenProvider");
@@ -70,6 +76,7 @@ class LssApiService extends polymer.Base {
         return this.baseUrl + urlPath;
     }
 
+
     async postAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<T | null> {
 
         var token = await this.tokenProvider.getTokenAsync();
@@ -85,17 +92,16 @@ class LssApiService extends polymer.Base {
             delete body._odataInfo;
         }
 
+        this.headers["Authorization"] = `Bearer ${token}`;
+        this.headers[this.AppNameKey] = appName;
+
         var response;
         try {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "POST",
                     body: JSON.stringify(body),
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        AppNameKey: appName
-                    }
+                    headers: this.headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -140,17 +146,16 @@ class LssApiService extends polymer.Base {
             delete body._odataInfo;
         }
 
+        this.headers["Authorization"] = `Bearer ${token}`;
+        this.headers[this.AppNameKey] = appName;
+
         var response;
         try {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "PATCH",
                     body: JSON.stringify(body),
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        AppNameKey: appName
-                    }
+                    headers: this.headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -189,16 +194,15 @@ class LssApiService extends polymer.Base {
             throw new Error("Redirect failed. Not authenticated.");
         }
 
+        this.headers["Authorization"] = `Bearer ${token}`;
+        this.headers[this.AppNameKey] = appName;
+
         var response;
         try {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        AppNameKey: appName
-                    }
+                    headers: this.headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -240,17 +244,16 @@ class LssApiService extends polymer.Base {
             throw new Error("Redirect failed. Not authenticated.");
         }
 
+        this.headers["Authorization"] = `Bearer ${token}`;
+        this.headers["Accept"] = "application/json";
+        this.headers[this.AppNameKey] = appName;
+
         var response;
         try {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        AppNameKey: appName
-                    }
+                    headers: this.headers
 
                 });
 

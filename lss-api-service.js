@@ -89,17 +89,15 @@ var LssApiService = (function (_super) {
                             }
                             delete body._odataInfo;
                         }
+                        this.headers["Authorization"] = "Bearer " + token;
+                        this.headers[this.AppNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
                                 method: "POST",
                                 body: JSON.stringify(body),
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": "Bearer " + token,
-                                    AppNameKey: appName
-                                }
+                                headers: this.headers
                             })];
                     case 3:
                         response = _a.sent();
@@ -157,17 +155,15 @@ var LssApiService = (function (_super) {
                             }
                             delete body._odataInfo;
                         }
+                        this.headers["Authorization"] = "Bearer " + token;
+                        this.headers[this.AppNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
                                 method: "PATCH",
                                 body: JSON.stringify(body),
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": "Bearer " + token,
-                                    AppNameKey: appName
-                                }
+                                headers: this.headers
                             })];
                     case 3:
                         response = _a.sent();
@@ -217,16 +213,14 @@ var LssApiService = (function (_super) {
                         if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
+                        this.headers["Authorization"] = "Bearer " + token;
+                        this.headers[this.AppNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
                                 method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": "Bearer " + token,
-                                    AppNameKey: appName
-                                }
+                                headers: this.headers
                             })];
                     case 3:
                         response = _a.sent();
@@ -280,17 +274,15 @@ var LssApiService = (function (_super) {
                         if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
+                        this.headers["Authorization"] = "Bearer " + token;
+                        this.headers["Accept"] = "application/json";
+                        this.headers[this.AppNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
                                 method: "GET",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Accept": "application/json",
-                                    "Authorization": "Bearer " + token,
-                                    AppNameKey: appName
-                                }
+                                headers: this.headers
                             })];
                     case 3:
                         response = _a.sent();
@@ -368,6 +360,13 @@ __decorate([
         notify: true
     })
 ], LssApiService.prototype, "AppNameKey", void 0);
+__decorate([
+    property({
+        value: {
+            "Content-Type": "application/json",
+        }
+    })
+], LssApiService.prototype, "headers", void 0);
 __decorate([
     observe("isDev")
 ], LssApiService.prototype, "environmentHandler", null);
