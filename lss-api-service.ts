@@ -91,10 +91,10 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
-
-        this.headers["Authorization"] = `Bearer ${token}`;
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
         if (this.appNameKey !== "")
-            this.headers[this.appNameKey] = appName;
+            headers[this.appNameKey] = appName;
 
         var response;
         try {
@@ -102,7 +102,7 @@ class LssApiService extends polymer.Base {
                 {
                     method: "POST",
                     body: JSON.stringify(body),
-                    headers: this.headers
+                    headers: headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -146,10 +146,10 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
-
-        this.headers["Authorization"] = `Bearer ${token}`;
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
         if (this.appNameKey !== "")
-            this.headers[this.appNameKey] = appName;
+            headers[this.appNameKey] = appName;
 
         var response;
         try {
@@ -157,7 +157,7 @@ class LssApiService extends polymer.Base {
                 {
                     method: "PATCH",
                     body: JSON.stringify(body),
-                    headers: this.headers
+                    headers: headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -195,17 +195,17 @@ class LssApiService extends polymer.Base {
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
-
-        this.headers["Authorization"] = `Bearer ${token}`;
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
         if (this.appNameKey !== "")
-            this.headers[this.appNameKey] = appName;
+            headers[this.appNameKey] = appName;
 
         var response;
         try {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "DELETE",
-                    headers: this.headers
+                    headers: headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -246,12 +246,12 @@ class LssApiService extends polymer.Base {
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
-
-        this.headers["Authorization"] = `Bearer ${token}`;
-        this.headers["Accept"] = "application/json";
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
+        headers["Accept"] = "application/json";
 
         if (this.appNameKey !== "")
-            this.headers[this.appNameKey] = appName;
+            headers[this.appNameKey] = appName;
 
 
         var response;
@@ -259,7 +259,7 @@ class LssApiService extends polymer.Base {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "GET",
-                    headers: this.headers
+                    headers: headers
 
                 });
 
