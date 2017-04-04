@@ -14,9 +14,9 @@
         <paper-button id="getButton" raised>Get Top 5 Fruits</paper-button>
         <paper-button id="createButton" raised>Post a new random fruit</paper-button>
         <div style="color:red;margin:16px">Error: [[error]]</div>
-      
-            <template is="dom-repeat" items="[[fruits]]">                
-                <div style="margin:16px;padding:8px;border:1px dashed green;width:350px; display: inline-block;">
+
+        <template is="dom-repeat" items="[[fruits]]">
+            <div style="margin:16px;padding:8px;border:1px dashed green;width:350px; display: inline-block;">
                 <pre>
  _  [[item.Name]]
 //\ [[item.Id]]
@@ -33,12 +33,12 @@ V  \
              `-.__  `----"""    __.-'
                   `--..____..--'
                 </pre>
-                    <paper-button object-id$="[[item.Id]]" on-tap="deleteFruit" raised>Delete</paper-button>
-                    <paper-button object-id$="[[item.Id]]" on-tap="patchFruit" raised>Patch Random Name</paper-button>
-                
-                </div>
-            </template>
-        
+                <paper-button object-id$="[[item.Id]]" on-tap="deleteFruit" raised>Delete</paper-button>
+                <paper-button object-id$="[[item.Id]]" on-tap="patchFruit" raised>Patch Random Name</paper-button>
+
+            </div>
+        </template>
+
     </template>
     <script src="demo-one.js">
     </script>
