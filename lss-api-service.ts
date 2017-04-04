@@ -49,7 +49,7 @@ class LssApiService extends polymer.Base {
         value: "X-LGAppName",
         notify: true
     })
-    AppNameKey: string;
+    appNameKey: string;
 
     @property({
         value: {
@@ -93,7 +93,8 @@ class LssApiService extends polymer.Base {
         }
 
         this.headers["Authorization"] = `Bearer ${token}`;
-        this.headers[this.AppNameKey] = appName;
+        if (this.appNameKey !== "")
+            this.headers[this.appNameKey] = appName;
 
         var response;
         try {
@@ -147,7 +148,8 @@ class LssApiService extends polymer.Base {
         }
 
         this.headers["Authorization"] = `Bearer ${token}`;
-        this.headers[this.AppNameKey] = appName;
+        if (this.appNameKey !== "")
+            this.headers[this.appNameKey] = appName;
 
         var response;
         try {
@@ -195,7 +197,8 @@ class LssApiService extends polymer.Base {
         }
 
         this.headers["Authorization"] = `Bearer ${token}`;
-        this.headers[this.AppNameKey] = appName;
+        if (this.appNameKey !== "")
+            this.headers[this.appNameKey] = appName;
 
         var response;
         try {
@@ -246,7 +249,10 @@ class LssApiService extends polymer.Base {
 
         this.headers["Authorization"] = `Bearer ${token}`;
         this.headers["Accept"] = "application/json";
-        this.headers[this.AppNameKey] = appName;
+
+        if (this.appNameKey !== "")
+            this.headers[this.appNameKey] = appName;
+
 
         var response;
         try {

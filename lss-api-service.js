@@ -90,7 +90,7 @@ var LssApiService = (function (_super) {
                             delete body._odataInfo;
                         }
                         this.headers["Authorization"] = "Bearer " + token;
-                        this.headers[this.AppNameKey] = appName;
+                        this.headers[this.appNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
@@ -156,7 +156,7 @@ var LssApiService = (function (_super) {
                             delete body._odataInfo;
                         }
                         this.headers["Authorization"] = "Bearer " + token;
-                        this.headers[this.AppNameKey] = appName;
+                        this.headers[this.appNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
@@ -214,7 +214,7 @@ var LssApiService = (function (_super) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
                         this.headers["Authorization"] = "Bearer " + token;
-                        this.headers[this.AppNameKey] = appName;
+                        this.headers[this.appNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
@@ -276,7 +276,7 @@ var LssApiService = (function (_super) {
                         }
                         this.headers["Authorization"] = "Bearer " + token;
                         this.headers["Accept"] = "application/json";
-                        this.headers[this.AppNameKey] = appName;
+                        this.headers[this.appNameKey] = appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
@@ -359,7 +359,7 @@ __decorate([
         value: "X-LGAppName",
         notify: true
     })
-], LssApiService.prototype, "AppNameKey", void 0);
+], LssApiService.prototype, "appNameKey", void 0);
 __decorate([
     property({
         value: {
