@@ -44,6 +44,19 @@ class LssApiService extends polymer.Base {
     })
     baseDevUri: string;
 
+    @property({
+        type: String,
+        value: "X-LGAppName",
+        notify: true
+    })
+    appNameKey: string;
+
+    @property({
+        value: {
+            "Content-Type": "application/json",
+        }
+    })
+    headers: any
     attached() {
         try {
             this.tokenProvider = this.requestInstance("TokenProvider");
@@ -66,6 +79,7 @@ class LssApiService extends polymer.Base {
         return this.baseUrl + urlPath;
     }
 
+
     async postAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<T | null> {
 
         var token = await this.tokenProvider.getTokenAsync();
@@ -80,6 +94,10 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
+        if (this.appNameKey !== "")
+            headers[this.appNameKey] = appName;
 
         var response;
         try {
@@ -87,11 +105,7 @@ class LssApiService extends polymer.Base {
                 {
                     method: "POST",
                     body: JSON.stringify(body),
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
-                    }
+                    headers: headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -135,6 +149,10 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
+        if (this.appNameKey !== "")
+            headers[this.appNameKey] = appName;
 
         var response;
         try {
@@ -142,11 +160,7 @@ class LssApiService extends polymer.Base {
                 {
                     method: "PATCH",
                     body: JSON.stringify(body),
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
-                    }
+                    headers: headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -184,17 +198,17 @@ class LssApiService extends polymer.Base {
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
+        if (this.appNameKey !== "")
+            headers[this.appNameKey] = appName;
 
         var response;
         try {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
-                    }
+                    headers: headers
                 });
         } catch (error) {
             if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
@@ -235,18 +249,20 @@ class LssApiService extends polymer.Base {
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
+        var headers = this.headers;
+        headers["Authorization"] = `Bearer ${token}`;
+        headers["Accept"] = "application/json";
+
+        if (this.appNameKey !== "")
+            headers[this.appNameKey] = appName;
+
 
         var response;
         try {
             response = await fetch(this.createUri(urlPath),
                 {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
-                    }
+                    headers: headers
 
                 });
 
