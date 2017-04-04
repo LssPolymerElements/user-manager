@@ -98,7 +98,7 @@ var LssApiService = (function (_super) {
                                 headers: {
                                     "Content-Type": "application/json",
                                     "Authorization": "Bearer " + token,
-                                    "X-LGAppName": appName
+                                    AppNameKey: appName
                                 }
                             })];
                     case 3:
@@ -166,7 +166,7 @@ var LssApiService = (function (_super) {
                                 headers: {
                                     "Content-Type": "application/json",
                                     "Authorization": "Bearer " + token,
-                                    "X-LGAppName": appName
+                                    AppNameKey: appName
                                 }
                             })];
                     case 3:
@@ -225,7 +225,7 @@ var LssApiService = (function (_super) {
                                 headers: {
                                     "Content-Type": "application/json",
                                     "Authorization": "Bearer " + token,
-                                    "X-LGAppName": appName
+                                    AppNameKey: appName
                                 }
                             })];
                     case 3:
@@ -289,7 +289,7 @@ var LssApiService = (function (_super) {
                                     "Content-Type": "application/json",
                                     "Accept": "application/json",
                                     "Authorization": "Bearer " + token,
-                                    "X-LGAppName": appName
+                                    AppNameKey: appName
                                 }
                             })];
                     case 3:
@@ -361,6 +361,13 @@ __decorate([
         notify: true
     })
 ], LssApiService.prototype, "baseDevUri", void 0);
+__decorate([
+    property({
+        type: String,
+        value: "X-LGAppName",
+        notify: true
+    })
+], LssApiService.prototype, "AppNameKey", void 0);
 __decorate([
     observe("isDev")
 ], LssApiService.prototype, "environmentHandler", null);

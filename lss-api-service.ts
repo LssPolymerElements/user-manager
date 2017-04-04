@@ -44,6 +44,13 @@ class LssApiService extends polymer.Base {
     })
     baseDevUri: string;
 
+    @property({
+        type: String,
+        value: "X-LGAppName",
+        notify: true
+    })
+    AppNameKey: string;
+
     attached() {
         try {
             this.tokenProvider = this.requestInstance("TokenProvider");
@@ -87,7 +94,7 @@ class LssApiService extends polymer.Base {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
+                        AppNameKey: appName
                     }
                 });
         } catch (error) {
@@ -142,7 +149,7 @@ class LssApiService extends polymer.Base {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
+                        AppNameKey: appName
                     }
                 });
         } catch (error) {
@@ -190,7 +197,7 @@ class LssApiService extends polymer.Base {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
+                        AppNameKey: appName
                     }
                 });
         } catch (error) {
@@ -242,7 +249,7 @@ class LssApiService extends polymer.Base {
                         "Content-Type": "application/json",
                         "Accept": "application/json",
                         "Authorization": `Bearer ${token}`,
-                        "X-LGAppName": appName
+                        AppNameKey: appName
                     }
 
                 });
