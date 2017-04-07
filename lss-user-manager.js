@@ -75,11 +75,20 @@ var LssUserManager = (function (_super) {
         });
     };
     LssUserManager.prototype.redirectToLogin = function (continueUrl) {
-        //console.log("REDIRECT!");
-        var redirectUrl = this.redirectUrl + "?continue=" + encodeURIComponent(continueUrl);
+        var redirectUrl = (this.isDevelopment ? this.redirectDevUrl : this.redirectUrl) + "?continue=" + encodeURIComponent(continueUrl);
         document.location.href = redirectUrl;
     };
     ;
+    LssUserManager.prototype.isDevelopment = function () {
+        if (document == null || document.location == null || document.location.host == null)
+            return true;
+        var host = document.location.host;
+        if (host.indexOf("dev") !== -1)
+            return true;
+        if (host.indexOf("localhost") !== -1)
+            return true;
+        return false;
+    };
     LssUserManager.prototype.getHashParametersFromUrl = function () {
         var hashParams = new Array();
         if (window.location.hash) {
@@ -331,6 +340,13 @@ __decorate([
         value: "https://login.leavitt.com/oauth/"
     })
 ], LssUserManager.prototype, "redirectUrl", void 0);
+__decorate([
+    property({
+        type: String,
+        notify: true,
+        value: "https://devsignin.leavitt.com/"
+    })
+], LssUserManager.prototype, "redirectDevUrl", void 0);
 __decorate([
     property({
         type: Array,

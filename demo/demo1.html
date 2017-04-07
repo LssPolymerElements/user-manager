@@ -45,9 +45,15 @@
                 });
             },
             callMultiple: function (e) {
-                this.$.manager.authenticateAndGetUserAsync().then(function () { console.log("1 done"); });
-                this.$.manager.authenticateAndGetUserAsync().then(function () { console.log("2 done"); });
-                this.$.manager.authenticateAndGetUserAsync().then(function () { console.log("3 done"); });
+                this.$.manager.authenticateAndGetUserAsync().then(function () {
+                    console.log("1 done");
+                });
+                this.$.manager.authenticateAndGetUserAsync().then(function () {
+                    console.log("2 done");
+                });
+                this.$.manager.authenticateAndGetUserAsync().then(function () {
+                    console.log("3 done");
+                });
             }
         });
     </script>
