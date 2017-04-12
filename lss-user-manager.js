@@ -79,6 +79,11 @@ var LssUserManager = (function (_super) {
         document.location.href = redirectUrl;
     };
     ;
+    LssUserManager.prototype.redirectToSignOut = function (continueUrl) {
+        var redirectUrl = (this.isDevelopment ? this.redirectDevUrl : this.redirectUrl) + "/sign-out/?continue=" + encodeURIComponent(continueUrl);
+        document.location.href = redirectUrl;
+    };
+    ;
     LssUserManager.prototype.isDevelopment = function () {
         if (document == null || document.location == null || document.location.host == null)
             return true;
@@ -274,7 +279,7 @@ var LssUserManager = (function (_super) {
     ;
     LssUserManager.prototype.logoutAsync = function () {
         localStorage.removeItem(this.localStorageKey);
-        //TODO:  POST TO API TO EXPIRE REFRESH TOKEN
+        this.redirectToSignOut(document.location.href);
         return Promise.resolve();
     };
     ;
