@@ -13,6 +13,13 @@ class LssUserManager extends polymer.Base {
     redirectUrl: string;
 
     @property({
+        type: String,
+        notify: true,
+        value: "https://devsignin.leavitt.com/"
+    })
+    redirectDevUrl: string;
+
+    @property({
         type: Array,
         notify: true
     })
@@ -59,10 +66,28 @@ class LssUserManager extends polymer.Base {
     }
 
     private redirectToLogin(continueUrl: string) {
-        //console.log("REDIRECT!");
-        var redirectUrl = `${this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
+        var redirectUrl = `${this.isDevelopment ? this.redirectDevUrl : this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
         document.location.href = redirectUrl;
     };
+
+    private redirectToSignOut(continueUrl: string) {
+        var redirectUrl = `${this.isDevelopment ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
+        document.location.href = redirectUrl;
+    };
+
+    isDevelopment(): Boolean {
+        if (document == null || document.location == null || document.location.host == null)
+            return true;
+
+        const host = document.location.host;
+        if (host.indexOf("dev") !== -1)
+            return true;
+
+        if (host.indexOf("localhost") !== -1)
+            return true;
+
+        return false;
+    }
 
     private getHashParametersFromUrl(): Array<HashParameter> {
         const hashParams = new Array<HashParameter>();
@@ -241,8 +266,7 @@ class LssUserManager extends polymer.Base {
 
     logoutAsync(): Promise<void> {
         localStorage.removeItem(this.localStorageKey);
-
-        //TODO:  POST TO API TO EXPIRE REFRESH TOKEN
+        this.redirectToSignOut(document.location.href);
         return Promise.resolve();
     };
 
