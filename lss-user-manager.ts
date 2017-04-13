@@ -71,7 +71,7 @@ class LssUserManager extends polymer.Base {
     };
 
     private redirectToSignOut(continueUrl: string) {
-        var redirectUrl = `${this.isDevelopment ? this.redirectDevUrl : this.redirectUrl}/sign-out/?continue=${encodeURIComponent(continueUrl)}`;
+        var redirectUrl = `${this.isDevelopment ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
         document.location.href = redirectUrl;
     };
 
