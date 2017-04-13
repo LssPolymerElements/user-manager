@@ -80,7 +80,7 @@ var LssUserManager = (function (_super) {
     };
     ;
     LssUserManager.prototype.redirectToSignOut = function (continueUrl) {
-        var redirectUrl = (this.isDevelopment ? this.redirectDevUrl : this.redirectUrl) + "/sign-out/?continue=" + encodeURIComponent(continueUrl);
+        var redirectUrl = (this.isDevelopment ? this.redirectDevUrl : this.redirectUrl) + "sign-out/?continue=" + encodeURIComponent(continueUrl);
         document.location.href = redirectUrl;
     };
     ;
