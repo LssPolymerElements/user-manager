@@ -66,12 +66,12 @@ class LssUserManager extends polymer.Base {
     }
 
     private redirectToLogin(continueUrl: string) {
-        var redirectUrl = `${this.isDevelopment ? this.redirectDevUrl : this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
+        var redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
         document.location.href = redirectUrl;
     };
 
     private redirectToSignOut(continueUrl: string) {
-        var redirectUrl = `${this.isDevelopment ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
+        var redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
         document.location.href = redirectUrl;
     };
 
