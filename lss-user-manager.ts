@@ -8,7 +8,7 @@ class LssUserManager extends polymer.Base {
     @property({
         type: String,
         notify: true,
-        value: "https://login.leavitt.com/oauth/"
+        value: "https://signin.leavitt.com/"
     })
     redirectUrl: string;
 
