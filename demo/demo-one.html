@@ -8,12 +8,12 @@
 <dom-module id="demo-one">
     <template>
         <lss-user-manager id="userManager"></lss-user-manager>
-        <lss-api-service id="service"></lss-api-service>
+        <lss-api-service app-name="Testing" id="service"></lss-api-service>
 
         <h1>lss-api-service Fruits CRUD Demo</h1>
         <paper-button id="getButton" raised>Get Top 5 Fruits</paper-button>
         <paper-button id="createButton" raised>Post a new random fruit</paper-button>
-        <div style="color:red;margin:16px">Error: [[error]]</div>
+        <div style="color:red;margin:16px">Errors: [[error]]</div>
 
         <template is="dom-repeat" items="[[fruits]]">
             <div style="margin:16px;padding:8px;border:1px dashed green;width:350px; display: inline-block;">
@@ -35,6 +35,7 @@ V  \
                 </pre>
                 <paper-button object-id$="[[item.Id]]" on-tap="deleteFruit" raised>Delete</paper-button>
                 <paper-button object-id$="[[item.Id]]" on-tap="patchFruit" raised>Patch Random Name</paper-button>
+                <paper-button object-id$="[[item.Id]]" on-tap="patchReturnDtoFruit" raised>Patch and return dto</paper-button>
 
             </div>
         </template>

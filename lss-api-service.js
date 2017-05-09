@@ -71,9 +71,9 @@ var LssApiService = (function (_super) {
         return this.baseUrl + urlPath;
     };
     LssApiService.prototype.postAsync = function (urlPath, body, appName) {
-        if (appName === void 0) { appName = "General"; }
+        if (appName === void 0) { appName = null; }
         return __awaiter(this, void 0, void 0, function () {
-            var token, response, error_1, json, error_2;
+            var token, headers, response, error_1, json, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
@@ -89,15 +89,17 @@ var LssApiService = (function (_super) {
                             }
                             delete body._odataInfo;
                         }
-                        this.headers["Authorization"] = "Bearer " + token;
-                        this.headers[this.appNameKey] = appName;
+                        headers = { "Content-Type": "application/json" };
+                        headers["Authorization"] = "Bearer " + token;
+                        if (this.appNameKey !== "")
+                            headers[this.appNameKey] = appName || this.appName;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
                                 method: "POST",
                                 body: JSON.stringify(body),
-                                headers: this.headers
+                                headers: headers
                             })];
                     case 3:
                         response = _a.sent();
@@ -137,9 +139,9 @@ var LssApiService = (function (_super) {
         });
     };
     LssApiService.prototype.patchAsync = function (urlPath, body, appName) {
-        if (appName === void 0) { appName = "General"; }
+        if (appName === void 0) { appName = null; }
         return __awaiter(this, void 0, void 0, function () {
-            var token, response, error_3, json, error_4;
+            var token, headers, response, error_3, json, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
@@ -155,15 +157,18 @@ var LssApiService = (function (_super) {
                             }
                             delete body._odataInfo;
                         }
-                        this.headers["Authorization"] = "Bearer " + token;
-                        this.headers[this.appNameKey] = appName;
+                        headers = { "Content-Type": "application/json" };
+                        headers["Authorization"] = "Bearer " + token;
+                        if (this.appNameKey !== "")
+                            headers[this.appNameKey] = appName || this.appName;
+                        ;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
                                 method: "PATCH",
                                 body: JSON.stringify(body),
-                                headers: this.headers
+                                headers: headers
                             })];
                     case 3:
                         response = _a.sent();
@@ -186,13 +191,7 @@ var LssApiService = (function (_super) {
                         if (json.error != null) {
                             return [2 /*return*/, Promise.reject(json.error.message)];
                         }
-                        if (response.status === 201) {
-                            return [2 /*return*/, Promise.resolve(json)];
-                        }
-                        else {
-                            return [2 /*return*/, Promise.reject("Request error, please try again later.")];
-                        }
-                        return [3 /*break*/, 9];
+                        return [2 /*return*/, Promise.reject("Request error, please try again later.")];
                     case 8:
                         error_4 = _a.sent();
                         return [2 /*return*/, Promise.reject("The server sent back invalid JSON. " + error_4)];
@@ -201,10 +200,10 @@ var LssApiService = (function (_super) {
             });
         });
     };
-    LssApiService.prototype.deleteAsync = function (urlPath, appName) {
-        if (appName === void 0) { appName = "General"; }
+    LssApiService.prototype.patchReturnDtoAsync = function (urlPath, body, appName) {
+        if (appName === void 0) { appName = null; }
         return __awaiter(this, void 0, void 0, function () {
-            var token, response, error_5, json, error_6;
+            var token, headers, response, error_5, json, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
@@ -213,14 +212,26 @@ var LssApiService = (function (_super) {
                         if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
-                        this.headers["Authorization"] = "Bearer " + token;
-                        this.headers[this.appNameKey] = appName;
+                        //Add in the odata model info if it not already on the object
+                        if (body._odataInfo && !body["@odata.type"]) {
+                            if (body._odataInfo.type) {
+                                body["@odata.type"] = body._odataInfo.type;
+                            }
+                            delete body._odataInfo;
+                        }
+                        headers = { "Content-Type": "application/json" };
+                        headers["Authorization"] = "Bearer " + token;
+                        if (this.appNameKey !== "")
+                            headers[this.appNameKey] = appName || this.appName;
+                        ;
+                        headers["Prefer"] = "return=representation";
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
-                                method: "DELETE",
-                                headers: this.headers
+                                method: "PATCH",
+                                body: JSON.stringify(body),
+                                headers: headers
                             })];
                     case 3:
                         response = _a.sent();
@@ -230,6 +241,61 @@ var LssApiService = (function (_super) {
                         if (error_5.message != null && error_5.message.indexOf("Failed to fetch") !== -1)
                             return [2 /*return*/, Promise.reject("Network error. Check your connection and try again.")];
                         return [2 /*return*/, Promise.reject(error_5)];
+                    case 5:
+                        _a.trys.push([5, 7, , 8]);
+                        return [4 /*yield*/, response.json()];
+                    case 6:
+                        json = _a.sent();
+                        if (json.error != null) {
+                            return [2 /*return*/, Promise.reject(json.error.message)];
+                        }
+                        if (response.status === 200) {
+                            return [2 /*return*/, Promise.resolve(json)];
+                        }
+                        else {
+                            return [2 /*return*/, Promise.reject("Request error, please try again later.")];
+                        }
+                        return [3 /*break*/, 8];
+                    case 7:
+                        error_6 = _a.sent();
+                        return [2 /*return*/, Promise.reject("The server sent back invalid JSON. " + error_6)];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    LssApiService.prototype.deleteAsync = function (urlPath, appName) {
+        if (appName === void 0) { appName = null; }
+        return __awaiter(this, void 0, void 0, function () {
+            var token, headers, response, error_7, json, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
+                    case 1:
+                        token = _a.sent();
+                        if (token === null) {
+                            throw new Error("Redirect failed. Not authenticated.");
+                        }
+                        headers = { "Content-Type": "application/json" };
+                        headers["Authorization"] = "Bearer " + token;
+                        if (this.appNameKey !== "")
+                            headers[this.appNameKey] = appName || this.appName;
+                        ;
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
+                        return [4 /*yield*/, fetch(this.createUri(urlPath), {
+                                method: "DELETE",
+                                headers: headers
+                            })];
+                    case 3:
+                        response = _a.sent();
+                        return [3 /*break*/, 5];
+                    case 4:
+                        error_7 = _a.sent();
+                        if (error_7.message != null && error_7.message.indexOf("Failed to fetch") !== -1)
+                            return [2 /*return*/, Promise.reject("Network error. Check your connection and try again.")];
+                        return [2 /*return*/, Promise.reject(error_7)];
                     case 5:
                         if (response.status === 204) {
                             return [2 /*return*/, Promise.resolve()];
@@ -245,8 +311,8 @@ var LssApiService = (function (_super) {
                         json = _a.sent();
                         return [3 /*break*/, 9];
                     case 8:
-                        error_6 = _a.sent();
-                        return [2 /*return*/, Promise.reject("The server sent back invalid JSON. " + error_6)];
+                        error_8 = _a.sent();
+                        return [2 /*return*/, Promise.reject("The server sent back invalid JSON. " + error_8)];
                     case 9:
                         if (json.error != null) {
                             return [2 /*return*/, Promise.reject(json.error.message)];
@@ -263,9 +329,9 @@ var LssApiService = (function (_super) {
         });
     };
     LssApiService.prototype.getAsync = function (urlPath, appName) {
-        if (appName === void 0) { appName = "General"; }
+        if (appName === void 0) { appName = null; }
         return __awaiter(this, void 0, void 0, function () {
-            var token, response, error_7, json, error_8;
+            var token, headers, response, error_9, json, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.tokenProvider.getTokenAsync()];
@@ -274,24 +340,27 @@ var LssApiService = (function (_super) {
                         if (token === null) {
                             throw new Error("Redirect failed. Not authenticated.");
                         }
-                        this.headers["Authorization"] = "Bearer " + token;
-                        this.headers["Accept"] = "application/json";
-                        this.headers[this.appNameKey] = appName;
+                        headers = { "Content-Type": "application/json" };
+                        headers["Authorization"] = "Bearer " + token;
+                        headers["Accept"] = "application/json";
+                        if (this.appNameKey !== "")
+                            headers[this.appNameKey] = appName || this.appName;
+                        ;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, fetch(this.createUri(urlPath), {
                                 method: "GET",
-                                headers: this.headers
+                                headers: headers
                             })];
                     case 3:
                         response = _a.sent();
                         return [3 /*break*/, 5];
                     case 4:
-                        error_7 = _a.sent();
-                        if (error_7.message != null && error_7.message.indexOf("Failed to fetch") !== -1)
+                        error_9 = _a.sent();
+                        if (error_9.message != null && error_9.message.indexOf("Failed to fetch") !== -1)
                             return [2 /*return*/, Promise.reject("Network error. Check your connection and try again.")];
-                        return [2 /*return*/, Promise.reject(error_7)];
+                        return [2 /*return*/, Promise.reject(error_9)];
                     case 5:
                         _a.trys.push([5, 7, , 8]);
                         return [4 /*yield*/, response.json()];
@@ -299,8 +368,8 @@ var LssApiService = (function (_super) {
                         json = _a.sent();
                         return [3 /*break*/, 8];
                     case 7:
-                        error_8 = _a.sent();
-                        return [2 /*return*/, Promise.reject("The server sent back invalid JSON. " + error_8)];
+                        error_10 = _a.sent();
+                        return [2 /*return*/, Promise.reject("The server sent back invalid JSON. " + error_10)];
                     case 8:
                         if (json.error) {
                             return [2 /*return*/, Promise.reject(json.error.message)];
@@ -362,11 +431,11 @@ __decorate([
 ], LssApiService.prototype, "appNameKey", void 0);
 __decorate([
     property({
-        value: {
-            "Content-Type": "application/json",
-        }
+        type: String,
+        value: "General",
+        notify: true
     })
-], LssApiService.prototype, "headers", void 0);
+], LssApiService.prototype, "appName", void 0);
 __decorate([
     observe("isDev")
 ], LssApiService.prototype, "environmentHandler", null);
