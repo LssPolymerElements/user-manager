@@ -70,7 +70,7 @@ var DemoOne = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.error = "";
+                        this.error = "none";
                         service = this.$.service;
                         _a.label = 1;
                     case 1:
@@ -96,14 +96,14 @@ var DemoOne = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.error = "";
+                        this.error = "none";
                         service = this.$.service;
                         dto = new Fruit();
                         dto.Name = this.getRandomFruitName();
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, service.postAsync("Fruits", dto, "Testing")];
+                        return [4 /*yield*/, service.postAsync("Fruits", dto)];
                     case 2:
                         fruit = _a.sent();
                         return [3 /*break*/, 4];
@@ -124,14 +124,14 @@ var DemoOne = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.error = "";
+                        this.error = "none";
                         id = e.target.getAttribute("object-id");
                         service = this.$.service;
                         if (!(id > 0)) return [3 /*break*/, 5];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, service.deleteAsync("Fruits(" + id + ")", "Testing")];
+                        return [4 /*yield*/, service.deleteAsync("Fruits(" + id + ")")];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 4];
@@ -157,7 +157,7 @@ var DemoOne = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.error = "";
+                        this.error = "none";
                         id = e.target.getAttribute("object-id");
                         service = this.$.service;
                         name = this.getRandomFruitName();
@@ -167,7 +167,7 @@ var DemoOne = (function (_super) {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, service.patchAsync("Fruits(" + id + ")", dto, "Testing")];
+                        return [4 /*yield*/, service.patchAsync("Fruits(" + id + ")", dto)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 4];
@@ -187,6 +187,42 @@ var DemoOne = (function (_super) {
             });
         });
     };
+    DemoOne.prototype.patchReturnDtoFruit = function (e) {
+        return __awaiter(this, void 0, void 0, function () {
+            var id, service, dto, name, returnFruit, error_5, fruit, index;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        this.error = "none";
+                        id = e.target.getAttribute("object-id");
+                        service = this.$.service;
+                        name = this.getRandomFruitName();
+                        dto = new ODataDto();
+                        dto.Name = name;
+                        if (!(id > 0)) return [3 /*break*/, 5];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, service.patchReturnDtoAsync("Fruits(" + id + ")", dto)];
+                    case 2:
+                        returnFruit = _a.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_5 = _a.sent();
+                        this.error = error_5;
+                        return [2 /*return*/];
+                    case 4:
+                        fruit = this.fruits.filter(function (o) { return o.Id === parseInt(id) || 0; });
+                        if (fruit.length === 1) {
+                            index = this.fruits.indexOf(fruit[0]);
+                            this.set("fruits." + index + ".Name", returnFruit.Name);
+                        }
+                        _a.label = 5;
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
     DemoOne.prototype.attached = function () {
     };
     return DemoOne;
@@ -195,7 +231,7 @@ __decorate([
     property()
 ], DemoOne.prototype, "fruits", void 0);
 __decorate([
-    property()
+    property({ value: "none" })
 ], DemoOne.prototype, "error", void 0);
 __decorate([
     listen("getButton.tap")

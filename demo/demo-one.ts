@@ -11,17 +11,17 @@ class DemoOne extends polymer.Base {
     @property()
     fruits: Array<Fruit> = [];
 
-    @property()
+    @property({ value: "none" })
     error: string;
 
     private names = ["Apple", "Banana", "Apricot", "Blackcurrant", "Blueberry", "Orange", "Strawberry", "Tomato", "Redcurrant"];
 
-private getRandomFruitName(){
-    return this.names[Math.floor(Math.random() * this.names.length)];
-}
+    private getRandomFruitName() {
+        return this.names[Math.floor(Math.random() * this.names.length)];
+    }
     @listen("getButton.tap")
     async getFruits() {
-        this.error = "";
+        this.error = "none";
         var service: LssApiService = this.$.service;
         var result;
         try {
@@ -35,13 +35,13 @@ private getRandomFruitName(){
 
     @listen("createButton.tap")
     async createFruit() {
-        this.error = "";
+        this.error = "none";
         var service: LssApiService = this.$.service;
         var dto = new Fruit();
         dto.Name = this.getRandomFruitName();
         var fruit;
         try {
-            fruit = await service.postAsync<Fruit>("Fruits", dto, "Testing");
+            fruit = await service.postAsync<Fruit>("Fruits", dto);
         } catch (error) {
             this.error = error;
             return;
@@ -50,14 +50,14 @@ private getRandomFruitName(){
     }
 
     async deleteFruit(e) {
-        this.error = "";
+        this.error = "none";
         var id = e.target.getAttribute("object-id");
 
         var service: LssApiService = this.$.service;
 
         if (id > 0) {
             try {
-                await service.deleteAsync(`Fruits(${id})`, "Testing");
+                await service.deleteAsync(`Fruits(${id})`);
             } catch (error) {
                 this.error = error;
                 return;
@@ -72,7 +72,7 @@ private getRandomFruitName(){
     }
 
     async patchFruit(e) {
-        this.error = "";
+        this.error = "none";
         var id = e.target.getAttribute("object-id");
         var service: LssApiService = this.$.service;
         var dto: IODataDto & any;
@@ -82,7 +82,7 @@ private getRandomFruitName(){
 
         if (id > 0) {
             try {
-                await service.patchAsync(`Fruits(${id})`, dto, "Testing");
+                await service.patchAsync(`Fruits(${id})`, dto);
             } catch (error) {
                 this.error = error;
                 return;
@@ -91,6 +91,30 @@ private getRandomFruitName(){
             if (fruit.length === 1) {
                 var index = this.fruits.indexOf(fruit[0]);
                 this.set(`fruits.${index}.Name`, name);
+            }
+        }
+    }
+
+    async patchReturnDtoFruit(e) {
+        this.error = "none";
+        var id = e.target.getAttribute("object-id");
+        var service: LssApiService = this.$.service;
+        var dto: IODataDto & any;
+        var name = this.getRandomFruitName();
+        dto = new ODataDto();
+        dto.Name = name;
+
+        if (id > 0) {
+            try {
+                var returnFruit = await service.patchReturnDtoAsync<Fruit>(`Fruits(${id})`, dto);
+            } catch (error) {
+                this.error = error;
+                return;
+            }
+            var fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
+            if (fruit.length === 1) {
+                var index = this.fruits.indexOf(fruit[0]);
+                this.set(`fruits.${index}.Name`, returnFruit.Name);
             }
         }
     }

@@ -52,11 +52,12 @@ class LssApiService extends polymer.Base {
     appNameKey: string;
 
     @property({
-        value: {
-            "Content-Type": "application/json",
-        }
+        type: String,
+        value: "General",
+        notify: true
     })
-    headers: any
+    appName: string;
+
     attached() {
         try {
             this.tokenProvider = this.requestInstance("TokenProvider");
@@ -80,7 +81,7 @@ class LssApiService extends polymer.Base {
     }
 
 
-    async postAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<T | null> {
+    async postAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = null): Promise<T | null> {
 
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
@@ -94,10 +95,10 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
-        var headers = this.headers;
+        var headers = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
         if (this.appNameKey !== "")
-            headers[this.appNameKey] = appName;
+            headers[this.appNameKey] = appName || this.appName;
 
         var response;
         try {
@@ -136,7 +137,7 @@ class LssApiService extends polymer.Base {
         }
     }
 
-    async patchAsync(urlPath: string, body: Object & IODataDto, appName: string = "General"): Promise<void> {
+    async patchAsync(urlPath: string, body: Object & IODataDto, appName: string = null): Promise<void> {
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
@@ -149,10 +150,11 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
-        var headers = this.headers;
+        var headers = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
+
         if (this.appNameKey !== "")
-            headers[this.appNameKey] = appName;
+            headers[this.appNameKey] = appName || this.appName;;
 
         var response;
         try {
@@ -181,7 +183,57 @@ class LssApiService extends polymer.Base {
                 return Promise.reject(json.error.message);
             }
 
-            if (response.status === 201) {
+            return Promise.reject("Request error, please try again later.");
+        } catch (error) {
+            return Promise.reject(`The server sent back invalid JSON. ${error}`);
+        }
+    }
+
+    async patchReturnDtoAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = null): Promise<T> {
+        var token = await this.tokenProvider.getTokenAsync();
+        if (token === null) {
+            throw new Error("Redirect failed. Not authenticated.");
+        }
+
+        //Add in the odata model info if it not already on the object
+        if (body._odataInfo && !body["@odata.type"]) {
+            if (body._odataInfo.type) {
+                body["@odata.type"] = body._odataInfo.type;
+            }
+            delete body._odataInfo;
+        }
+        var headers = { "Content-Type": "application/json" };
+        headers["Authorization"] = `Bearer ${token}`;
+
+        if (this.appNameKey !== "")
+            headers[this.appNameKey] = appName || this.appName;;
+
+        headers["Prefer"] = "return=representation";
+
+        var response;
+        try {
+            response = await fetch(this.createUri(urlPath),
+                {
+                    method: "PATCH",
+                    body: JSON.stringify(body),
+                    headers: headers
+                });
+        } catch (error) {
+            if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
+                return Promise.reject("Network error. Check your connection and try again.");
+
+            return Promise.reject(error);
+        }
+
+        var json;
+        try {
+            json = await response.json();
+
+            if (json.error != null) {
+                return Promise.reject(json.error.message);
+            }
+
+            if (response.status === 200) {
                 return Promise.resolve(json);
             } else {
                 return Promise.reject("Request error, please try again later.");
@@ -189,19 +241,18 @@ class LssApiService extends polymer.Base {
         } catch (error) {
             return Promise.reject(`The server sent back invalid JSON. ${error}`);
         }
-
     }
 
-    async deleteAsync(urlPath: string, appName: string = "General"): Promise<void> {
+    async deleteAsync(urlPath: string, appName: string = null): Promise<void> {
 
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
-        var headers = this.headers;
+        var headers = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
         if (this.appNameKey !== "")
-            headers[this.appNameKey] = appName;
+            headers[this.appNameKey] = appName || this.appName;;
 
         var response;
         try {
@@ -243,19 +294,18 @@ class LssApiService extends polymer.Base {
         }
     }
 
-    async getAsync<T extends IODataDto>(urlPath: string, appName: string = "General"): Promise<GetResult<T>> {
+    async getAsync<T extends IODataDto>(urlPath: string, appName: string = null): Promise<GetResult<T>> {
 
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
-        var headers = this.headers;
+        var headers = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
         headers["Accept"] = "application/json";
 
         if (this.appNameKey !== "")
-            headers[this.appNameKey] = appName;
-
+            headers[this.appNameKey] = appName || this.appName;;
 
         var response;
         try {
