@@ -9,6 +9,7 @@ class LssTokenProvider extends polymer.Base implements ITokenProvider {
     userManager: LssUserManager;
 
     async getTokenAsync(): Promise<string> {
+        this.userManager = this.requestInstance("UserManager");
         var user = await this.userManager.authenticateAndGetUserAsync();
         if (user === null) {
             throw new Error("Redirect failed. Not authenticated.");
@@ -17,11 +18,6 @@ class LssTokenProvider extends polymer.Base implements ITokenProvider {
     }
 
     attached() {
-        try {
-            this.userManager = this.requestInstance("UserManager");
-        } catch (error) {
-            console.log("Default Lss User Manager not found. If other ITokenProvider is used ignore this message.");
-        }
     }
 }
 LssTokenProvider.register();

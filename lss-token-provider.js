@@ -59,7 +59,9 @@ var LssTokenProvider = (function (_super) {
             var user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.userManager.authenticateAndGetUserAsync()];
+                    case 0:
+                        this.userManager = this.requestInstance("UserManager");
+                        return [4 /*yield*/, this.userManager.authenticateAndGetUserAsync()];
                     case 1:
                         user = _a.sent();
                         if (user === null) {
@@ -71,12 +73,6 @@ var LssTokenProvider = (function (_super) {
         });
     };
     LssTokenProvider.prototype.attached = function () {
-        try {
-            this.userManager = this.requestInstance("UserManager");
-        }
-        catch (error) {
-            console.log("Default Lss User Manager not found. If other ITokenProvider is used ignore this message.");
-        }
     };
     return LssTokenProvider;
 }(polymer.Base));
