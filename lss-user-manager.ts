@@ -3,7 +3,11 @@ declare var jwt_decode: any;
 
 @component("lss-user-manager")
 class LssUserManager extends polymer.Base {
-    private localStorageKey = "LgUser";
+    @property({
+        type: String,
+        value: "LgUser"
+    })
+    localStorageKey: string;
 
     @property({
         type: String,

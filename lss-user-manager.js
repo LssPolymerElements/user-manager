@@ -54,7 +54,6 @@ var LssUserManager = (function (_super) {
     __extends(LssUserManager, _super);
     function LssUserManager() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.localStorageKey = "LgUser";
         _this.lastIssuer = null;
         _this.getUserAsyncPromise = null;
         return _this;
@@ -341,8 +340,14 @@ var LssUserManager = (function (_super) {
 __decorate([
     property({
         type: String,
+        value: "LgUser"
+    })
+], LssUserManager.prototype, "localStorageKey", void 0);
+__decorate([
+    property({
+        type: String,
         notify: true,
-        value: "https://login.leavitt.com/oauth/"
+        value: "https://signin.leavitt.com/"
     })
 ], LssUserManager.prototype, "redirectUrl", void 0);
 __decorate([
