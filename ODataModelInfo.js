@@ -1,8 +1,6 @@
-var ODataModelInfo = (function () {
-    function ODataModelInfo() {
+class ODataModelInfo {
+    constructor() {
         this.type = null;
         this.shortType = null;
     }
-    return ODataModelInfo;
-}());
-//# sourceMappingURL=ODataModelInfo.js.map
+}

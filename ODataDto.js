@@ -1,8 +1,5 @@
-var ODataDto = (function () {
-    function ODataDto(modelInfo) {
-        if (modelInfo === void 0) { modelInfo = new ODataModelInfo(); }
+class ODataDto {
+    constructor(modelInfo = new ODataModelInfo()) {
         this._odataInfo = modelInfo;
     }
-    return ODataDto;
-}());
-//# sourceMappingURL=ODataDto.js.map
+}

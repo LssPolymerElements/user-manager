@@ -1,25 +1,23 @@
-﻿/// <reference path="../bower_components/polymer-ts/polymer-ts.ts" />
-
-@behavior(LssProviderBehavior)
-@component("demo-one")
-class DemoOne extends polymer.Base {
-    provideInstance: (key: string, any) => void;
+﻿@customElement("api2-service-demo")
+class Api2ServiceDemo extends LssProviderBehavior(Polymer.Element) {
     ready() {
+        super.ready();
         this.provideInstance("UserManager", this.$.userManager);
     }
 
     @property()
     fruits: Array<Fruit> = [];
 
-    @property({ value: "none" })
-    error: string;
+    @property()
+    error: string = "none";
 
     private names = ["Apple", "Banana", "Apricot", "Blackcurrant", "Blueberry", "Orange", "Strawberry", "Tomato", "Redcurrant"];
 
     private getRandomFruitName() {
         return this.names[Math.floor(Math.random() * this.names.length)];
     }
-    @listen("getButton.tap")
+
+    @listen("getButton", "tap")
     async getFruits() {
         this.error = "none";
         var service: LssApiService = this.$.service;
@@ -33,7 +31,7 @@ class DemoOne extends polymer.Base {
         this.fruits = result.toList();
     }
 
-    @listen("createButton.tap")
+    @listen("createButton", "tap")
     async createFruit() {
         this.error = "none";
         var service: LssApiService = this.$.service;
@@ -49,7 +47,7 @@ class DemoOne extends polymer.Base {
         this.push("fruits", fruit)
     }
 
-    async deleteFruit(e) {
+    async deleteFruit(e: any) {
         this.error = "none";
         var id = e.target.getAttribute("object-id");
 
@@ -71,7 +69,7 @@ class DemoOne extends polymer.Base {
         }
     }
 
-    async patchFruit(e) {
+    async patchFruit(e: any) {
         this.error = "none";
         var id = e.target.getAttribute("object-id");
         var service: LssApiService = this.$.service;
@@ -95,7 +93,7 @@ class DemoOne extends polymer.Base {
         }
     }
 
-    async patchReturnDtoFruit(e) {
+    async patchReturnDtoFruit(e: any) {
         this.error = "none";
         var id = e.target.getAttribute("object-id");
         var service: LssApiService = this.$.service;
@@ -128,5 +126,3 @@ class Fruit extends ODataDto {
     Id: number
     Name: String
 }
-
-DemoOne.register();

@@ -1,11 +1,6 @@
-@behavior(LssRequesterBehavior)
-@component("lss-token-provider")
-class LssTokenProvider extends polymer.Base implements ITokenProvider {
-    requestInstance: (key: string) => any;
-    @property({
-        type: LssUserManager,
-        notify: true
-    })
+@customElement("lss-token-provider")
+class LssTokenProvider extends LssRequesterBehavior(Polymer.Element) implements ITokenProvider {
+    @property({ notify: true })
     userManager: LssUserManager;
 
     async getTokenAsync(): Promise<string> {
@@ -14,10 +9,9 @@ class LssTokenProvider extends polymer.Base implements ITokenProvider {
         if (user === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
-        return user.accessToken;
+        return user.accessToken as string;
     }
 
     attached() {
     }
 }
-LssTokenProvider.register();

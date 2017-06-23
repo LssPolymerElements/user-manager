@@ -1,64 +1,36 @@
-﻿@behavior(LssRequesterBehavior)
-@component("lss-api-service")
-class LssApiService extends polymer.Base {
-    requestInstance: (key: string) => any;
+﻿@customElement("lss-api-service")
+class LssApiService extends LssRequesterBehavior(Polymer.Element) {
 
-    @property({
-        type: Object,
-        notify: true
-    })
+    @property({ notify: true })
     tokenProvider: ITokenProvider;
 
-    @property({
-        type: LssEnvironment,
-        notify: true
-    })
+    @property({ notify: true })
     lssEnvironment: LssEnvironment;
 
-    @property({
-        type: Boolean,
-        notify: true
-    })
+    @property({ notify: true })
     isDev: boolean;
 
-    @property({
-        type: String,
-        notify: true
-    })
+    @property({ notify: true })
     baseUrl: string;
 
     @property()
     isLoading: boolean;
 
-    @property({
-        type: String,
-        value: "https://api2.leavitt.com/",
-        notify: true
-    })
-    baseProductionUri: string;
+    @property({ notify: true })
+    baseProductionUri: string = "https://api2.leavitt.com/";
 
-    @property({
-        type: String,
-        value: "https://devapi2.leavitt.com/",
-        notify: true
-    })
-    baseDevUri: string;
+    @property({ notify: true })
+    baseDevUri: string = "https://devapi2.leavitt.com/";
 
-    @property({
-        type: String,
-        value: "X-LGAppName",
-        notify: true
-    })
-    appNameKey: string;
+    @property({ notify: true })
+    appNameKey: string = "X-LGAppName";
 
-    @property({
-        type: String,
-        value: "General",
-        notify: true
-    })
-    appName: string;
+    @property({ notify: true })
+    appName: string = "General";
 
-    attached() {
+    async connectedCallback() {
+        super.connectedCallback();
+
         try {
             this.tokenProvider = this.requestInstance("TokenProvider");
         } catch (error) {
@@ -67,6 +39,8 @@ class LssApiService extends polymer.Base {
     }
 
     ready() {
+        super.ready();
+
         this.lssEnvironment = this.$.lssEnvironment;
         this.tokenProvider = this.$.lssTokenProvider;
     }
@@ -81,7 +55,7 @@ class LssApiService extends polymer.Base {
     }
 
 
-    async postAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = null): Promise<T | null> {
+    async postAsync<T>(urlPath: string, body: any & IODataDto, appName: string | null = null): Promise<T | null> {
 
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
@@ -95,7 +69,7 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
-        var headers = { "Content-Type": "application/json" };
+        var headers: any = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
         if (this.appNameKey !== "")
             headers[this.appNameKey] = appName || this.appName;
@@ -137,7 +111,7 @@ class LssApiService extends polymer.Base {
         }
     }
 
-    async patchAsync(urlPath: string, body: Object & IODataDto, appName: string = null): Promise<void> {
+    async patchAsync(urlPath: string, body: any & IODataDto, appName: string | null = null): Promise<void> {
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
@@ -150,7 +124,7 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
-        var headers = { "Content-Type": "application/json" };
+        var headers: any = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
 
         if (this.appNameKey !== "")
@@ -189,7 +163,7 @@ class LssApiService extends polymer.Base {
         }
     }
 
-    async patchReturnDtoAsync<T>(urlPath: string, body: Object & IODataDto, appName: string = null): Promise<T> {
+    async patchReturnDtoAsync<T>(urlPath: string, body: any & IODataDto, appName: string | null = null): Promise<T> {
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
@@ -202,7 +176,7 @@ class LssApiService extends polymer.Base {
             }
             delete body._odataInfo;
         }
-        var headers = { "Content-Type": "application/json" };
+        var headers: any = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
 
         if (this.appNameKey !== "")
@@ -243,13 +217,13 @@ class LssApiService extends polymer.Base {
         }
     }
 
-    async deleteAsync(urlPath: string, appName: string = null): Promise<void> {
+    async deleteAsync(urlPath: string, appName: string | null = null): Promise<void> {
 
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
-        var headers = { "Content-Type": "application/json" };
+        var headers: any = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
         if (this.appNameKey !== "")
             headers[this.appNameKey] = appName || this.appName;;
@@ -294,13 +268,13 @@ class LssApiService extends polymer.Base {
         }
     }
 
-    async getAsync<T extends IODataDto>(urlPath: string, appName: string = null): Promise<GetResult<T>> {
+    async getAsync<T extends IODataDto>(urlPath: string, appName: string | null = null): Promise<GetResult<T>> {
 
         var token = await this.tokenProvider.getTokenAsync();
         if (token === null) {
             throw new Error("Redirect failed. Not authenticated.");
         }
-        var headers = { "Content-Type": "application/json" };
+        var headers: any = { "Content-Type": "application/json" };
         headers["Authorization"] = `Bearer ${token}`;
         headers["Accept"] = "application/json";
 
@@ -337,4 +311,3 @@ class LssApiService extends polymer.Base {
         return Promise.resolve(new GetResult<T>(json));
     }
 }
-LssApiService.register();
