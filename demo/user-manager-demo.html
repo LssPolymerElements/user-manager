@@ -2,7 +2,7 @@
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../lss-user-manager.html">
 
-<dom-module id="x-demo">
+<dom-module id="user-manager-demo">
     <template>
         <lss-user-manager id="manager" person-id="{{personId}}" fullname="{{name}}" first-name="{{firstName}}" should-validate-on-load="{{shouldLoad}}"
             roles="{{roles}}"></lss-user-manager>
@@ -22,29 +22,34 @@
         </ol>
     </template>
     <script>
-        Polymer({
-            is: 'x-demo',
-            properties: {
-                foo: {
-                    type: String,
-                    value: "Hello world!"
-                },
-                shouldLoad: {
-                    type: Boolean,
-                    value: true
-                },
-            },
-            logoutClicked: function (e) {
+        class UserManagerDemo extends Polymer.Element {
+            static get is() {
+                return 'user-manager-demo';
+            }
+
+            static get properties() {
+                return {
+                    foo: {
+                        type: String,
+                        value: "Hello world!"
+                    },
+                    shouldLoad: {
+                        type: Boolean,
+                        value: true
+                    }
+                }
+            }
+            logoutClicked(e) {
                 console.log("logout clicked");
                 this.$.manager.logoutAsync();
                 location.reload();
-            },
-            getUserObject: function (e) {
+            }
+            getUserObject(e) {
                 this.$.manager.authenticateAndGetUserAsync().then(function (user) {
                     console.log(user);
                 });
-            },
-            callMultiple: function (e) {
+            }
+            callMultiple(e) {
                 this.$.manager.authenticateAndGetUserAsync().then(function () {
                     console.log("1 done");
                 });
@@ -55,6 +60,8 @@
                     console.log("3 done");
                 });
             }
-        });
+
+        }
+        customElements.define(UserManagerDemo.is, UserManagerDemo);
     </script>
 </dom-module>

@@ -1,8 +1,6 @@
-var HashParameter = (function () {
-    function HashParameter(key, value) {
+class HashParameter {
+    constructor(key, value) {
         this.key = key;
         this.value = value;
     }
-    return HashParameter;
-}());
-//# sourceMappingURL=HashParameter.js.map
+}

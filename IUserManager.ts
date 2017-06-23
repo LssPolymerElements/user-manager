@@ -1,8 +1,6 @@
-﻿/// <reference path="./user.ts" />
+﻿interface IUserManager {
 
-interface IUserManager {
-
-    constructor(loginUrl?: string, localStorageKey?: string, publicApiKey?: string);
+    constructor(loginUrl?: string, localStorageKey?: string, publicApiKey?: string): void;
 
     user(): User;
 

@@ -1,69 +1,38 @@
-﻿/// <reference path="./user.ts" />
-declare var jwt_decode: any;
+﻿declare var jwt_decode: any;
 
-@component("lss-user-manager")
-class LssUserManager extends polymer.Base {
-    @property({
-        type: String,
-        value: "LgUser"
-    })
-    localStorageKey: string;
+@customElement("lss-user-manager")
+class LssUserManager extends Polymer.Element {
+    @property()
+    localStorageKey: string = "LgUser";
 
-    @property({
-        type: String,
-        notify: true,
-        value: "https://signin.leavitt.com/"
-    })
-    redirectUrl: string;
+    @property({ notify: true })
+    redirectUrl: string = "https://signin.leavitt.com/";
 
-    @property({
-        type: String,
-        notify: true,
-        value: "https://devsignin.leavitt.com/"
-    })
-    redirectDevUrl: string;
+    @property({ notify: true })
+    redirectDevUrl: string = "https://devsignin.leavitt.com/";
 
-    @property({
-        type: Array,
-        notify: true
-    })
+    @property({ notify: true })
     roles: Array<string>;
 
-    @property({
-        type: String,
-        notify: true
-    })
+    @property({ notify: true })
     fullname: string;
 
-    @property({
-        type: String,
-        notify: true
-    })
+    @property({ notify: true })
     firstName: string;
 
-    @property({
-        type: Array,
-        value: [new userManagerIssuer("https://oauth2.leavitt.com/", "https://oauth2.leavitt.com/token"),
-        new userManagerIssuer("https://loginapi.unitedvalley.com/", "https://loginapi.unitedvalley.com/Token")]
-    })
-    userManagerIssuers: Array<userManagerIssuer>;
+    @property()
+    userManagerIssuers: Array<userManagerIssuer> = [new userManagerIssuer("https://oauth2.leavitt.com/", "https://oauth2.leavitt.com/token"),
+    new userManagerIssuer("https://loginapi.unitedvalley.com/", "https://loginapi.unitedvalley.com/Token")];
 
-    @property({
-        type: Boolean,
-        notify: true,
-        value: true,
-        reflectToAttribute: true
-    })
-    shouldValidateOnLoad: boolean;
+    @property({ notify: true, reflectToAttribute: true })
+    shouldValidateOnLoad: boolean = true;
 
-    @property({
-        value: 0,
-        type: Number,
-        notify: true
-    })
-    personId: Number;
+    @property({ notify: true })
+    personId: Number = 0;
 
-    async attached() {
+    async connectedCallback() {
+        super.connectedCallback();
+
         if (this.shouldValidateOnLoad) {
             await this.authenticateAndGetUserAsync();
         }
@@ -133,7 +102,7 @@ class LssUserManager extends polymer.Base {
 
     lastIssuer = null;
     private createUserFromToken(refreshToken: string, accessToken: string): User | null {
-        var decodedToken;
+        var decodedToken: any;
 
         try {
             decodedToken = this.decodeAccessToken(accessToken);
@@ -209,7 +178,7 @@ class LssUserManager extends polymer.Base {
 
     private async getUserAsync(): Promise<User> {
 
-        var accessToken = this.getTokenfromUrl("accessToken");
+        var accessToken: any = this.getTokenfromUrl("accessToken");
         var refreshToken = this.getTokenfromUrl("refreshToken");
 
         if (!accessToken && !refreshToken) {
@@ -274,7 +243,7 @@ class LssUserManager extends polymer.Base {
         return Promise.resolve();
     };
 
-    getUserAsyncPromise: Promise<User> = null;
+    getUserAsyncPromise: Promise<User> | null = null;
 
     async authenticateAndGetUserAsync(): Promise<User | null> {
         return new Promise<User | null>(async (resolve, reject) => {
@@ -295,7 +264,7 @@ class LssUserManager extends polymer.Base {
         return new Promise<string | null>(async (resolve, reject) => {
             try {
                 await this.getUserAsync();
-                return resolve("Authenicated");
+                return resolve("Authenticated");
             } catch (error) {
                 this.redirectToLogin(document.location.href);
                 return;  //Wait for the redirect to happen with a unreturned promise
@@ -303,5 +272,3 @@ class LssUserManager extends polymer.Base {
         });
     }
 }
-
-LssUserManager.register();

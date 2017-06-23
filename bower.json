@@ -1,7 +1,7 @@
 {
   "name": "lss-user-manager",
-  "version": "2.0.9",
-  "description": "A polymer user manager for Leavitt OAuth2",
+  "version": "3.0.0",
+  "description": "A polymer 2 user manager for Leavitt OAuth2",
   "authors": [
     "Leavitt Software Solutions"
   ],
@@ -26,14 +26,15 @@
     ".vscode"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.1.0",
-    "polymer-ts": "^0.1.26",
-    "paper-button": "PolymerElements/paper-button#^1.0.14",
+    "polymer": "Polymer/polymer#^2.0.0",
+    "polymer2-ts": "^1.0.0",
     "fetch": "^2.0.1",
     "bluebird": "^3.4.6"
   },
   "devDependencies": {
-    "web-component-tester": "^4.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "paper-button": "PolymerElements/paper-button#^2.0.0"
   }
 }

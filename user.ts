@@ -11,8 +11,6 @@ class User {
         public username: string,
         public fullName: string,
         public refreshTokenId: string) {
-
-
     }
 
     clearToken() {
