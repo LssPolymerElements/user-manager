@@ -1,6 +1,6 @@
 {
   "name": "lss-user-manager",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A polymer 2 user manager for Leavitt OAuth2",
   "authors": [
     "Leavitt Software Solutions"
@@ -28,8 +28,7 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "polymer2-ts": "^1.0.0",
-    "fetch": "^2.0.1",
-    "bluebird": "^3.4.6"
+    "fetch": "^2.0.1"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
