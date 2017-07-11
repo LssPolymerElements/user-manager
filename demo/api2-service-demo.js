@@ -19,23 +19,23 @@ let Api2ServiceDemo = class Api2ServiceDemo extends LssProviderBehavior(Polymer.
     constructor() {
         super(...arguments);
         this.fruits = [];
-        this.error = "none";
-        this.names = ["Apple", "Banana", "Apricot", "Blackcurrant", "Blueberry", "Orange", "Strawberry", "Tomato", "Redcurrant"];
+        this.error = 'none';
+        this.names = ['Apple', 'Banana', 'Apricot', 'Blackcurrant', 'Blueberry', 'Orange', 'Strawberry', 'Tomato', 'Redcurrant'];
     }
     ready() {
         super.ready();
-        this.provideInstance("UserManager", this.$.userManager);
+        this.provideInstance('UserManager', this.$.userManager);
     }
     getRandomFruitName() {
         return this.names[Math.floor(Math.random() * this.names.length)];
     }
     getFruits() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.error = "none";
-            var service = this.$.service;
-            var result;
+            this.error = 'none';
+            let service = this.$.service;
+            let result;
             try {
-                result = yield service.getAsync("Fruits/?$top=5&$orderby=Id desc", "Testing");
+                result = yield service.getAsync('Fruits/?$top=5&$orderby=Id desc', 'Testing');
             }
             catch (error) {
                 this.error = error;
@@ -46,26 +46,26 @@ let Api2ServiceDemo = class Api2ServiceDemo extends LssProviderBehavior(Polymer.
     }
     createFruit() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.error = "none";
-            var service = this.$.service;
-            var dto = new Fruit();
+            this.error = 'none';
+            let service = this.$.service;
+            let dto = new Fruit();
             dto.Name = this.getRandomFruitName();
-            var fruit;
+            let fruit;
             try {
-                fruit = yield service.postAsync("Fruits", dto);
+                fruit = yield service.postAsync('Fruits', dto);
             }
             catch (error) {
                 this.error = error;
                 return;
             }
-            this.push("fruits", fruit);
+            this.push('fruits', fruit);
         });
     }
     deleteFruit(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.error = "none";
-            var id = e.target.getAttribute("object-id");
-            var service = this.$.service;
+            this.error = 'none';
+            let id = e.target.getAttribute('object-id');
+            let service = this.$.service;
             if (id > 0) {
                 try {
                     yield service.deleteAsync(`Fruits(${id})`);
@@ -74,9 +74,9 @@ let Api2ServiceDemo = class Api2ServiceDemo extends LssProviderBehavior(Polymer.
                     this.error = error;
                     return;
                 }
-                var fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
+                let fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
                 if (fruit.length === 1) {
-                    var index = this.fruits.indexOf(fruit[0]);
+                    let index = this.fruits.indexOf(fruit[0]);
                     this.splice('fruits', index, 1);
                 }
             }
@@ -84,11 +84,11 @@ let Api2ServiceDemo = class Api2ServiceDemo extends LssProviderBehavior(Polymer.
     }
     patchFruit(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.error = "none";
-            var id = e.target.getAttribute("object-id");
-            var service = this.$.service;
-            var dto;
-            var name = this.getRandomFruitName();
+            this.error = 'none';
+            let id = e.target.getAttribute('object-id');
+            let service = this.$.service;
+            let dto;
+            let name = this.getRandomFruitName();
             dto = new ODataDto();
             dto.Name = name;
             if (id > 0) {
@@ -99,9 +99,9 @@ let Api2ServiceDemo = class Api2ServiceDemo extends LssProviderBehavior(Polymer.
                     this.error = error;
                     return;
                 }
-                var fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
+                let fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
                 if (fruit.length === 1) {
-                    var index = this.fruits.indexOf(fruit[0]);
+                    let index = this.fruits.indexOf(fruit[0]);
                     this.set(`fruits.${index}.Name`, name);
                 }
             }
@@ -109,24 +109,25 @@ let Api2ServiceDemo = class Api2ServiceDemo extends LssProviderBehavior(Polymer.
     }
     patchReturnDtoFruit(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.error = "none";
-            var id = e.target.getAttribute("object-id");
-            var service = this.$.service;
-            var dto;
-            var name = this.getRandomFruitName();
+            this.error = 'none';
+            let id = e.target.getAttribute('object-id');
+            let service = this.$.service;
+            let dto;
+            let name = this.getRandomFruitName();
             dto = new ODataDto();
             dto.Name = name;
             if (id > 0) {
+                let returnFruit;
                 try {
-                    var returnFruit = yield service.patchReturnDtoAsync(`Fruits(${id})`, dto);
+                    returnFruit = yield service.patchReturnDtoAsync(`Fruits(${id})`, dto);
                 }
                 catch (error) {
                     this.error = error;
                     return;
                 }
-                var fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
+                let fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
                 if (fruit.length === 1) {
-                    var index = this.fruits.indexOf(fruit[0]);
+                    let index = this.fruits.indexOf(fruit[0]);
                     this.set(`fruits.${index}.Name`, returnFruit.Name);
                 }
             }
@@ -144,19 +145,19 @@ __decorate([
     __metadata("design:type", String)
 ], Api2ServiceDemo.prototype, "error", void 0);
 __decorate([
-    listen("getButton", "tap"),
+    listen('getButton', 'tap'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], Api2ServiceDemo.prototype, "getFruits", null);
 __decorate([
-    listen("createButton", "tap"),
+    listen('createButton', 'tap'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], Api2ServiceDemo.prototype, "createFruit", null);
 Api2ServiceDemo = __decorate([
-    customElement("api2-service-demo")
+    customElement('api2-service-demo')
 ], Api2ServiceDemo);
 class Fruit extends ODataDto {
 }

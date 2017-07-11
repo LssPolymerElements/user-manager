@@ -30,12 +30,12 @@ class GetResult<T extends IODataDto> {
     }
 
     private convertODataInfo(item: any): T {
-        if (item["@odata.type"]) {
+        if (item['@odata.type']) {
             if (!item._odataInfo) { item._odataInfo = new ODataModelInfo(); }
-            item._odataInfo.type = item["@odata.type"];
-            delete item["@odata.type"];
+            item._odataInfo.type = item['@odata.type'];
+            delete item['@odata.type'];
 
-            var parts = item._odataInfo.type.split(".");
+            let parts = item._odataInfo.type.split('.');
             item._odataInfo.shortType = parts[parts.length - 1];
         }
         return item;

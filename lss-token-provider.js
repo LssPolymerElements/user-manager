@@ -18,15 +18,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 let LssTokenProvider = class LssTokenProvider extends LssRequesterBehavior(Polymer.Element) {
     getTokenAsync() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.userManager = this.requestInstance("UserManager");
-            var user = yield this.userManager.authenticateAndGetUserAsync();
+            this.userManager = this.requestInstance('UserManager');
+            let user = yield this.userManager.authenticateAndGetUserAsync();
             if (user === null) {
-                throw new Error("Redirect failed. Not authenticated.");
+                throw new Error('Redirect failed. Not authenticated.');
             }
             return user.accessToken;
         });
-    }
-    attached() {
     }
 };
 __decorate([
@@ -34,5 +32,5 @@ __decorate([
     __metadata("design:type", LssUserManager)
 ], LssTokenProvider.prototype, "userManager", void 0);
 LssTokenProvider = __decorate([
-    customElement("lss-token-provider")
+    customElement('lss-token-provider')
 ], LssTokenProvider);

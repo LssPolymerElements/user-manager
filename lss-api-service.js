@@ -18,20 +18,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Element) {
     constructor() {
         super(...arguments);
-        this.baseProductionUri = "https://api2.leavitt.com/";
-        this.baseDevUri = "https://devapi2.leavitt.com/";
-        this.appNameKey = "X-LGAppName";
-        this.appName = "General";
+        this.baseProductionUri = 'https://api2.leavitt.com/';
+        this.baseDevUri = 'https://devapi2.leavitt.com/';
+        this.appNameKey = 'X-LGAppName';
+        this.appName = 'General';
     }
     connectedCallback() {
         const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
             _super("connectedCallback").call(this);
             try {
-                this.tokenProvider = this.requestInstance("TokenProvider");
+                this.tokenProvider = this.requestInstance('TokenProvider');
             }
             catch (error) {
-                console.log("Token Provider not found. Service will use default lss-token-provider.");
+                console.log('Token Provider not found. Service will use default lss-token-provider.');
             }
         });
     }
@@ -40,46 +40,46 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
         this.lssEnvironment = this.$.lssEnvironment;
         this.tokenProvider = this.$.lssTokenProvider;
     }
-    environmentHandler() {
-        this.baseUrl = this.$.lssEnvironment.isDev ? this.baseDevUri : this.baseProductionUri;
+    environmentHandler(isDev) {
+        this.baseUrl = isDev ? this.baseDevUri : this.baseProductionUri;
     }
     createUri(urlPath) {
         return this.baseUrl + urlPath;
     }
     postAsync(urlPath, body, appName = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            var token = yield this.tokenProvider.getTokenAsync();
+            let token = yield this.tokenProvider.getTokenAsync();
             if (token === null) {
-                throw new Error("Redirect failed. Not authenticated.");
+                throw new Error('Redirect failed. Not authenticated.');
             }
             //Add in the odata model info if it not already on the object
-            if (body._odataInfo && !body["@odata.type"]) {
+            if (body._odataInfo && !body['@odata.type']) {
                 if (body._odataInfo.type) {
-                    body["@odata.type"] = body._odataInfo.type;
+                    body['@odata.type'] = body._odataInfo.type;
                 }
                 delete body._odataInfo;
             }
-            var headers = { "Content-Type": "application/json" };
-            headers["Authorization"] = `Bearer ${token}`;
-            if (this.appNameKey !== "")
+            let headers = { 'Content-Type': 'application/json' };
+            headers['Authorization'] = `Bearer ${token}`;
+            if (this.appNameKey !== '')
                 headers[this.appNameKey] = appName || this.appName;
-            var response;
+            let response;
             try {
                 response = yield fetch(this.createUri(urlPath), {
-                    method: "POST",
+                    method: 'POST',
                     body: JSON.stringify(body),
                     headers: headers
                 });
             }
             catch (error) {
-                if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
-                    return Promise.reject("Network error. Check your connection and try again.");
+                if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
+                    return Promise.reject('Network error. Check your connection and try again.');
                 return Promise.reject(error);
             }
             if (response.status === 204) {
                 return Promise.resolve(null);
             }
-            var json;
+            let json;
             try {
                 json = yield response.json();
             }
@@ -93,51 +93,50 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
                 return Promise.resolve(json);
             }
             else {
-                return Promise.reject("Request error, please try again later.");
+                return Promise.reject('Request error, please try again later.');
             }
         });
     }
     patchAsync(urlPath, body, appName = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            var token = yield this.tokenProvider.getTokenAsync();
+            let token = yield this.tokenProvider.getTokenAsync();
             if (token === null) {
-                throw new Error("Redirect failed. Not authenticated.");
+                throw new Error('Redirect failed. Not authenticated.');
             }
             //Add in the odata model info if it not already on the object
-            if (body._odataInfo && !body["@odata.type"]) {
+            if (body._odataInfo && !body['@odata.type']) {
                 if (body._odataInfo.type) {
-                    body["@odata.type"] = body._odataInfo.type;
+                    body['@odata.type'] = body._odataInfo.type;
                 }
                 delete body._odataInfo;
             }
-            var headers = { "Content-Type": "application/json" };
-            headers["Authorization"] = `Bearer ${token}`;
-            if (this.appNameKey !== "")
+            let headers = { 'Content-Type': 'application/json' };
+            headers['Authorization'] = `Bearer ${token}`;
+            if (this.appNameKey !== '')
                 headers[this.appNameKey] = appName || this.appName;
-            ;
-            var response;
+            let response;
             try {
                 response = yield fetch(this.createUri(urlPath), {
-                    method: "PATCH",
+                    method: 'PATCH',
                     body: JSON.stringify(body),
                     headers: headers
                 });
             }
             catch (error) {
-                if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
-                    return Promise.reject("Network error. Check your connection and try again.");
+                if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
+                    return Promise.reject('Network error. Check your connection and try again.');
                 return Promise.reject(error);
             }
             if (response.status === 204) {
                 return Promise.resolve();
             }
-            var json;
+            let json;
             try {
                 json = yield response.json();
                 if (json.error != null) {
                     return Promise.reject(json.error.message);
                 }
-                return Promise.reject("Request error, please try again later.");
+                return Promise.reject('Request error, please try again later.');
             }
             catch (error) {
                 return Promise.reject(`The server sent back invalid JSON. ${error}`);
@@ -146,37 +145,36 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
     }
     patchReturnDtoAsync(urlPath, body, appName = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            var token = yield this.tokenProvider.getTokenAsync();
+            let token = yield this.tokenProvider.getTokenAsync();
             if (token === null) {
-                throw new Error("Redirect failed. Not authenticated.");
+                throw new Error('Redirect failed. Not authenticated.');
             }
             //Add in the odata model info if it not already on the object
-            if (body._odataInfo && !body["@odata.type"]) {
+            if (body._odataInfo && !body['@odata.type']) {
                 if (body._odataInfo.type) {
-                    body["@odata.type"] = body._odataInfo.type;
+                    body['@odata.type'] = body._odataInfo.type;
                 }
                 delete body._odataInfo;
             }
-            var headers = { "Content-Type": "application/json" };
-            headers["Authorization"] = `Bearer ${token}`;
-            if (this.appNameKey !== "")
+            let headers = { 'Content-Type': 'application/json' };
+            headers['Authorization'] = `Bearer ${token}`;
+            if (this.appNameKey !== '')
                 headers[this.appNameKey] = appName || this.appName;
-            ;
-            headers["Prefer"] = "return=representation";
-            var response;
+            headers['Prefer'] = 'return=representation';
+            let response;
             try {
                 response = yield fetch(this.createUri(urlPath), {
-                    method: "PATCH",
+                    method: 'PATCH',
                     body: JSON.stringify(body),
                     headers: headers
                 });
             }
             catch (error) {
-                if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
-                    return Promise.reject("Network error. Check your connection and try again.");
+                if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
+                    return Promise.reject('Network error. Check your connection and try again.');
                 return Promise.reject(error);
             }
-            var json;
+            let json;
             try {
                 json = yield response.json();
                 if (json.error != null) {
@@ -186,7 +184,7 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
                     return Promise.resolve(json);
                 }
                 else {
-                    return Promise.reject("Request error, please try again later.");
+                    return Promise.reject('Request error, please try again later.');
                 }
             }
             catch (error) {
@@ -196,34 +194,33 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
     }
     deleteAsync(urlPath, appName = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            var token = yield this.tokenProvider.getTokenAsync();
+            let token = yield this.tokenProvider.getTokenAsync();
             if (token === null) {
-                throw new Error("Redirect failed. Not authenticated.");
+                throw new Error('Redirect failed. Not authenticated.');
             }
-            var headers = { "Content-Type": "application/json" };
-            headers["Authorization"] = `Bearer ${token}`;
-            if (this.appNameKey !== "")
+            let headers = { 'Content-Type': 'application/json' };
+            headers['Authorization'] = `Bearer ${token}`;
+            if (this.appNameKey !== '')
                 headers[this.appNameKey] = appName || this.appName;
-            ;
-            var response;
+            let response;
             try {
                 response = yield fetch(this.createUri(urlPath), {
-                    method: "DELETE",
+                    method: 'DELETE',
                     headers: headers
                 });
             }
             catch (error) {
-                if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
-                    return Promise.reject("Network error. Check your connection and try again.");
+                if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
+                    return Promise.reject('Network error. Check your connection and try again.');
                 return Promise.reject(error);
             }
             if (response.status === 204) {
                 return Promise.resolve();
             }
             if (response.status === 404) {
-                return Promise.reject("Not Found");
+                return Promise.reject('Not Found');
             }
-            var json;
+            let json;
             try {
                 json = yield response.json();
             }
@@ -237,35 +234,34 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
                 return Promise.resolve(json);
             }
             else {
-                return Promise.reject("Request error, please try again later.");
+                return Promise.reject('Request error, please try again later.');
             }
         });
     }
     getAsync(urlPath, appName = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            var token = yield this.tokenProvider.getTokenAsync();
+            let token = yield this.tokenProvider.getTokenAsync();
             if (token === null) {
-                throw new Error("Redirect failed. Not authenticated.");
+                throw new Error('Redirect failed. Not authenticated.');
             }
-            var headers = { "Content-Type": "application/json" };
-            headers["Authorization"] = `Bearer ${token}`;
-            headers["Accept"] = "application/json";
-            if (this.appNameKey !== "")
+            let headers = { 'Content-Type': 'application/json' };
+            headers['Authorization'] = `Bearer ${token}`;
+            headers['Accept'] = 'application/json';
+            if (this.appNameKey !== '')
                 headers[this.appNameKey] = appName || this.appName;
-            ;
-            var response;
+            let response;
             try {
                 response = yield fetch(this.createUri(urlPath), {
-                    method: "GET",
+                    method: 'GET',
                     headers: headers
                 });
             }
             catch (error) {
-                if (error.message != null && error.message.indexOf("Failed to fetch") !== -1)
-                    return Promise.reject("Network error. Check your connection and try again.");
+                if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
+                    return Promise.reject('Network error. Check your connection and try again.');
                 return Promise.reject(error);
             }
-            var json;
+            let json;
             try {
                 json = yield response.json();
             }
@@ -316,11 +312,11 @@ __decorate([
     __metadata("design:type", String)
 ], LssApiService.prototype, "appName", void 0);
 __decorate([
-    observe("isDev"),
+    observe('isDev'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Boolean]),
     __metadata("design:returntype", void 0)
 ], LssApiService.prototype, "environmentHandler", null);
 LssApiService = __decorate([
-    customElement("lss-api-service")
+    customElement('lss-api-service')
 ], LssApiService);

@@ -9,36 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 let LssEnvironment = class LssEnvironment extends Polymer.Element {
     constructor() {
-        super(...arguments);
-        this.isDev = () => {
-            if (document == null || document.location == null || document.location.host == null)
-                return true;
-            const host = document.location.host;
-            if (host.indexOf("dev") !== -1)
-                return true;
-            if (host.indexOf("localhost") !== -1)
-                return true;
-            return false;
-        };
+        super();
+        this.isDev = false;
+        this.isDev = this.isDevelopment();
     }
-    reevaluate() {
-        this.set("isDev", this.isDevelopmentHandler());
-    }
-    isDevelopmentHandler() {
+    isDevelopment() {
         if (document == null || document.location == null || document.location.host == null)
             return true;
         const host = document.location.host;
-        if (host.indexOf("dev") !== -1)
+        if (host.indexOf('dev') !== -1)
             return true;
-        if (host.indexOf("localhost") !== -1)
+        if (host.indexOf('localhost') !== -1)
             return true;
         return false;
     }
 };
 __decorate([
     property({ notify: true }),
-    __metadata("design:type", Object)
+    __metadata("design:type", Boolean)
 ], LssEnvironment.prototype, "isDev", void 0);
 LssEnvironment = __decorate([
-    customElement("lss-environment")
+    customElement('lss-environment'),
+    __metadata("design:paramtypes", [])
 ], LssEnvironment);
