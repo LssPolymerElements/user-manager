@@ -104,7 +104,7 @@ class LssApiService extends LssRequesterBehavior(Polymer.Element) {
             return Promise.reject(json.error.message);
         }
 
-        if (response.status === 201) {
+        if (response.status === 201 || response.status === 200) {
             return Promise.resolve(json);
         } else {
             return Promise.reject('Request error, please try again later.');
