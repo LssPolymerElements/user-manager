@@ -1,5 +1,5 @@
 interface IODataDto {
-    _odataInfo: IODataModelInfo
+    _odataInfo: IODataModelInfo;
 }
 
 class ODataDto implements IODataDto {

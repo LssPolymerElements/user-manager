@@ -14,7 +14,7 @@ gulp.task('compile', function (done) {
 });
 
 gulp.task('polymerServe', function (done) {
-  exec('polymer serve', function (err, stdOut, stdErr) {
+  exec('polymer serve -p 502 -v', function (err, stdOut, stdErr) {
     console.log(stdOut);
     if (err) {
       done(err);
@@ -26,8 +26,9 @@ gulp.task('polymerServe', function (done) {
 
 gulp.task('browser-sync', function () {
   browserSync.init({
-    proxy: "localhost:8080",
-    files: '*.html, *.js, images/*, demo/*.html, demo/*.js'
+    proxy: "localhost:502",
+    files: '*.html, *.js, images/*, demo/*.html, demo/*.js',
+    startPath: '/components/lss-api-service/demo/index.html'
   });
 });
 
