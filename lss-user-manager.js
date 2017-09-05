@@ -18,11 +18,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 let LssUserManager = class LssUserManager extends Polymer.Element {
     constructor() {
         super(...arguments);
-        this.localStorageKey = "LgUser";
-        this.redirectUrl = "https://signin.leavitt.com/";
-        this.redirectDevUrl = "https://devsignin.leavitt.com/";
-        this.userManagerIssuers = [new userManagerIssuer("https://oauth2.leavitt.com/", "https://oauth2.leavitt.com/token"),
-            new userManagerIssuer("https://loginapi.unitedvalley.com/", "https://loginapi.unitedvalley.com/Token")];
+        this.localStorageKey = 'LgUser';
+        this.redirectUrl = 'https://signin.leavitt.com/';
+        this.redirectDevUrl = 'https://devsignin.leavitt.com/';
+        this.userManagerIssuers = [new userManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'),
+            new userManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
         this.shouldValidateOnLoad = true;
         this.personId = 0;
         this.lastIssuer = null;
@@ -38,22 +38,20 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
         });
     }
     redirectToLogin(continueUrl) {
-        var redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
+        let redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
         document.location.href = redirectUrl;
     }
-    ;
     redirectToSignOut(continueUrl) {
-        var redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
+        let redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
         document.location.href = redirectUrl;
     }
-    ;
     isDevelopment() {
         if (document == null || document.location == null || document.location.host == null)
             return true;
         const host = document.location.host;
-        if (host.indexOf("dev") !== -1)
+        if (host.indexOf('dev') !== -1)
             return true;
-        if (host.indexOf("localhost") !== -1)
+        if (host.indexOf('localhost') !== -1)
             return true;
         return false;
     }
@@ -62,10 +60,10 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
         if (window.location.hash) {
             let hash = window.location.hash.substring(1);
             hash = decodeURIComponent(hash);
-            const hashArray = hash.split("&");
+            const hashArray = hash.split('&');
             for (let i in hashArray) {
                 if (hashArray.hasOwnProperty(i)) {
-                    const keyValPair = hashArray[i].split("=");
+                    const keyValPair = hashArray[i].split('=');
                     if (keyValPair.length > 1) {
                         hashParams.push(new HashParameter(keyValPair[0], decodeURIComponent(keyValPair[1])));
                     }
@@ -74,12 +72,10 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
         }
         return hashParams;
     }
-    ;
     clearHashFromUrl() {
-        if (document.location.hash && document.location.hash.indexOf("refreshToken") > -1)
-            document.location.hash = "";
+        if (document.location.hash && document.location.hash.indexOf('refreshToken') > -1)
+            document.location.hash = '';
     }
-    ;
     getTokenfromUrl(tokenName) {
         const hashParameters = this.getHashParametersFromUrl();
         const accessTokenArray = hashParameters.filter(value => value.key === tokenName);
@@ -94,7 +90,7 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
         return jwt_decode(accessToken);
     }
     createUserFromToken(refreshToken, accessToken) {
-        var decodedToken;
+        let decodedToken;
         try {
             decodedToken = this.decodeAccessToken(accessToken);
         }
@@ -111,66 +107,65 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
             //Access token expired or not from a valid issuer
             return null;
         }
-        this.set("roles", decodedToken.role);
-        this.set("fullname", decodedToken.unique_name);
-        this.set("firstName", decodedToken.given_name);
-        this.set("personId", parseInt(decodedToken.nameid) || 0);
+        this.set('roles', decodedToken.role);
+        this.set('fullname', decodedToken.unique_name);
+        this.set('firstName', decodedToken.given_name);
+        this.set('personId', parseInt(decodedToken.nameid) || 0);
         //this.set("roles", ["Hire Employee", "Terminate Employee", "Transfer Employee"]);
         return new User(decodedToken.given_name, decodedToken.family_name, expirationDate, this.personId, decodedToken.role, refreshToken, accessToken, decodedToken.unique_name, decodedToken.unique_name, decodedToken.RefreshTokenId);
     }
-    ;
     getAccessTokenFromApiAsync(refreshToken, uri) {
         return __awaiter(this, void 0, void 0, function* () {
             const body = {
-                grant_type: "refresh_token",
+                grant_type: 'refresh_token',
                 refresh_token: refreshToken
             };
-            var response = yield fetch(uri, {
-                method: "POST",
+            let response = yield fetch(uri, {
+                method: 'POST',
                 body: JSON.stringify(body),
                 headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
             });
-            var json;
+            let json;
             try {
                 json = yield response.json();
             }
             catch (error) {
-                return Promise.reject("The server sent back invalid JSON.");
+                return Promise.reject('The server sent back invalid JSON.');
             }
             if (response.status === 200 && json.access_token) {
                 return Promise.resolve(json.access_token);
             }
             if (json.error) {
-                if (json.error === "unauthorized_client") {
-                    return Promise.reject("Not authenticated");
+                if (json.error === 'unauthorized_client') {
+                    return Promise.reject('Not authenticated');
                 }
                 return Promise.reject(json.error);
             }
-            return Promise.reject("Not authenticated");
+            return Promise.reject('Not authenticated');
         });
     }
     getUserAsync() {
         return __awaiter(this, void 0, void 0, function* () {
-            var accessToken = this.getTokenfromUrl("accessToken");
-            var refreshToken = this.getTokenfromUrl("refreshToken");
+            let accessToken = this.getTokenfromUrl('accessToken');
+            let refreshToken = this.getTokenfromUrl('refreshToken');
             if (!accessToken && !refreshToken) {
                 //Fallback get tokens from localstorage if the tokens are not in the URL
                 const localStorageUser = User.fromLocalStorage(this.localStorageKey);
                 if (localStorageUser != null) {
-                    this.set("roles", localStorageUser.roles);
-                    this.set("fullname", localStorageUser.fullName);
-                    this.set("firstName", localStorageUser.firstName);
-                    this.set("personId", localStorageUser.personId);
+                    this.set('roles', localStorageUser.roles);
+                    this.set('fullname', localStorageUser.fullName);
+                    this.set('firstName', localStorageUser.firstName);
+                    this.set('personId', localStorageUser.personId);
                     accessToken = localStorageUser.accessToken;
                     refreshToken = localStorageUser.refreshToken;
                 }
             }
             ////valid local tokens
             if (accessToken != null) {
-                var user = this.createUserFromToken(refreshToken || "", accessToken);
+                let user = this.createUserFromToken(refreshToken || '', accessToken);
                 if (user != null) {
                     user.saveToLocalStorage(this.localStorageKey);
                     this.clearHashFromUrl();
@@ -179,8 +174,8 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
             }
             if (refreshToken != null) {
                 try {
-                    var hasToken = false;
-                    var issuers = this.userManagerIssuers;
+                    let hasToken = false;
+                    let issuers = this.userManagerIssuers;
                     if (this.lastIssuer != null) {
                         issuers = issuers.filter(o => o.Issurer === this.lastIssuer);
                     }
@@ -194,41 +189,39 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
                         catch (error) {
                         }
                     }
-                    var user = this.createUserFromToken(refreshToken || "", accessToken);
+                    let user = this.createUserFromToken(refreshToken || '', accessToken);
                     if (user != null) {
                         user.saveToLocalStorage(this.localStorageKey);
                         this.clearHashFromUrl();
                         return Promise.resolve(user);
                     }
-                    return Promise.reject("Not authenticated");
+                    return Promise.reject('Not authenticated');
                 }
                 catch (error) {
                     return Promise.reject(error);
                 }
             }
-            return Promise.reject("Not authenticated");
+            return Promise.reject('Not authenticated');
         });
     }
-    ;
     logoutAsync() {
         localStorage.removeItem(this.localStorageKey);
         this.redirectToSignOut(document.location.href);
         return Promise.resolve();
     }
-    ;
     authenticateAndGetUserAsync() {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    var user = yield this.getUserAsync();
-                    return resolve(user);
+                    let user = yield this.getUserAsync();
+                    resolve(user);
                 }
                 catch (error) {
-                    if (error === "Not authenticated") {
+                    if (error === 'Not authenticated') {
                         this.redirectToLogin(document.location.href);
                         return; //Wait for the redirect to happen with a unreturned promise
                     }
-                    return reject(error);
+                    reject(error);
                 }
             }));
         });
@@ -238,7 +231,7 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield this.getUserAsync();
-                    return resolve("Authenticated");
+                    resolve('Authenticated');
                 }
                 catch (error) {
                     this.redirectToLogin(document.location.href);
@@ -285,5 +278,5 @@ __decorate([
     __metadata("design:type", Number)
 ], LssUserManager.prototype, "personId", void 0);
 LssUserManager = __decorate([
-    customElement("lss-user-manager")
+    customElement('lss-user-manager')
 ], LssUserManager);
