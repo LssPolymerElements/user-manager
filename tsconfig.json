@@ -15,5 +15,8 @@
     "build",
     "node_modules",
     "bower_components/reflect-metadata/"
+  ],
+  "include": [
+    "bower_components"
   ]
 }
