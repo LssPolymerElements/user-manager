@@ -249,13 +249,13 @@ class LssUserManager extends Polymer.Element {
         return new Promise<User | null>(async (resolve, reject) => {
             try {
                 var user = await this.getUserAsync();
-                return resolve(user);
+                resolve(user);
             } catch (error) {
                 if (error === "Not authenticated") {
                     this.redirectToLogin(document.location.href);
                     return;  //Wait for the redirect to happen with a unreturned promise
                 }
-                return reject(error);
+                reject(error);
             }
         });
     }
@@ -264,7 +264,7 @@ class LssUserManager extends Polymer.Element {
         return new Promise<string | null>(async (resolve, reject) => {
             try {
                 await this.getUserAsync();
-                return resolve("Authenticated");
+                resolve("Authenticated");
             } catch (error) {
                 this.redirectToLogin(document.location.href);
                 return;  //Wait for the redirect to happen with a unreturned promise
