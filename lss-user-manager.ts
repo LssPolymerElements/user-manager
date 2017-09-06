@@ -246,29 +246,27 @@ class LssUserManager extends Polymer.Element {
     getUserAsyncPromise: Promise<User> | null = null;
 
     async authenticateAndGetUserAsync(): Promise<User | null> {
-        return new Promise<User | null>(async (resolve, reject) => {
-            try {
-                let user = await this.getUserAsync();
+        return new Promise<User | null>((resolve, reject) => {
+            this.getUserAsync().then((user) => {
                 resolve(user);
-            } catch (error) {
+            }).catch((error) => {
                 if (error === 'Not authenticated') {
                     this.redirectToLogin(document.location.href);
                     return;  //Wait for the redirect to happen with a unreturned promise
                 }
                 reject(error);
-            }
+            });
         });
     }
 
     async authenticateAsync(): Promise<string | null> {
-        return new Promise<string | null>(async (resolve, reject) => {
-            try {
-                await this.getUserAsync();
+        return new Promise<string | null>((resolve, reject) => {
+            this.getUserAsync().then((user) => {
                 resolve('Authenticated');
-            } catch (error) {
+            }).catch((error) => {
                 this.redirectToLogin(document.location.href);
                 return;  //Wait for the redirect to happen with a unreturned promise
-            }
+            });
         });
     }
 }
