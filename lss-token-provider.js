@@ -29,7 +29,7 @@ let LssTokenProvider = class LssTokenProvider extends LssRequesterBehavior(Polym
 };
 __decorate([
     property({ notify: true }),
-    __metadata("design:type", Object)
+    __metadata("design:type", LssUserManager)
 ], LssTokenProvider.prototype, "userManager", void 0);
 LssTokenProvider = __decorate([
     customElement('lss-token-provider')
