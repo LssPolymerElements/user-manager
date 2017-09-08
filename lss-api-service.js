@@ -89,7 +89,7 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
             if (json.error != null) {
                 return Promise.reject(json.error.message);
             }
-            if (response.status === 201) {
+            if (response.status === 201 || response.status === 200) {
                 return Promise.resolve(json);
             }
             else {
