@@ -7,7 +7,7 @@ class GetResult {
         }
         else {
             this.data = [];
-            this.data.push(json.value);
+            this.data.push(json.value ? json.value : json);
         }
     }
     count() {
