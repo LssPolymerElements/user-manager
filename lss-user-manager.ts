@@ -1,5 +1,49 @@
 ﻿declare var jwt_decode: any;
 
+class HashParameter {
+    constructor(public key: string, public value: string) { }
+}
+
+class UserManagerIssuer {
+    constructor(public issuer: string, public tokenUri: string) { }
+}
+
+class User {
+
+    constructor(
+        public firstName: string,
+        public lastName: string,
+        public expirationDate: Date,
+        public personId: Number,
+        public roles: Array<string>,
+        public refreshToken: string | null,
+        public accessToken: string | null,
+        public username: string,
+        public fullName: string,
+        public refreshTokenId: string) {
+    }
+
+    clearToken() {
+        this.expirationDate = new Date(Date.now());
+        this.refreshToken = null;
+        this.accessToken = null;
+    }
+
+    saveToLocalStorage(localStorageKey: string) {
+        const data = JSON.stringify(this);
+        window.localStorage.setItem(localStorageKey, data);
+    }
+
+    static fromLocalStorage(localStorageKey: string): User | null {
+        const data = JSON.parse(window.localStorage.getItem(localStorageKey) || '{}');
+        if (data == null || data.refreshToken == null) {
+            return null;
+        }
+
+        return new User(data.firstName, data.lastName, data.expirationDate, data.personId, data.roles, data.refreshToken, data.accessToken, data.username, data.fullName, data.refreshTokenId);
+    }
+}
+
 @customElement('lss-user-manager')
 class LssUserManager extends Polymer.Element {
     @property()
@@ -21,8 +65,8 @@ class LssUserManager extends Polymer.Element {
     firstName: string;
 
     @property()
-    userManagerIssuers: Array<userManagerIssuer> = [new userManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'),
-    new userManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
+    userManagerIssuers: Array<UserManagerIssuer> = [new UserManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'),
+    new UserManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
 
     @property({ notify: true, reflectToAttribute: true })
     shouldValidateOnLoad: boolean = true;
@@ -117,7 +161,7 @@ class LssUserManager extends Polymer.Element {
         let currentDate = new Date();
         currentDate.setSeconds(currentDate.getSeconds() + 30);
 
-        if (!(expirationDate > currentDate && this.userManagerIssuers.some((o) => o.Issurer === decodedToken.iss))) {
+        if (!(expirationDate > currentDate && this.userManagerIssuers.some((o) => o.issuer === decodedToken.iss))) {
             //Access token expired or not from a valid issuer
             return null;
         }
@@ -208,14 +252,14 @@ class LssUserManager extends Polymer.Element {
                 let hasToken = false;
                 let issuers = this.userManagerIssuers;
                 if (this.lastIssuer != null) {
-                    issuers = issuers.filter(o => o.Issurer === this.lastIssuer);
+                    issuers = issuers.filter(o => o.issuer === this.lastIssuer);
                 }
                 for (let issuer of issuers) {
                     if (hasToken)
                         break;
 
                     try {
-                        accessToken = await this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri);
+                        accessToken = await this.getAccessTokenFromApiAsync(refreshToken, issuer.tokenUri);
                         hasToken = true;
                     } catch (error) {
                     }
