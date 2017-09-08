@@ -11,9 +11,14 @@
     "typeRoots": ["types"]
   },
   "compileOnSave": true,
+  "include": [
+    "bower_components/**/*.ts",
+    "src/**/*.ts"
+  ],
   "exclude": [
     "build",
     "node_modules",
     "bower_components/reflect-metadata/"
   ]
+
 }
