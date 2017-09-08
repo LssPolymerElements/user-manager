@@ -15,14 +15,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+class HashParameter {
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+    }
+}
+class UserManagerIssuer {
+    constructor(issuer, tokenUri) {
+        this.issuer = issuer;
+        this.tokenUri = tokenUri;
+    }
+}
+class User {
+    constructor(firstName, lastName, expirationDate, personId, roles, refreshToken, accessToken, username, fullName, refreshTokenId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.expirationDate = expirationDate;
+        this.personId = personId;
+        this.roles = roles;
+        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
+        this.username = username;
+        this.fullName = fullName;
+        this.refreshTokenId = refreshTokenId;
+    }
+    clearToken() {
+        this.expirationDate = new Date(Date.now());
+        this.refreshToken = null;
+        this.accessToken = null;
+    }
+    saveToLocalStorage(localStorageKey) {
+        const data = JSON.stringify(this);
+        window.localStorage.setItem(localStorageKey, data);
+    }
+    static fromLocalStorage(localStorageKey) {
+        const data = JSON.parse(window.localStorage.getItem(localStorageKey) || '{}');
+        if (data == null || data.refreshToken == null) {
+            return null;
+        }
+        return new User(data.firstName, data.lastName, data.expirationDate, data.personId, data.roles, data.refreshToken, data.accessToken, data.username, data.fullName, data.refreshTokenId);
+    }
+}
 let LssUserManager = class LssUserManager extends Polymer.Element {
     constructor() {
         super(...arguments);
         this.localStorageKey = 'LgUser';
         this.redirectUrl = 'https://signin.leavitt.com/';
         this.redirectDevUrl = 'https://devsignin.leavitt.com/';
-        this.userManagerIssuers = [new userManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'),
-            new userManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
+        this.userManagerIssuers = [new UserManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'),
+            new UserManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
         this.shouldValidateOnLoad = true;
         this.personId = 0;
         this.lastIssuer = null;
@@ -103,7 +145,7 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
         expirationDate.setUTCSeconds(decodedToken.exp);
         let currentDate = new Date();
         currentDate.setSeconds(currentDate.getSeconds() + 30);
-        if (!(expirationDate > currentDate && this.userManagerIssuers.some((o) => o.Issurer === decodedToken.iss))) {
+        if (!(expirationDate > currentDate && this.userManagerIssuers.some((o) => o.issuer === decodedToken.iss))) {
             //Access token expired or not from a valid issuer
             return null;
         }
@@ -177,13 +219,13 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
                     let hasToken = false;
                     let issuers = this.userManagerIssuers;
                     if (this.lastIssuer != null) {
-                        issuers = issuers.filter(o => o.Issurer === this.lastIssuer);
+                        issuers = issuers.filter(o => o.issuer === this.lastIssuer);
                     }
                     for (let issuer of issuers) {
                         if (hasToken)
                             break;
                         try {
-                            accessToken = yield this.getAccessTokenFromApiAsync(refreshToken, issuer.TokenUri);
+                            accessToken = yield this.getAccessTokenFromApiAsync(refreshToken, issuer.tokenUri);
                             hasToken = true;
                         }
                         catch (error) {
@@ -211,33 +253,29 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
     }
     authenticateAndGetUserAsync() {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                try {
-                    let user = yield this.getUserAsync();
+            return new Promise((resolve, reject) => {
+                this.getUserAsync().then((user) => {
                     resolve(user);
-                }
-                catch (error) {
+                }).catch((error) => {
                     if (error === 'Not authenticated') {
                         this.redirectToLogin(document.location.href);
                         return; //Wait for the redirect to happen with a unreturned promise
                     }
                     reject(error);
-                }
-            }));
+                });
+            });
         });
     }
     authenticateAsync() {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                try {
-                    yield this.getUserAsync();
+            return new Promise((resolve, reject) => {
+                this.getUserAsync().then((user) => {
                     resolve('Authenticated');
-                }
-                catch (error) {
+                }).catch((error) => {
                     this.redirectToLogin(document.location.href);
                     return; //Wait for the redirect to happen with a unreturned promise
-                }
-            }));
+                });
+            });
         });
     }
 };

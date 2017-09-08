@@ -17,6 +17,7 @@
     "bower_components/reflect-metadata/"
   ],
   "include": [
-    "bower_components"
+    "bower_components",
+    "*.ts"
   ]
 }
