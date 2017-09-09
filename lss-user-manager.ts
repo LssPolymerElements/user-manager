@@ -69,7 +69,7 @@ class LssUserManager extends Polymer.Element {
     new UserManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
 
     @property({ notify: true, reflectToAttribute: true })
-    shouldValidateOnLoad: boolean = true;
+    disableAutoload: boolean = false;
 
     @property({ notify: true })
     personId: Number = 0;
@@ -77,7 +77,7 @@ class LssUserManager extends Polymer.Element {
     async connectedCallback() {
         super.connectedCallback();
 
-        if (this.shouldValidateOnLoad) {
+        if (!this.disableAutoload) {
             await this.authenticateAndGetUserAsync();
         }
     }

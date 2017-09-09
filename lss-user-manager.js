@@ -65,7 +65,7 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
         this.redirectDevUrl = 'https://devsignin.leavitt.com/';
         this.userManagerIssuers = [new UserManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'),
             new UserManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
-        this.shouldValidateOnLoad = true;
+        this.disableAutoload = false;
         this.personId = 0;
         this.lastIssuer = null;
         this.getUserAsyncPromise = null;
@@ -74,7 +74,7 @@ let LssUserManager = class LssUserManager extends Polymer.Element {
         const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
             _super("connectedCallback").call(this);
-            if (this.shouldValidateOnLoad) {
+            if (!this.disableAutoload) {
                 yield this.authenticateAndGetUserAsync();
             }
         });
@@ -310,7 +310,7 @@ __decorate([
 __decorate([
     property({ notify: true, reflectToAttribute: true }),
     __metadata("design:type", Boolean)
-], LssUserManager.prototype, "shouldValidateOnLoad", void 0);
+], LssUserManager.prototype, "disableAutoload", void 0);
 __decorate([
     property({ notify: true }),
     __metadata("design:type", Number)
