@@ -15,10 +15,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let LssTokenProvider = class LssTokenProvider extends LssRequesterBehavior(Polymer.Element) {
+let LssTokenProvider = class LssTokenProvider extends TitaniumRequesterMixin(Polymer.Element) {
     getTokenAsync() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.userManager = this.requestInstance('UserManager');
+            this.userManager = yield this.requestInstance('UserManager');
             let user = yield this.userManager.authenticateAndGetUserAsync();
             if (user === null) {
                 throw new Error('Redirect failed. Not authenticated.');

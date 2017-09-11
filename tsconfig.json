@@ -13,7 +13,8 @@
   "compileOnSave": true,
   "include": [
     "bower_components/**/*.ts",
-    "src/**/*.ts"
+    "**/*.ts",
+    "*.ts"
   ],
   "exclude": [
     "build",

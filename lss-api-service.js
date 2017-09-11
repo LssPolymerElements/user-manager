@@ -15,7 +15,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Element) {
+let LssApiService = class LssApiService extends TitaniumRequesterMixin(Polymer.Element) {
     constructor() {
         super(...arguments);
         this.baseProductionUri = 'https://api2.leavitt.com/';
@@ -28,7 +28,7 @@ let LssApiService = class LssApiService extends LssRequesterBehavior(Polymer.Ele
         return __awaiter(this, void 0, void 0, function* () {
             _super("connectedCallback").call(this);
             try {
-                this.tokenProvider = this.requestInstance('TokenProvider');
+                this.tokenProvider = yield this.requestInstance('TokenProvider');
             }
             catch (error) {
                 console.log('Token Provider not found. Service will use default lss-token-provider.');
