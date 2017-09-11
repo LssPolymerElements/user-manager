@@ -1,5 +1,5 @@
 ﻿@customElement('lss-api-service')
-class LssApiService extends LssRequesterBehavior(Polymer.Element) {
+class LssApiService extends TitaniumRequesterMixin(Polymer.Element) {
 
     @property({ notify: true })
     tokenProvider: ITokenProvider;
@@ -32,7 +32,7 @@ class LssApiService extends LssRequesterBehavior(Polymer.Element) {
         super.connectedCallback();
 
         try {
-            this.tokenProvider = this.requestInstance('TokenProvider');
+            this.tokenProvider = await this.requestInstance('TokenProvider');
         } catch (error) {
             console.log('Token Provider not found. Service will use default lss-token-provider.');
         }

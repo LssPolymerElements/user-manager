@@ -15,7 +15,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let Api2ServiceDemo = class Api2ServiceDemo extends LssProviderBehavior(Polymer.Element) {
+let Api2ServiceDemo = class Api2ServiceDemo extends TitaniumProviderMixin(TitaniumDependencyResolverMixin(Polymer.Element)) {
     constructor() {
         super(...arguments);
         this.fruits = [];
@@ -145,13 +145,13 @@ __decorate([
     __metadata("design:type", String)
 ], Api2ServiceDemo.prototype, "error", void 0);
 __decorate([
-    listen('getButton', 'tap'),
+    listen('tap', 'getButton'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], Api2ServiceDemo.prototype, "getFruits", null);
 __decorate([
-    listen('createButton', 'tap'),
+    listen('tap', 'createButton'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

@@ -1,5 +1,5 @@
 ﻿@customElement('api2-service-demo')
-class Api2ServiceDemo extends LssProviderBehavior(Polymer.Element) {
+class Api2ServiceDemo extends TitaniumProviderMixin(TitaniumDependencyResolverMixin(Polymer.Element)) {
     ready() {
         super.ready();
         this.provideInstance('UserManager', this.$.userManager);
@@ -17,7 +17,7 @@ class Api2ServiceDemo extends LssProviderBehavior(Polymer.Element) {
         return this.names[Math.floor(Math.random() * this.names.length)];
     }
 
-    @listen('getButton', 'tap')
+    @listen('tap', 'getButton')
     async getFruits() {
         this.error = 'none';
         let service: LssApiService = this.$.service;
@@ -31,7 +31,7 @@ class Api2ServiceDemo extends LssProviderBehavior(Polymer.Element) {
         this.fruits = result.toList();
     }
 
-    @listen('createButton', 'tap')
+    @listen('tap', 'createButton')
     async createFruit() {
         this.error = 'none';
         let service: LssApiService = this.$.service;

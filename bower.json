@@ -31,7 +31,7 @@
     "polymer": "Polymer/polymer#^2.0.0",
     "polymer2-ts": "^1.0.0",
     "lss-user-manager": "^3.0.0",
-    "lss-inject": "^2.0.0"
+    "titanium-dependency-injection": "LssPolymerElements/titanium-dependency-injection#^2.0.5"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
