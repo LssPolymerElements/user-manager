@@ -289,8 +289,8 @@ class LssUserManager extends Polymer.Element {
 
     getUserAsyncPromise: Promise<User> | null = null;
 
-    async authenticateAndGetUserAsync(): Promise<User | null> {
-        return new Promise<User | null>((resolve, reject) => {
+    async authenticateAndGetUserAsync(): Promise<User> {
+        return new Promise<User>((resolve, reject) => {
             this.getUserAsync().then((user) => {
                 resolve(user);
             }).catch((error) => {
@@ -303,8 +303,8 @@ class LssUserManager extends Polymer.Element {
         });
     }
 
-    async authenticateAsync(): Promise<string | null> {
-        return new Promise<string | null>((resolve, reject) => {
+    async authenticateAsync(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
             this.getUserAsync().then((user) => {
                 resolve('Authenticated');
             }).catch((error) => {
