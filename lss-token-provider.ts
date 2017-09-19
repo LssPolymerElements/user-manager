@@ -4,12 +4,12 @@ class LssTokenProvider extends TitaniumRequesterMixin(Polymer.Element) implement
     @property({ notify: true })
     userManager: LssUserManager;
 
-    async getTokenAsync(): Promise<string> {
+    async getTokenAsync(): Promise<string | null> {
         this.userManager = await this.requestInstance('UserManager');
         let user = await this.userManager.authenticateAndGetUserAsync();
         if (user === null) {
             throw new Error('Redirect failed. Not authenticated.');
         }
-        return user.accessToken as string;
+        return user.accessToken;
     }
 }
