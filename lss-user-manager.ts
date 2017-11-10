@@ -193,10 +193,9 @@ class LssUserManager extends Polymer.Element {
         let response = await fetch(uri, {
             method: 'POST',
             body: JSON.stringify(body),
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
+            headers: [
+                ['Content-Type', 'application/json'],
+                ['Accept', 'application/json']]
         });
 
         let json;
