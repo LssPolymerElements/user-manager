@@ -1,7 +1,11 @@
 class GetResult<T extends IODataDto> {
     private data: Array<T>;
-
+    public odataCount: number;
     constructor(json: any) {
+
+        if (json['@odata.count'])
+            this.odataCount = json['@odata.count'];
+
 
         if (Array.isArray(json.value)) {
             this.data = json.value.map((o: any) => {
