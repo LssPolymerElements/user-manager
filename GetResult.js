@@ -1,5 +1,7 @@
 class GetResult {
     constructor(json) {
+        if (json['@odata.count'])
+            this.odataCount = json['@odata.count'];
         if (Array.isArray(json.value)) {
             this.data = json.value.map((o) => {
                 return this.convertODataInfo(o);
