@@ -5,11 +5,12 @@
   "main": "lss-api-service.html",
   "dependencies": {},
   "devDependencies": {
-    "tslint": "^4.0.2",
+    "bower": "*",
     "browser-sync": "^2.18.2",
+    "clang-format": "^1.2.2",
     "gulp": "^3.9.1",
-    "typescript": "^2.4.2",
-    "bower": "*"
+    "tslint": "^4.0.2",
+    "typescript": "^2.4.2"
   },
   "scripts": {
     "prepublish": "npm run build",
