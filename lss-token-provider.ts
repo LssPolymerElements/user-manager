@@ -1,15 +1,12 @@
 
 @customElement('lss-token-provider')
 class LssTokenProvider extends TitaniumRequesterMixin(Polymer.Element) implements ITokenProvider {
-    @property({ notify: true })
-    userManager: LssUserManager;
-
-    async getTokenAsync(): Promise<string> {
-        this.userManager = await this.requestInstance('UserManager');
-        let user = await this.userManager.authenticateAndGetUserAsync();
+    async getTokenAsync(): Promise<string | null> {
+        let userManager = await this.requestInstance('UserManager');
+        let user = await userManager.authenticateAndGetUserAsync();
         if (user === null) {
             throw new Error('Redirect failed. Not authenticated.');
         }
-        return user.accessToken as string;
+        return user.accessToken;
     }
 }
