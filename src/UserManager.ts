@@ -1,4 +1,4 @@
-﻿interface IUserManager {
+﻿interface UserManager {
 
     constructor(loginUrl?: string, localStorageKey?: string, publicApiKey?: string): void;
 
