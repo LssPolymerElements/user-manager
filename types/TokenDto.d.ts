@@ -1,4 +1,4 @@
-interface ITokenDto {
+interface TokenDto {
     IsActiveEmployee: string;
     RefreshTokenId: string;
     aud: string;
