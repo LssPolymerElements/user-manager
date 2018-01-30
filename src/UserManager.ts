@@ -1,12 +1,11 @@
 ﻿interface UserManager {
+  constructor(loginUrl?: string, localStorageKey?: string, publicApiKey?: string): void;
 
-    constructor(loginUrl?: string, localStorageKey?: string, publicApiKey?: string): void;
+  user(): User;
 
-    user(): User;
+  logoutAsync(): Promise<void>;
 
-    logoutAsync(): Promise<void>;
+  authenticateAndGetUserAsync(): Promise<User>;
 
-    authenticateAndGetUserAsync(): Promise<User>;
-
-    authenticateAsync(): Promise<void>;
+  authenticateAsync(): Promise<void>;
 }
