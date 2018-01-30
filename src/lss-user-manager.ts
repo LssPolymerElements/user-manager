@@ -74,17 +74,17 @@ class LssUserManager extends Polymer.Element {
     }
   }
 
-  private redirectToLogin(continueUrl: string) {
+  private _redirectToLogin(continueUrl: string) {
     let redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
     document.location.href = redirectUrl;
   }
 
-  private redirectToSignOut(continueUrl: string) {
+  private _redirectToSignOut(continueUrl: string) {
     let redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
     document.location.href = redirectUrl;
   }
 
-  isDevelopment(): Boolean {
+  isDevelopment(): boolean {
     if (document == null || document.location == null || document.location.host == null)
       return true;
 
@@ -98,7 +98,7 @@ class LssUserManager extends Polymer.Element {
     return false;
   }
 
-  private getHashParametersFromUrl(): Array<HashParameter> {
+  private _getHashParametersFromUrl(): Array<HashParameter> {
     const hashParams = new Array<HashParameter>();
     if (window.location.hash) {
       let hash = window.location.hash.substring(1);
@@ -117,13 +117,13 @@ class LssUserManager extends Polymer.Element {
     return hashParams;
   }
 
-  private clearHashFromUrl() {
+  private _clearHashFromUrl() {
     if (document.location.hash && document.location.hash.indexOf('refreshToken') > -1)
       document.location.hash = '';
   }
 
-  private getTokenfromUrl(tokenName: string): string|null {
-    const hashParameters = this.getHashParametersFromUrl();
+  private _getTokenfromUrl(tokenName: string): string|null {
+    const hashParameters = this._getHashParametersFromUrl();
     const accessTokenArray = hashParameters.filter(value => value.key === tokenName);
     if (accessTokenArray.length === 0) {
       return null;
@@ -132,16 +132,16 @@ class LssUserManager extends Polymer.Element {
     }
   }
 
-  private decodeAccessToken(accessToken: string): TokenDto {
+  private _decodeAccessToken(accessToken: string): TokenDto {
     return jwt_decode(accessToken) as TokenDto;
   }
 
   lastIssuer = null;
-  private createUserFromToken(refreshToken: string, accessToken: string): User|null {
+  private _createUserFromToken(refreshToken: string, accessToken: string): User|null {
     let decodedToken: any;
 
     try {
-      decodedToken = this.decodeAccessToken(accessToken);
+      decodedToken = this._decodeAccessToken(accessToken);
     } catch (error) {
       // Invalid JWT token format
       return null;
@@ -167,7 +167,7 @@ class LssUserManager extends Polymer.Element {
     return new User(decodedToken.given_name, decodedToken.family_name, expirationDate, this.personId, decodedToken.role, refreshToken, accessToken, decodedToken.unique_name, decodedToken.unique_name, decodedToken.RefreshTokenId);
   }
 
-  private async getAccessTokenFromApiAsync(refreshToken: string, uri: string): Promise<string> {
+  private async _getAccessTokenFromApiAsync(refreshToken: string, uri: string): Promise<string> {
     const body = {grant_type: 'refresh_token', refresh_token: refreshToken};
 
     let response = await fetch(uri, {method: 'POST', body: JSON.stringify(body), headers: [['Content-Type', 'application/json'], ['Accept', 'application/json']]});
@@ -193,9 +193,9 @@ class LssUserManager extends Polymer.Element {
     return Promise.reject('Not authenticated');
   }
 
-  private async getUserAsync(): Promise<User> {
-    let accessToken: any = this.getTokenfromUrl('accessToken');
-    let refreshToken = this.getTokenfromUrl('refreshToken');
+  private async _getUserAsync(): Promise<User> {
+    let accessToken: any = this._getTokenfromUrl('accessToken');
+    let refreshToken = this._getTokenfromUrl('refreshToken');
 
     if (!accessToken && !refreshToken) {
       // Fallback get tokens from localstorage if the tokens are not in the URL
@@ -211,10 +211,10 @@ class LssUserManager extends Polymer.Element {
     }
     ////valid local tokens
     if (accessToken != null) {
-      let user = this.createUserFromToken(refreshToken || '', accessToken);
+      let user = this._createUserFromToken(refreshToken || '', accessToken);
       if (user != null) {
         user.saveToLocalStorage(this.localStorageKey);
-        this.clearHashFromUrl();
+        this._clearHashFromUrl();
         return Promise.resolve(user);
       }
     }
@@ -230,16 +230,16 @@ class LssUserManager extends Polymer.Element {
             break;
 
           try {
-            accessToken = await this.getAccessTokenFromApiAsync(refreshToken, issuer.tokenUri);
+            accessToken = await this._getAccessTokenFromApiAsync(refreshToken, issuer.tokenUri);
             hasToken = true;
           } catch (error) {
           }
         }
 
-        let user = this.createUserFromToken(refreshToken || '', accessToken);
+        let user = this._createUserFromToken(refreshToken || '', accessToken);
         if (user != null) {
           user.saveToLocalStorage(this.localStorageKey);
-          this.clearHashFromUrl();
+          this._clearHashFromUrl();
           return Promise.resolve(user);
         }
         return Promise.reject('Not authenticated');
@@ -253,7 +253,7 @@ class LssUserManager extends Polymer.Element {
 
   logoutAsync(): Promise<void> {
     localStorage.removeItem(this.localStorageKey);
-    this.redirectToSignOut(document.location.href);
+    this._redirectToSignOut(document.location.href);
     return Promise.resolve();
   }
 
@@ -261,13 +261,13 @@ class LssUserManager extends Polymer.Element {
 
   async authenticateAndGetUserAsync(): Promise<User> {
     return new Promise<User>((resolve, reject) => {
-      this.getUserAsync()
+      this._getUserAsync()
           .then((user) => {
             resolve(user);
           })
           .catch((error) => {
             if (error === 'Not authenticated') {
-              this.redirectToLogin(document.location.href);
+              this._redirectToLogin(document.location.href);
               return;  // Wait for the redirect to happen with a unreturned promise
             }
             reject(error);
@@ -277,12 +277,12 @@ class LssUserManager extends Polymer.Element {
 
   async authenticateAsync(): Promise<string> {
     return new Promise<string>((resolve) => {
-      this.getUserAsync()
+      this._getUserAsync()
           .then(() => {
             resolve('Authenticated');
           })
           .catch(() => {
-            this.redirectToLogin(document.location.href);
+            this._redirectToLogin(document.location.href);
             return;  // Wait for the redirect to happen with a unreturned promise
           });
     });
