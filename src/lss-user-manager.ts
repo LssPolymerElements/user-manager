@@ -35,7 +35,7 @@ class User {
   }
 }
 
-const {customElement, property, query, queryAll, observe, computed, listen} = Polymer.decorators;
+const {customElement, property} = Polymer.decorators;
 
 @customElement('lss-user-manager')
 class LssUserManager extends Polymer.Element {
