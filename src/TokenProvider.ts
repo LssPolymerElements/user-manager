@@ -1,3 +1,3 @@
 interface TokenProvider {
-    getTokenAsync(): Promise<string | null>;
+  getTokenAsync(): Promise<string|null>;
 }
