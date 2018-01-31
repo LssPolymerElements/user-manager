@@ -1,31 +1,35 @@
-﻿@customElement('lss-api-service')
+﻿
+/// <reference path="./lss-environment.ts" />
+/// <reference path="./TokenProvider.ts" />
+
+@Polymer.decorators.customElement('lss-api-service')
 class LssApiService extends TitaniumRequesterMixin
 (Polymer.Element) {
-  @property({notify: true})
-  tokenProvider: ITokenProvider;
+  @Polymer.decorators.property({notify: true, type: Object})
+  tokenProvider: TokenProvider;
 
-  @property({notify: true})
+  @Polymer.decorators.property({notify: true, type: Object})
   lssEnvironment: LssEnvironment;
 
-  @property({notify: true})
+  @Polymer.decorators.property({notify: true, type: Boolean})
   isDev: boolean;
 
-  @property({notify: true})
+  @Polymer.decorators.property({notify: true, type: String})
   baseUrl: string;
 
-  @property()
+  @Polymer.decorators.property({type: Boolean})
   isLoading: boolean;
 
-  @property({notify: true})
+  @Polymer.decorators.property({notify: true, type: String})
   baseProductionUri: string = 'https://api2.leavitt.com/';
 
-  @property({notify: true})
+  @Polymer.decorators.property({notify: true, type: String})
   baseDevUri: string = 'https://devapi2.leavitt.com/';
 
-  @property({notify: true})
+  @Polymer.decorators.property({notify: true, type: String})
   appNameKey: string = 'X-LGAppName';
 
-  @property({notify: true})
+  @Polymer.decorators.property({notify: true, type: String})
   appName: string = 'General';
 
   async connectedCallback() {
@@ -37,24 +41,23 @@ class LssApiService extends TitaniumRequesterMixin
       console.log('Token Provider not found. Service will use default lss-token-provider.');
     }
   }
-
   ready() {
     super.ready();
 
-    this.lssEnvironment = this.$.lssEnvironment;
-    this.tokenProvider = this.$.lssTokenProvider;
+    this.lssEnvironment = this.$.lssEnvironment as LssEnvironment;
+    this.tokenProvider = this.$.lssTokenProvider as LssTokenProvider;
   }
 
-  @observe('isDev')
-  environmentHandler(isDev: boolean) {
+  @Polymer.decorators.observe('isDev')
+  _environmentHandler(isDev: boolean) {
     this.baseUrl = isDev ? this.baseDevUri : this.baseProductionUri;
   }
 
-  private createUri(urlPath: string): string {
+  private _createUri(urlPath: string): string {
     return this.baseUrl + urlPath;
   }
 
-  async postAsync<T>(urlPath: string, body: any&IODataDto, appName: string|null = null): Promise<T|null> {
+  async postAsync<T>(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<T|null> {
     let token = await this.tokenProvider.getTokenAsync();
     if (token === null) {
       throw new Error('Redirect failed. Not authenticated.');
@@ -74,7 +77,7 @@ class LssApiService extends TitaniumRequesterMixin
 
     let response;
     try {
-      response = await fetch(this.createUri(urlPath), {method: 'POST', body: JSON.stringify(body), headers: headers});
+      response = await fetch(this._createUri(urlPath), {method: 'POST', body: JSON.stringify(body), headers: headers});
     } catch (error) {
       if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
         return Promise.reject('Network error. Check your connection and try again.');
@@ -104,7 +107,7 @@ class LssApiService extends TitaniumRequesterMixin
     }
   }
 
-  async patchAsync(urlPath: string, body: any&IODataDto, appName: string|null = null): Promise<void> {
+  async patchAsync(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<void> {
     let token = await this.tokenProvider.getTokenAsync();
     if (token === null) {
       throw new Error('Redirect failed. Not authenticated.');
@@ -125,7 +128,7 @@ class LssApiService extends TitaniumRequesterMixin
 
     let response;
     try {
-      response = await fetch(this.createUri(urlPath), {method: 'PATCH', body: JSON.stringify(body), headers: headers});
+      response = await fetch(this._createUri(urlPath), {method: 'PATCH', body: JSON.stringify(body), headers: headers});
     } catch (error) {
       if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
         return Promise.reject('Network error. Check your connection and try again.');
@@ -151,7 +154,7 @@ class LssApiService extends TitaniumRequesterMixin
     }
   }
 
-  async patchReturnDtoAsync<T>(urlPath: string, body: any&IODataDto, appName: string|null = null): Promise<T> {
+  async patchReturnDtoAsync<T>(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<T> {
     let token = await this.tokenProvider.getTokenAsync();
     if (token === null) {
       throw new Error('Redirect failed. Not authenticated.');
@@ -174,7 +177,7 @@ class LssApiService extends TitaniumRequesterMixin
 
     let response;
     try {
-      response = await fetch(this.createUri(urlPath), {method: 'PATCH', body: JSON.stringify(body), headers: headers});
+      response = await fetch(this._createUri(urlPath), {method: 'PATCH', body: JSON.stringify(body), headers: headers});
     } catch (error) {
       if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
         return Promise.reject('Network error. Check your connection and try again.');
@@ -212,7 +215,7 @@ class LssApiService extends TitaniumRequesterMixin
 
     let response;
     try {
-      response = await fetch(this.createUri(urlPath), {method: 'DELETE', headers: headers});
+      response = await fetch(this._createUri(urlPath), {method: 'DELETE', headers: headers});
     } catch (error) {
       if (error.message != null && error.message.indexOf('Failed to fetch') !== -1)
         return Promise.reject('Network error. Check your connection and try again.');
@@ -246,7 +249,7 @@ class LssApiService extends TitaniumRequesterMixin
     }
   }
 
-  async getAsync<T extends IODataDto>(urlPath: string, appName: string|null = null): Promise<GetResult<T>> {
+  async getAsync<T extends ODataDto>(urlPath: string, appName: string|null = null): Promise<GetResult<T>> {
     let token = await this.tokenProvider.getTokenAsync();
     if (token === null) {
       throw new Error('Redirect failed. Not authenticated.');
@@ -260,7 +263,7 @@ class LssApiService extends TitaniumRequesterMixin
 
     let response;
     try {
-      response = await fetch(this.createUri(urlPath), {
+      response = await fetch(this._createUri(urlPath), {
         method: 'GET',
         headers: headers
 
@@ -288,7 +291,7 @@ class LssApiService extends TitaniumRequesterMixin
   }
 }
 
-class GetResult<T extends IODataDto> {
+class GetResult<T extends ODataDto> {
   private data: Array<T>;
   public odataCount: number;
   constructor(json: any) {
@@ -335,23 +338,23 @@ class GetResult<T extends IODataDto> {
   }
 }
 
-interface IODataDto {
-  _odataInfo: IODataModelInfo;
+interface ODataDto {
+  _odataInfo: ODataModelInfo;
 }
 
-class ODataDto implements IODataDto {
+class ODataDto implements ODataDto {
   constructor(modelInfo = new ODataModelInfo()) {
     this._odataInfo = modelInfo;
   }
-  _odataInfo: IODataModelInfo;
+  _odataInfo: ODataModelInfo;
 }
 
-interface IODataModelInfo {
+interface ODataModelInfo {
   type: string|null;
   shortType: string|null;
 }
 
-class ODataModelInfo implements IODataModelInfo {
+class ODataModelInfo implements ODataModelInfo {
   type: string|null = null;
   shortType: string|null = null;
 }

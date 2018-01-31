@@ -1,6 +1,6 @@
 {
   "name": "lss-api-service",
-  "version": "5.0.2",
+  "version": "7.0.2",
   "description": "A polymer 2 compenent to aid in communicating with LSS's RESTful apis.",
   "authors": [
     "Leavitt Software Solutions"
@@ -29,9 +29,9 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "polymer2-ts": "^1.0.0",
-    "lss-user-manager": "^3.0.0",
-    "titanium-dependency-injection": "LssPolymerElements/titanium-dependency-injection#^2.0.5"
+    "polymer-decorators": "Polymer/polymer-decorators#^1.0.2",
+    "titanium-dependency-injection": "LssPolymerElements/titanium-dependency-injection#^3.0.1",
+    "lss-user-manager": "^4.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
