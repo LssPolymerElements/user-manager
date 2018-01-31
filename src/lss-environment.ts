@@ -5,7 +5,7 @@ class LssEnvironment extends Polymer.Element {
     this.isDev = this.isDevelopment();
   }
 
-  @property({notify: true, type: Boolean})
+  @Polymer.decorators.property({notify: true, type: Boolean})
   isDev: boolean = false;
 
   isDevelopment(): boolean {
