@@ -133,19 +133,19 @@ let Api2ServiceDemo = class Api2ServiceDemo extends Polymer.DeclarativeEventList
     }
 };
 __decorate([
-    property({ type: Array })
+    Polymer.decorators.property({ type: Array })
 ], Api2ServiceDemo.prototype, "fruits", void 0);
 __decorate([
-    property({ type: String })
+    Polymer.decorators.property({ type: String })
 ], Api2ServiceDemo.prototype, "error", void 0);
 __decorate([
-    listen('tap', 'getButton')
+    Polymer.decorators.listen('tap', 'getButton')
 ], Api2ServiceDemo.prototype, "getFruits", null);
 __decorate([
-    listen('tap', 'createButton')
+    Polymer.decorators.listen('tap', 'createButton')
 ], Api2ServiceDemo.prototype, "createFruit", null);
 Api2ServiceDemo = __decorate([
-    customElement('api2-service-demo')
+    Polymer.decorators.customElement('api2-service-demo')
 ], Api2ServiceDemo);
 class Fruit extends ODataDto {
 }

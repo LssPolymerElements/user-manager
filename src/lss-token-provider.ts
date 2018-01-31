@@ -1,7 +1,7 @@
 
 /// <reference path="TokenProvider.ts" />
 
-@customElement('lss-token-provider')
+@Polymer.decorators.customElement('lss-token-provider')
 class LssTokenProvider extends TitaniumRequesterMixin
 (Polymer.Element) implements TokenProvider {
   async getTokenAsync(): Promise<string|null> {

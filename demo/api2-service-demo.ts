@@ -1,5 +1,5 @@
 ﻿
-@customElement('api2-service-demo')
+@Polymer.decorators.customElement('api2-service-demo')
 class Api2ServiceDemo extends Polymer.DeclarativeEventListeners
 (TitaniumProviderMixin(TitaniumDependencyResolverMixin(Polymer.Element))) {
   ready() {
@@ -7,10 +7,10 @@ class Api2ServiceDemo extends Polymer.DeclarativeEventListeners
     this.provideInstance('UserManager', this.$.userManager);
   }
 
-  @property({type: Array})
+  @Polymer.decorators.property({type: Array})
   fruits: Array<Fruit> = [];
 
-  @property({type: String})
+  @Polymer.decorators.property({type: String})
   error: string = 'none';
 
   private names = ['Apple', 'Banana', 'Apricot', 'Blackcurrant', 'Blueberry', 'Orange', 'Strawberry', 'Tomato', 'Redcurrant'];
@@ -19,7 +19,7 @@ class Api2ServiceDemo extends Polymer.DeclarativeEventListeners
     return this.names[Math.floor(Math.random() * this.names.length)];
   }
 
-  @listen('tap', 'getButton')
+  @Polymer.decorators.listen('tap', 'getButton')
   async getFruits() {
     this.error = 'none';
     let service = this.$.service as LssApiService;
@@ -33,7 +33,7 @@ class Api2ServiceDemo extends Polymer.DeclarativeEventListeners
     this.fruits = result.toList();
   }
 
-  @listen('tap', 'createButton')
+  @Polymer.decorators.listen('tap', 'createButton')
   async createFruit() {
     this.error = 'none';
     let service = this.$.service as LssApiService;

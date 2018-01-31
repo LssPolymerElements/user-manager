@@ -1,36 +1,35 @@
 ﻿
 /// <reference path="./lss-environment.ts" />
 /// <reference path="./TokenProvider.ts" />
-const {observe, listen} = Polymer.decorators;
 
-@customElement('lss-api-service')
+@Polymer.decorators.customElement('lss-api-service')
 class LssApiService extends TitaniumRequesterMixin
 (Polymer.Element) {
-  @property({notify: true, type: Object})
+  @Polymer.decorators.property({notify: true, type: Object})
   tokenProvider: TokenProvider;
 
-  @property({notify: true, type: Object})
+  @Polymer.decorators.property({notify: true, type: Object})
   lssEnvironment: LssEnvironment;
 
-  @property({notify: true, type: Boolean})
+  @Polymer.decorators.property({notify: true, type: Boolean})
   isDev: boolean;
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   baseUrl: string;
 
-  @property({type: Boolean})
+  @Polymer.decorators.property({type: Boolean})
   isLoading: boolean;
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   baseProductionUri: string = 'https://api2.leavitt.com/';
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   baseDevUri: string = 'https://devapi2.leavitt.com/';
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   appNameKey: string = 'X-LGAppName';
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   appName: string = 'General';
 
   async connectedCallback() {
@@ -49,7 +48,7 @@ class LssApiService extends TitaniumRequesterMixin
     this.tokenProvider = this.$.lssTokenProvider as LssTokenProvider;
   }
 
-  @observe('isDev')
+  @Polymer.decorators.observe('isDev')
   _environmentHandler(isDev: boolean) {
     this.baseUrl = isDev ? this.baseDevUri : this.baseProductionUri;
   }

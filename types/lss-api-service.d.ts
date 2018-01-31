@@ -1,6 +1,5 @@
 /// <reference path="lss-environment.d.ts" />
 /// <reference path="TokenProvider.d.ts" />
-declare const observe: typeof Polymer.decorators.observe, listen: (eventName: string, target: string | EventTarget) => (proto: any, methodName: string) => void;
 declare const LssApiService_base: (new (...args: any[]) => {
     dispatchEvent: any;
     requestProvider(key: string): Promise<any>;
