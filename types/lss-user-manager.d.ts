@@ -25,7 +25,6 @@ declare class User {
     saveToLocalStorage(localStorageKey: string): void;
     static fromLocalStorage(localStorageKey: string): User | null;
 }
-declare const customElement: typeof Polymer.decorators.customElement, property: typeof Polymer.decorators.property;
 declare class LssUserManager extends Polymer.Element {
     localStorageKey: string;
     redirectUrl: string;

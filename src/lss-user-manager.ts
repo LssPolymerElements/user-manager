@@ -35,35 +35,33 @@ class User {
   }
 }
 
-const {customElement, property} = Polymer.decorators;
-
-@customElement('lss-user-manager')
+@Polymer.decorators.customElement('lss-user-manager')
 class LssUserManager extends Polymer.Element {
-  @property({type: String})
+  @Polymer.decorators.property({type: String})
   localStorageKey: string = 'LgUser';
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   redirectUrl: string = 'https://signin.leavitt.com/';
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   redirectDevUrl: string = 'https://devsignin.leavitt.com/';
 
-  @property({notify: true, type: Array})
+  @Polymer.decorators.property({notify: true, type: Array})
   roles: Array<string>;
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   fullname: string;
 
-  @property({notify: true, type: String})
+  @Polymer.decorators.property({notify: true, type: String})
   firstName: string;
 
-  @property({type: Array})
+  @Polymer.decorators.property({type: Array})
   userManagerIssuers: Array<UserManagerIssuer> = [new UserManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'), new UserManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
 
-  @property({type: Boolean, notify: true, reflectToAttribute: true})
+  @Polymer.decorators.property({type: Boolean, notify: true, reflectToAttribute: true})
   disableAutoload: boolean = false;
 
-  @property({type: Number, notify: true})
+  @Polymer.decorators.property({type: Number, notify: true})
   personId: number = 0;
 
   async connectedCallback() {
