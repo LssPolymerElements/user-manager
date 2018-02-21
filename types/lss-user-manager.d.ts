@@ -13,14 +13,14 @@ declare class User {
     firstName: string;
     lastName: string;
     expirationDate: Date;
-    personId: Number;
+    personId: number;
     roles: Array<string>;
     refreshToken: string | null;
     accessToken: string | null;
     username: string;
     fullName: string;
     refreshTokenId: string;
-    constructor(firstName: string, lastName: string, expirationDate: Date, personId: Number, roles: Array<string>, refreshToken: string | null, accessToken: string | null, username: string, fullName: string, refreshTokenId: string);
+    constructor(firstName: string, lastName: string, expirationDate: Date, personId: number, roles: Array<string>, refreshToken: string | null, accessToken: string | null, username: string, fullName: string, refreshTokenId: string);
     clearToken(): void;
     saveToLocalStorage(localStorageKey: string): void;
     static fromLocalStorage(localStorageKey: string): User | null;
@@ -35,6 +35,7 @@ declare class LssUserManager extends Polymer.Element {
     userManagerIssuers: Array<UserManagerIssuer>;
     disableAutoload: boolean;
     personId: number;
+    user: User;
     connectedCallback(): Promise<void>;
     private _redirectToLogin(continueUrl);
     private _redirectToSignOut(continueUrl);
@@ -43,12 +44,17 @@ declare class LssUserManager extends Polymer.Element {
     private _clearHashFromUrl();
     private _getTokenfromUrl(tokenName);
     private _decodeAccessToken(accessToken);
-    lastIssuer: null;
+    private lastIssuer;
+    private _disableOuterListener;
+    private _disablePropertyObservers;
     private _createUserFromToken(refreshToken, accessToken);
     private _getAccessTokenFromApiAsync(refreshToken, uri);
+    protected _rolesChanged(personId: number): void;
+    private _updateElementPropertiesFromUser(user);
     private _getUserAsync();
     logoutAsync(): Promise<void>;
-    getUserAsyncPromise: Promise<User> | null;
+    private _handleUserChanged(e);
+    authenticateAsync(): Promise<User>;
+    notifyUserChanged(user: User): void;
     authenticateAndGetUserAsync(): Promise<User>;
-    authenticateAsync(): Promise<string>;
 }
