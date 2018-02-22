@@ -45,7 +45,7 @@ declare class LssUserManager extends Polymer.Element {
     private _getTokenfromUrl(tokenName);
     private _decodeAccessToken(accessToken);
     private lastIssuer;
-    private _disableOuterListener;
+    private _disableInternalListener;
     private _disablePropertyObservers;
     private _createUserFromToken(refreshToken, accessToken);
     private _getAccessTokenFromApiAsync(refreshToken, uri);
