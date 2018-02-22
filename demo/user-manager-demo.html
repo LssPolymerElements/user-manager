@@ -4,19 +4,34 @@
 
 <dom-module id="user-manager-demo">
     <template>
-        <lss-user-manager id="manager" person-id="{{personId}}" fullname="{{name}}" first-name="{{firstName}}" should-validate-on-load="{{shouldLoad}}"
+        <lss-user-manager id="manager" person-id="{{personId}}" fullname="{{name}}" first-name="{{firstName}}" disable-autoload="{{!shouldLoad}}"
             roles="{{roles}}"></lss-user-manager>
+
+        <lss-user-manager id="manager2" person-id="{{personId2}}" roles="{{roles2}}"></lss-user-manager>
+        <lss-user-manager id="manager3"></lss-user-manager>
+        <lss-user-manager id="manager4"></lss-user-manager>
+        <lss-user-manager id="manager5"></lss-user-manager>
+        <lss-user-manager id="manager6"></lss-user-manager>
         <paper-button raised on-tap="logoutClicked">Logout</paper-button>
         <paper-button raised on-tap="getUserObject">GetUserAsync()</paper-button>
         <paper-button raised on-tap="callMultiple">Call GetUserAsync Multiple Times</paper-button>
+        <paper-button raised on-tap="popRole">Pop role from first user-manager</paper-button>
         <h2>name: [[name]]</h2>
         <h2>firstName: [[firstName]]</h2>
         <h2>shouldValidateOnLoad: [[shouldLoad]]</h2>
         <h2>personId: [[personId]]</h2>
+        <h2>personId from 2nd user manager: [[personId2]]</h2>
 
         <h1>My Roles </h1>
         <ol>
             <template is="dom-repeat" items="[[roles]]">
+                <li>[[item]]</li>
+            </template>
+        </ol>
+
+        <h1>My Roles from 2nd user manager </h1>
+        <ol>
+            <template is="dom-repeat" items="[[roles2]]">
                 <li>[[item]]</li>
             </template>
         </ol>
@@ -36,7 +51,15 @@
                     shouldLoad: {
                         type: Boolean,
                         value: true
-                    }
+                    },
+                    roles: {
+                        type: Array,
+                        notify: true
+                    },
+                    roles2: {
+                        type: Array,
+                        notify: true
+                    },
                 }
             }
             logoutClicked(e) {
@@ -44,23 +67,26 @@
                 this.$.manager.logoutAsync();
                 location.reload();
             }
+            popRole() {
+                this.pop('roles2');
+                this.personId = 11;
+            }
             getUserObject(e) {
-                this.$.manager.authenticateAndGetUserAsync().then(function (user) {
+                this.$.manager.authenticateAsync().then(function (user) {
                     console.log(user);
                 });
             }
             callMultiple(e) {
-                this.$.manager.authenticateAndGetUserAsync().then(function () {
+                this.$.manager.authenticateAsync().then(function () {
                     console.log("1 done");
                 });
-                this.$.manager.authenticateAndGetUserAsync().then(function () {
+                this.$.manager.authenticateAsync().then(function () {
                     console.log("2 done");
                 });
-                this.$.manager.authenticateAndGetUserAsync().then(function () {
+                this.$.manager.authenticateAsync().then(function () {
                     console.log("3 done");
                 });
             }
-
         }
         customElements.define(UserManagerDemo.is, UserManagerDemo);
     </script>

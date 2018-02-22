@@ -11,7 +11,7 @@ class UserManagerIssuer {
 }
 
 class User {
-  constructor(public firstName: string, public lastName: string, public expirationDate: Date, public personId: Number, public roles: Array<string>, public refreshToken: string|null, public accessToken: string|null, public username: string, public fullName: string, public refreshTokenId: string) {
+  constructor(public firstName: string, public lastName: string, public expirationDate: Date, public personId: number, public roles: Array<string>, public refreshToken: string|null, public accessToken: string|null, public username: string, public fullName: string, public refreshTokenId: string) {
   }
 
   clearToken() {
@@ -58,17 +58,22 @@ class LssUserManager extends Polymer.Element {
   @Polymer.decorators.property({type: Array})
   userManagerIssuers: Array<UserManagerIssuer> = [new UserManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'), new UserManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
 
-  @Polymer.decorators.property({type: Boolean, notify: true, reflectToAttribute: true})
+  @Polymer.decorators.property({type: Boolean, notify: true})
   disableAutoload: boolean = false;
 
   @Polymer.decorators.property({type: Number, notify: true})
   personId: number = 0;
 
+  @Polymer.decorators.property({type: Object})
+  user: User = {} as User;
+
   async connectedCallback() {
     super.connectedCallback();
 
+    window.addEventListener('lss-user-manager-user-changed', this._handleUserChanged.bind(this));
+
     if (!this.disableAutoload) {
-      await this.authenticateAndGetUserAsync();
+      await this.authenticateAsync();
     }
   }
 
@@ -134,7 +139,9 @@ class LssUserManager extends Polymer.Element {
     return jwt_decode(accessToken) as TokenDto;
   }
 
-  lastIssuer = null;
+  private lastIssuer = null;
+  private _disableInternalListener = false;
+  private _disablePropertyObservers = false;
   private _createUserFromToken(refreshToken: string, accessToken: string): User|null {
     let decodedToken: any;
 
@@ -156,13 +163,7 @@ class LssUserManager extends Polymer.Element {
       return null;
     }
 
-    this.set('roles', decodedToken.role);
-    this.set('fullname', decodedToken.unique_name);
-    this.set('firstName', decodedToken.given_name);
-    this.set('personId', parseInt(decodedToken.nameid) || 0);
-    // this.set("roles", ["Hire Employee", "Terminate Employee", "Transfer Employee"]);
-
-    return new User(decodedToken.given_name, decodedToken.family_name, expirationDate, this.personId, decodedToken.role, refreshToken, accessToken, decodedToken.unique_name, decodedToken.unique_name, decodedToken.RefreshTokenId);
+    return new User(decodedToken.given_name, decodedToken.family_name, expirationDate, Number(decodedToken.nameid) || 0, decodedToken.role, refreshToken, accessToken, decodedToken.unique_name, decodedToken.unique_name, decodedToken.RefreshTokenId);
   }
 
   private async _getAccessTokenFromApiAsync(refreshToken: string, uri: string): Promise<string> {
@@ -191,6 +192,26 @@ class LssUserManager extends Polymer.Element {
     return Promise.reject('Not authenticated');
   }
 
+  @Polymer
+      .decorators.observe('personId', 'roles.length') protected _rolesChanged(personId: number) {
+    if (!this.roles || !this.personId || this._disablePropertyObservers)
+      return;
+
+    this.user.roles = this.roles;
+    this.user.personId = personId;
+    this.notifyUserChanged(this.user);
+  }
+
+  private _updateElementPropertiesFromUser(user: User) {
+    this._disablePropertyObservers = true;  // We dont want to internally observe this change.
+    this.user = JSON.parse(JSON.stringify(user));
+    this.roles = this.user.roles;
+    this.fullname = this.user.fullName;
+    this.firstName = this.user.firstName;
+    this.personId = this.user.personId;
+    this._disablePropertyObservers = false;
+  }
+
   private async _getUserAsync(): Promise<User> {
     let accessToken: any = this._getTokenfromUrl('accessToken');
     let refreshToken = this._getTokenfromUrl('refreshToken');
@@ -199,15 +220,11 @@ class LssUserManager extends Polymer.Element {
       // Fallback get tokens from localstorage if the tokens are not in the URL
       const localStorageUser = User.fromLocalStorage(this.localStorageKey);
       if (localStorageUser != null) {
-        this.set('roles', localStorageUser.roles);
-        this.set('fullname', localStorageUser.fullName);
-        this.set('firstName', localStorageUser.firstName);
-        this.set('personId', localStorageUser.personId);
         accessToken = localStorageUser.accessToken;
         refreshToken = localStorageUser.refreshToken;
       }
     }
-    ////valid local tokens
+    ////validate local tokens
     if (accessToken != null) {
       let user = this._createUserFromToken(refreshToken || '', accessToken);
       if (user != null) {
@@ -255,34 +272,54 @@ class LssUserManager extends Polymer.Element {
     return Promise.resolve();
   }
 
-  getUserAsyncPromise: Promise<User>|null = null;
+  private _handleUserChanged(e: any) {
+    if (this._disableInternalListener)
+      return;
 
-  async authenticateAndGetUserAsync(): Promise<User> {
+    this._updateElementPropertiesFromUser(e.detail.user);
+  }
+
+  async authenticateAsync(): Promise<User> {
     return new Promise<User>((resolve, reject) => {
-      this._getUserAsync()
-          .then((user) => {
-            resolve(user);
-          })
-          .catch((error) => {
-            if (error === 'Not authenticated') {
-              this._redirectToLogin(document.location.href);
-              return;  // Wait for the redirect to happen with a unreturned promise
-            }
-            reject(error);
-          });
+      const _window = window as any;
+      if (_window.__lss_user_manager_resolving) {
+        const self = this;
+        this._disableInternalListener = true;  // This listener is active so disable the outer to prevent notifications
+        _window.addEventListener('lss-user-manager-user-changed', function listener(e: any) {
+          _window.removeEventListener('lss-user-manager-user-changed', listener);
+          self._disableInternalListener = false;
+          const user = e.detail.user;
+          self.user = user;
+          self._updateElementPropertiesFromUser(user);
+          resolve(user);
+        });
+      } else {
+        _window.__lss_user_manager_resolving = true;
+        this._getUserAsync()
+            .then((user) => {
+              _window.__lss_user_manager_resolving = false;
+              this.notifyUserChanged(user);
+              this._updateElementPropertiesFromUser(user);
+              resolve(user);
+            })
+            .catch((error) => {
+              if (error === 'Not authenticated') {
+                this._redirectToLogin(document.location.href);
+                return;  // Wait for the redirect to happen with a unreturned promise
+              }
+              reject(error);
+            });
+      }
     });
   }
 
-  async authenticateAsync(): Promise<string> {
-    return new Promise<string>((resolve) => {
-      this._getUserAsync()
-          .then(() => {
-            resolve('Authenticated');
-          })
-          .catch(() => {
-            this._redirectToLogin(document.location.href);
-            return;  // Wait for the redirect to happen with a unreturned promise
-          });
-    });
+  notifyUserChanged(user: User) {
+    this._disableInternalListener = true;
+    window.dispatchEvent(new CustomEvent('lss-user-manager-user-changed', {detail: {user: user}}));
+    this._disableInternalListener = false;
+  }
+
+  async authenticateAndGetUserAsync(): Promise<User> {
+    return await this.authenticateAsync();
   }
 }
