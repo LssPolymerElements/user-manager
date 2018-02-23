@@ -218,13 +218,18 @@ class LssUserManager extends Polymer.Element {
 
     if (!accessToken && !refreshToken) {
       // Fallback get tokens from localstorage if the tokens are not in the URL
-      const localStorageUser = User.fromLocalStorage(this.localStorageKey);
-      if (localStorageUser != null) {
-        accessToken = localStorageUser.accessToken;
-        refreshToken = localStorageUser.refreshToken;
+      const user = User.fromLocalStorage(this.localStorageKey);
+      if (user != null) {
+        accessToken = user.accessToken;
+        refreshToken = user.refreshToken;
+        if (this._createUserFromToken(user.refreshToken || '', user.accessToken || '')) {  //_createUserFromToken also validates access token. TODO: split logic out
+          this._clearHashFromUrl();
+          return Promise.resolve(user);
+        }
       }
     }
-    ////validate local tokens
+
+    // validate uri access token
     if (accessToken != null) {
       let user = this._createUserFromToken(refreshToken || '', accessToken);
       if (user != null) {
@@ -233,6 +238,7 @@ class LssUserManager extends Polymer.Element {
         return Promise.resolve(user);
       }
     }
+
     if (refreshToken != null) {
       try {
         let hasToken = false;
