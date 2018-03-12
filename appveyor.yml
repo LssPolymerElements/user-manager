@@ -40,7 +40,7 @@ notifications:
   
   
 skip_tags: true
-version: 7.0.{build}
+version: 8.0.{build}
 deploy:
 - provider: GitHub
   auth_token:
