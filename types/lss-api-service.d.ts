@@ -1,14 +1,4 @@
-/// <reference path="lss-environment.d.ts" />
-/// <reference path="TokenProvider.d.ts" />
-declare const LssApiService_base: (new (...args: any[]) => {
-    dispatchEvent: any;
-    requestProvider(key: string): Promise<any>;
-    requestInstance(key: string): Promise<any>;
-    value(key: string): () => Promise<any>;
-}) & typeof Polymer.Element;
-declare class LssApiService extends LssApiService_base {
-    tokenProvider: TokenProvider;
-    lssEnvironment: LssEnvironment;
+declare class LssApiService extends Polymer.Element {
     isDev: boolean;
     baseUrl: string;
     isLoading: boolean;
@@ -16,10 +6,10 @@ declare class LssApiService extends LssApiService_base {
     baseDevUri: string;
     appNameKey: string;
     appName: string;
-    connectedCallback(): Promise<void>;
-    ready(): void;
+    lssUserManager: LssUserManager;
     _environmentHandler(isDev: boolean): void;
     private _createUri(urlPath);
+    private _getTokenAsync();
     postAsync<T>(urlPath: string, body: any & ODataDto, appName?: string | null): Promise<T | null>;
     patchAsync(urlPath: string, body: any & ODataDto, appName?: string | null): Promise<void>;
     patchReturnDtoAsync<T>(urlPath: string, body: any & ODataDto, appName?: string | null): Promise<T>;

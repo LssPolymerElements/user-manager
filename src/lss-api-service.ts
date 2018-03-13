@@ -1,16 +1,6 @@
 ﻿
-/// <reference path="./lss-environment.ts" />
-/// <reference path="./TokenProvider.ts" />
-
 @Polymer.decorators.customElement('lss-api-service')
-class LssApiService extends TitaniumRequesterMixin
-(Polymer.Element) {
-  @Polymer.decorators.property({notify: true, type: Object})
-  tokenProvider: TokenProvider;
-
-  @Polymer.decorators.property({notify: true, type: Object})
-  lssEnvironment: LssEnvironment;
-
+class LssApiService extends Polymer.Element {
   @Polymer.decorators.property({notify: true, type: Boolean})
   isDev: boolean;
 
@@ -32,21 +22,8 @@ class LssApiService extends TitaniumRequesterMixin
   @Polymer.decorators.property({notify: true, type: String})
   appName: string = 'General';
 
-  async connectedCallback() {
-    super.connectedCallback();
-
-    try {
-      this.tokenProvider = await this.requestInstance('TokenProvider');
-    } catch (error) {
-      console.log('Token Provider not found. Service will use default lss-token-provider.');
-    }
-  }
-  ready() {
-    super.ready();
-
-    this.lssEnvironment = this.$.lssEnvironment as LssEnvironment;
-    this.tokenProvider = this.$.lssTokenProvider as LssTokenProvider;
-  }
+  @Polymer.decorators.query('lss-user-manager')
+  lssUserManager: LssUserManager;
 
   @Polymer.decorators.observe('isDev')
   _environmentHandler(isDev: boolean) {
@@ -57,12 +34,16 @@ class LssApiService extends TitaniumRequesterMixin
     return this.baseUrl + urlPath;
   }
 
-  async postAsync<T>(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<T|null> {
-    let token = await this.tokenProvider.getTokenAsync();
-    if (token === null) {
-      throw new Error('Redirect failed. Not authenticated.');
+  private async _getTokenAsync() {
+    try {
+      return (await this.lssUserManager.authenticateAsync()).accessToken;
+    } catch (error) {
+      console.warn(error);
     }
+    return '';
+  }
 
+  async postAsync<T>(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<T|null> {
     // Add in the odata model info if it not already on the object
     if (body._odataInfo && !body['@odata.type']) {
       if (body._odataInfo.type) {
@@ -71,7 +52,7 @@ class LssApiService extends TitaniumRequesterMixin
       delete body._odataInfo;
     }
     let headers: any = {'Content-Type': 'application/json'};
-    headers['Authorization'] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${await this._getTokenAsync()}`;
     if (this.appNameKey !== '')
       headers[this.appNameKey] = appName || this.appName;
 
@@ -108,11 +89,6 @@ class LssApiService extends TitaniumRequesterMixin
   }
 
   async patchAsync(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<void> {
-    let token = await this.tokenProvider.getTokenAsync();
-    if (token === null) {
-      throw new Error('Redirect failed. Not authenticated.');
-    }
-
     // Add in the odata model info if it not already on the object
     if (body._odataInfo && !body['@odata.type']) {
       if (body._odataInfo.type) {
@@ -121,7 +97,7 @@ class LssApiService extends TitaniumRequesterMixin
       delete body._odataInfo;
     }
     let headers: any = {'Content-Type': 'application/json'};
-    headers['Authorization'] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${await this._getTokenAsync()}`;
 
     if (this.appNameKey !== '')
       headers[this.appNameKey] = appName || this.appName;
@@ -155,11 +131,6 @@ class LssApiService extends TitaniumRequesterMixin
   }
 
   async patchReturnDtoAsync<T>(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<T> {
-    let token = await this.tokenProvider.getTokenAsync();
-    if (token === null) {
-      throw new Error('Redirect failed. Not authenticated.');
-    }
-
     // Add in the odata model info if it not already on the object
     if (body._odataInfo && !body['@odata.type']) {
       if (body._odataInfo.type) {
@@ -168,7 +139,7 @@ class LssApiService extends TitaniumRequesterMixin
       delete body._odataInfo;
     }
     let headers: any = {'Content-Type': 'application/json'};
-    headers['Authorization'] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${await this._getTokenAsync()}`;
 
     if (this.appNameKey !== '')
       headers[this.appNameKey] = appName || this.appName;
@@ -204,12 +175,8 @@ class LssApiService extends TitaniumRequesterMixin
   }
 
   async deleteAsync(urlPath: string, appName: string|null = null): Promise<void> {
-    let token = await this.tokenProvider.getTokenAsync();
-    if (token === null) {
-      throw new Error('Redirect failed. Not authenticated.');
-    }
     let headers: any = {'Content-Type': 'application/json'};
-    headers['Authorization'] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${await this._getTokenAsync()}`;
     if (this.appNameKey !== '')
       headers[this.appNameKey] = appName || this.appName;
 
@@ -250,12 +217,8 @@ class LssApiService extends TitaniumRequesterMixin
   }
 
   async getAsync<T extends ODataDto>(urlPath: string, appName: string|null = null): Promise<GetResult<T>> {
-    let token = await this.tokenProvider.getTokenAsync();
-    if (token === null) {
-      throw new Error('Redirect failed. Not authenticated.');
-    }
     let headers: any = {'Content-Type': 'application/json'};
-    headers['Authorization'] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${await this._getTokenAsync()}`;
     headers['Accept'] = 'application/json';
 
     if (this.appNameKey !== '')
