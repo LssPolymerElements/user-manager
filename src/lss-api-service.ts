@@ -263,7 +263,7 @@ class GetResult<T extends ODataDto> {
 
     if (Array.isArray(json.value)) {
       this.data = json.value.map((o: any) => {
-        return this.convertODataInfo(o);
+        return GetResult.convertODataInfo<T>(o);
       });
     } else {
       this.data = [];
@@ -277,7 +277,7 @@ class GetResult<T extends ODataDto> {
 
   firstOrDefault(): T|null {
     if (this.count() > 0) {
-      return this.convertODataInfo(this.data[0]);
+      return GetResult.convertODataInfo<T>(this.data[0]);
     }
     return null;
   }
@@ -286,7 +286,7 @@ class GetResult<T extends ODataDto> {
     return this.data;
   }
 
-  private convertODataInfo(item: any): T {
+  static convertODataInfo<T>(item: any): T {
     if (item['@odata.type']) {
       if (!item._odataInfo) {
         item._odataInfo = new ODataModelInfo();
