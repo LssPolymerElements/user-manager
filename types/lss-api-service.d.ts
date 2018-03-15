@@ -23,7 +23,7 @@ declare class GetResult<T extends ODataDto> {
     count(): number;
     firstOrDefault(): T | null;
     toList(): Array<T>;
-    private convertODataInfo(item);
+    static convertODataInfo<T>(item: any): T;
 }
 interface ODataDto {
     _odataInfo: ODataModelInfo;
