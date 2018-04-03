@@ -258,8 +258,9 @@ class GetResult<T extends ODataDto> {
   private data: Array<T>;
   public odataCount: number;
   constructor(json: any) {
-    if (json['@odata.count'])
-      this.odataCount = json['@odata.count'];
+    if (!isNaN(Number(json['@odata.count']))) {
+      this.odataCount = Number(json['@odata.count']);
+    }
 
     if (Array.isArray(json.value)) {
       this.data = json.value.map((o: any) => {
