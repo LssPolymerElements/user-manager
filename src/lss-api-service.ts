@@ -268,7 +268,7 @@ class GetResult<T extends ODataDto> {
       });
     } else {
       this.data = [];
-      this.data.push(json.value ? json.value : json);
+      this.data.push(json.hasOwnProperty('value') ? json.value : json);
     }
   }
 
