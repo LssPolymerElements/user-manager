@@ -120,6 +120,10 @@ class LssUserManager extends Polymer.Element {
     return hashParams;
   }
 
+  private _getClaimScopes(localStorageKey: string): Array<string> {
+    return JSON.parse(window.localStorage.getItem(localStorageKey) || '[]');
+  }
+
   private _clearHashFromUrl() {
     if (document.location.hash && document.location.hash.indexOf('refreshToken') > -1)
       document.location.hash = '';
@@ -167,7 +171,12 @@ class LssUserManager extends Polymer.Element {
   }
 
   private async _getAccessTokenFromApiAsync(refreshToken: string, uri: string): Promise<string> {
-    const body = {grant_type: 'refresh_token', refresh_token: refreshToken};
+    const claimScopes = this._getClaimScopes('LgClaimScopes');
+    const body = {grant_type: 'refresh_token', refresh_token: refreshToken} as any;
+
+    if (claimScopes.length > 0) {
+      body.claim_scopes = claimScopes;
+    }
 
     let response = await fetch(uri, {method: 'POST', body: JSON.stringify(body), headers: [['Content-Type', 'application/json'], ['Accept', 'application/json']]});
 
