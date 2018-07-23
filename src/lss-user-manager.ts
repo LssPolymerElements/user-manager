@@ -121,7 +121,12 @@ class LssUserManager extends Polymer.Element {
   }
 
   private _getClaimScopes(localStorageKey: string): Array<string> {
-    return JSON.parse(window.localStorage.getItem(localStorageKey) || '[]');
+    try {
+      return JSON.parse(window.localStorage.getItem(localStorageKey) || '[]');
+    } catch (error) {
+      console.log(`Failed to parse scopes in local storage. ${error}`);
+      return [];
+    }
   }
 
   private _clearHashFromUrl() {
@@ -255,14 +260,19 @@ class LssUserManager extends Polymer.Element {
         if (this.lastIssuer != null) {
           issuers = issuers.filter(o => o.issuer === this.lastIssuer);
         }
+
+        if (!window.navigator.onLine) {
+          return Promise.reject('Computer not connected. Make sure your computer is connected to the internet.');
+        }
+
         for (let issuer of issuers) {
           if (hasToken)
             break;
-
           try {
             accessToken = await this._getAccessTokenFromApiAsync(refreshToken, issuer.tokenUri);
             hasToken = true;
           } catch (error) {
+            console.warn(error);
           }
         }
 
