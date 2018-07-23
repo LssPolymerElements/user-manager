@@ -239,6 +239,10 @@ class LssApiService extends Polymer.Element {
       return Promise.reject(error);
     }
 
+    if (response.status === 404) {
+      return Promise.reject(`404: Endpoint not found.`);
+    }
+
     let json;
     try {
       json = await response.json();
