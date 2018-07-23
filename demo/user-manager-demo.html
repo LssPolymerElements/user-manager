@@ -1,5 +1,6 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../lss-user-manager.html">
 
 <dom-module id="user-manager-demo">
@@ -16,6 +17,9 @@
         <paper-button raised on-tap="getUserObject">GetUserAsync()</paper-button>
         <paper-button raised on-tap="callMultiple">Call GetUserAsync Multiple Times</paper-button>
         <paper-button raised on-tap="popRole">Pop role from first user-manager</paper-button>
+        <paper-input style="width:300px" value="{{claimScopes}}"> </paper-input>
+        <paper-button raised on-tap="setScopes">Set Scopes</paper-button>
+
         <h2>name: [[name]]</h2>
         <h2>firstName: [[firstName]]</h2>
         <h2>shouldValidateOnLoad: [[shouldLoad]]</h2>
@@ -60,6 +64,9 @@
                         type: Array,
                         notify: true
                     },
+                    claimScopes: {
+                        type: String
+                    }
                 }
             }
             logoutClicked(e) {
@@ -86,6 +93,17 @@
                 this.$.manager.authenticateAsync().then(function () {
                     console.log("3 done");
                 });
+            }
+            setScopes() {
+                this.setClaimScopes(this.claimScopes || '');
+            }
+            setClaimScopes(claims = '') {
+                if (claims.length > 0) {
+                    const data = JSON.stringify(claims.split(','));
+                    window.localStorage.setItem('LgClaimScopes', data);
+                } else {
+                    window.localStorage.removeItem('LgClaimScopes');
+                }
             }
         }
         customElements.define(UserManagerDemo.is, UserManagerDemo);
