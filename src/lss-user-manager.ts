@@ -121,7 +121,12 @@ class LssUserManager extends Polymer.Element {
   }
 
   private _getClaimScopes(localStorageKey: string): Array<string> {
-    return JSON.parse(window.localStorage.getItem(localStorageKey) || '[]');
+    try {
+      return JSON.parse(window.localStorage.getItem(localStorageKey) || '[]');
+    } catch (error) {
+      console.log(`Failed to parse scopes in local storage. ${error}`);
+      return [];
+    }
   }
 
   private _clearHashFromUrl() {
@@ -263,6 +268,7 @@ class LssUserManager extends Polymer.Element {
             accessToken = await this._getAccessTokenFromApiAsync(refreshToken, issuer.tokenUri);
             hasToken = true;
           } catch (error) {
+            console.warn(error);
           }
         }
 
