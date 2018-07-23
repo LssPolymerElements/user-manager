@@ -30,7 +30,7 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "polymer-decorators": "Polymer/polymer-decorators#^1.0.2",
-    "lss-user-manager": "^4.0.0"
+    "lss-user-manager": "^5.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

@@ -8,8 +8,8 @@ declare class LssApiService extends Polymer.Element {
     appName: string;
     lssUserManager: LssUserManager;
     _environmentHandler(isDev: boolean): void;
-    private _createUri(urlPath);
-    private _getTokenAsync();
+    private _createUri;
+    private _getTokenAsync;
     postAsync<T>(urlPath: string, body: any & ODataDto, appName?: string | null): Promise<T | null>;
     patchAsync(urlPath: string, body: any & ODataDto, appName?: string | null): Promise<void>;
     patchReturnDtoAsync<T>(urlPath: string, body: any & ODataDto, appName?: string | null): Promise<T>;

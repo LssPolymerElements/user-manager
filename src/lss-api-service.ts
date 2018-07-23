@@ -35,12 +35,7 @@ class LssApiService extends Polymer.Element {
   }
 
   private async _getTokenAsync() {
-    try {
       return (await this.lssUserManager.authenticateAsync()).accessToken;
-    } catch (error) {
-      console.warn(error);
-    }
-    return '';
   }
 
   async postAsync<T>(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<T|null> {
