@@ -97,7 +97,7 @@ class LssUserManager extends Polymer.Element {
     try {
       return JSON.parse(window.localStorage.getItem(localStorageKey) || '[]');
     } catch (error) {
-      console.log(`Failed to parse scopes in local storage. ${error}`);
+      console.warn(`Failed to parse scopes in local storage. ${error}`);
       return [];
     }
   }

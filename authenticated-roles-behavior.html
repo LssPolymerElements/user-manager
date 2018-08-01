@@ -1,14 +1,13 @@
-<dom-module id="authenticated-person-id-behavior">
+<dom-module id="authenticated-roles-behavior">
     <script type="text/javascript">
-        AuthenticatedPersonIdBehavior = Polymer.dedupingMixin(superClass => {
+        AuthenticatedRolesBehavior = Polymer.dedupingMixin(superClass => {
             /* @polymerMixin */
-            class AuthenticatedPersonIdBehavior extends superClass {
+            class AuthenticatedRolesBehavior extends superClass {
                 static get properties() {
                     return {
-                        personId: {
-                            type: Number,
-                            notify: true,
-                            value: 0
+                        roles: {
+                            type: Array,
+                            notify: true
                         }
                     }
                 }
@@ -22,11 +21,11 @@
                 }
                 _onAuthComplete(e) {
                     if (!e.detail.rejected) {
-                        this.personId = Number(e.detail.jwtToken.nameid);
+                        this.roles = e.detail.jwtToken.role;
                     }
                 }
             }
-            return AuthenticatedPersonIdBehavior;
+            return AuthenticatedRolesBehavior;
         });
     </script>
 </dom-module>
