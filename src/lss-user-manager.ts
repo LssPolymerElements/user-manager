@@ -263,6 +263,14 @@ class LssUserManager extends Polymer.Element {
   logout() {
     localStorage.removeItem('LG-AUTH-AT');
     localStorage.removeItem('LG-AUTH-RT');
+
+    window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {jwtToken: {given_name: '', unique_name: '', family_name: '', nameid: 0, role: []}}}));
+
+    this.personId = 0;
+    this.fullname = '';
+    this.firstName = '';
+    this.lastName = '';
+    this.roles = [];
     this._redirectToSignOut(document.location.href);
     return;
   }
