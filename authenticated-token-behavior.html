@@ -5,14 +5,14 @@
             class AuthenticatedTokenBehavior extends superClass {
                 _getAccessTokenAsync() {
                     return new Promise((resolve, reject) => {
-                        var handleUpate = function listener(e) {
-                            window.removeEventListener('um-auth-complete', handleUpate);
+                        var handleUpdate = function listener(e) {
+                            window.removeEventListener('um-auth-complete', handleUpdate);
                             if (e.detail.rejected) {
                                 reject(e.detail.message);
                             }
                             resolve(e.detail.accessToken);
                         }
-                        window.addEventListener('um-auth-complete', handleUpate);
+                        window.addEventListener('um-auth-complete', handleUpdate);
                         window.dispatchEvent(new CustomEvent('um-request-token'));
                     });
                 }
