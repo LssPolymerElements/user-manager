@@ -1,9 +1,9 @@
-interface TokenDto {
+interface LssJwtToken {
     IsActiveEmployee: string;
     RefreshTokenId: string;
     aud: string;
     birthdate: string;
-    exp: number;
+    exp: Date | number;
     family_name: string;
     gender: string;
     given_name: string;
