@@ -1,0 +1,32 @@
+<dom-module id="authenticated-person-id-behavior">
+    <script type="text/javascript">
+        AuthenticatedPersonIdBehavior = Polymer.dedupingMixin(superClass => {
+            /* @polymerMixin */
+            class AuthenticatedPersonIdBehavior extends superClass {
+                static get properties() {
+                    return {
+                        personId: {
+                            type: Number,
+                            notify: true,
+                            value: 0
+                        }
+                    }
+                }
+                constructor() {
+                    super();
+                    this._handleUpdate = this._handleUpdate.bind(this);
+                }
+                ready() {
+                    super.ready();
+                    window.addEventListener('um-auth-complete', this._handleUpdate);
+                }
+                _handleUpdate(e) {
+                    if (!e.detail.rejected) {
+                        this.personId = Number(e.detail.jwtToken.nameid);
+                    }
+                }
+            }
+            return AuthenticatedPersonIdBehavior;
+        });
+    </script>
+</dom-module>
