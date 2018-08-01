@@ -40,7 +40,7 @@ class LssUserManager extends Polymer.Element {
   async connectedCallback() {
     super.connectedCallback();
 
-    if (!this.disableAutoload) {
+    if (!this.disableAutoload || this._getTokenfromUrl('refreshToken')) {
       await this.authenticateAsync();
     }
 
@@ -211,7 +211,7 @@ class LssUserManager extends Polymer.Element {
   }
 
   private async _getTokenAsync(): Promise<LssJwtToken> {
-    let accessToken = this._getTokenfromUrl('accessToken') || this._getAccessTokenFromLocalStorage();
+    let accessToken = this._getAccessTokenFromLocalStorage();
     let refreshToken = this._getTokenfromUrl('refreshToken') || this._getRefreshTokenFromLocalStorage();
     this._clearHashFromUrl();
 
