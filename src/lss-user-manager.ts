@@ -29,11 +29,38 @@ class LssUserManager extends Polymer.Element {
   @Polymer.decorators.property({type: Boolean})
   disableAutoload: boolean = false;
 
+  @Polymer.decorators.property({type: Boolean})
+  isAuthenticating: boolean;
+
+  constructor() {
+    super();
+    this.handleRequestTokenRequest = this.handleRequestTokenRequest.bind(this);
+  }
+
   async connectedCallback() {
     super.connectedCallback();
 
     if (!this.disableAutoload) {
       await this.authenticateAsync();
+    }
+
+    window.addEventListener('um-request-token', this.handleRequestTokenRequest);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    window.removeEventListener('um-request-token', this.handleRequestTokenRequest);
+  }
+
+  private handleRequestTokenRequest() {
+    if (this.isAuthenticating) {
+      return;
+    }
+
+    try {
+      this.authenticateAsync();
+    } catch (error) {
     }
   }
 
@@ -158,7 +185,7 @@ class LssUserManager extends Polymer.Element {
     try {
       json = await response.json();
     } catch (error) {
-      return Promise.reject('The server sent back invalid JSON.');
+      return Promise.reject('Get Auth Token: The server sent back invalid JSON.');
     }
 
     if (response.status === 200 && json.access_token) {
@@ -215,14 +242,20 @@ class LssUserManager extends Polymer.Element {
     return new Promise<LssJwtToken>(async (resolve, reject) => {
       let jwtToken;
       try {
+        this.isAuthenticating = true;
         jwtToken = await this._getTokenAsync();
       } catch (error) {
         if (error === 'Not authenticated') {
           this._redirectToLogin(document.location.href);
+          this.isAuthenticating = false;
           return;  // Wait for the redirect to happen with a unreturned promise
         }
+        window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {rejected: true, message: error}}));
+        this.isAuthenticating = false;
         reject(error);
       }
+      window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {jwtToken: jwtToken, accessToken: this._getAccessTokenFromLocalStorage()}}));
+      this.isAuthenticating = false;
       resolve(jwtToken);
     });
   }
