@@ -5,6 +5,6 @@ interface AuthenticatedPersonIdBehaviorConstructor {
 }
 
 interface AuthenticatedPersonIdBehavior {
-  personId: string;
+  personId: number;
   _onAuthComplete(e: Event)
 }
