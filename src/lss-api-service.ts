@@ -1,32 +1,22 @@
 ﻿
-@Polymer.decorators.customElement('lss-api-service')
-class LssApiService extends Polymer.Element {
-  @Polymer.decorators.property({notify: true, type: Boolean})
-  isDev: boolean;
+@Polymer.decorators.customElement('lss-api-service') class LssApiService extends AuthenticatedTokenBehavior
+(Polymer.Element) {
+  @Polymer.decorators.property({notify: true, type: Boolean}) isDev: boolean;
 
-  @Polymer.decorators.property({notify: true, type: String})
-  baseUrl: string;
+  @Polymer.decorators.property({notify: true, type: String}) baseUrl: string;
 
-  @Polymer.decorators.property({type: Boolean})
-  isLoading: boolean;
+  @Polymer.decorators.property({type: Boolean}) isLoading: boolean;
 
-  @Polymer.decorators.property({notify: true, type: String})
-  baseProductionUri: string = 'https://api2.leavitt.com/';
+  @Polymer.decorators.property({notify: true, type: String}) baseProductionUri: string = 'https://api2.leavitt.com/';
 
-  @Polymer.decorators.property({notify: true, type: String})
-  baseDevUri: string = 'https://devapi2.leavitt.com/';
+  @Polymer.decorators.property({notify: true, type: String}) baseDevUri: string = 'https://devapi2.leavitt.com/';
 
-  @Polymer.decorators.property({notify: true, type: String})
-  appNameKey: string = 'X-LGAppName';
+  @Polymer.decorators.property({notify: true, type: String}) appNameKey: string = 'X-LGAppName';
 
-  @Polymer.decorators.property({notify: true, type: String})
-  appName: string = 'General';
+  @Polymer.decorators.property({notify: true, type: String}) appName: string = 'General';
 
-  @Polymer.decorators.query('lss-user-manager')
-  lssUserManager: LssUserManager;
-
-  @Polymer.decorators.observe('isDev')
-  _environmentHandler(isDev: boolean) {
+  @Polymer
+      .decorators.observe('isDev') _environmentHandler(isDev: boolean) {
     this.baseUrl = isDev ? this.baseDevUri : this.baseProductionUri;
   }
 
@@ -35,7 +25,7 @@ class LssApiService extends Polymer.Element {
   }
 
   private async _getTokenAsync() {
-      return (await this.lssUserManager.authenticateAsync()).accessToken;
+    return await this._getAccessTokenAsync();
   }
 
   async postAsync<T>(urlPath: string, body: any&ODataDto, appName: string|null = null): Promise<T|null> {

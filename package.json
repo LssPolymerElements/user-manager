@@ -3,7 +3,9 @@
   "version": "6.0.0",
   "description": "",
   "main": "lss-api-service.html",
-  "dependencies": {},
+  "dependencies": {
+    "babel-polyfill": "^6.26.0"
+  },
   "devDependencies": {
     "bower": "*",
     "browser-sync": "^2.18.2",

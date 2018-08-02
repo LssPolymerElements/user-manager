@@ -1,4 +1,5 @@
-declare class LssApiService extends Polymer.Element {
+declare const LssApiService_base: AuthenticatedTokenBehaviorConstructor & typeof Polymer.Element;
+declare class LssApiService extends LssApiService_base {
     isDev: boolean;
     baseUrl: string;
     isLoading: boolean;
@@ -6,7 +7,6 @@ declare class LssApiService extends Polymer.Element {
     baseDevUri: string;
     appNameKey: string;
     appName: string;
-    lssUserManager: LssUserManager;
     _environmentHandler(isDev: boolean): void;
     private _createUri;
     private _getTokenAsync;
