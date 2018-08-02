@@ -1,6 +1,6 @@
 ﻿{
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "lib": [
       "es2016",
       "dom"
@@ -24,8 +24,7 @@
     "bower_components/polymer/types/polymer-element.d.ts",
     "bower_components/polymer-decorators/polymer-decorators.d.ts",
     "bower_components/lss-user-manager/types/lss-user-manager.d.ts",
-    "bower_components/titanium-dependency-injection/types/titanium-requester-mixin.d.ts",
-    "bower_components/titanium-dependency-injection/types/titanium-requester-mixin.d.ts",
+    "bower_components/lss-user-manager/types/authenticated-token-behavior.d.ts",
     "src/**/*.ts"
   ]
 }
