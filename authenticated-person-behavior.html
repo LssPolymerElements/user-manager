@@ -31,6 +31,7 @@
                 ready() {
                     super.ready();
                     window.addEventListener('um-auth-complete', this._onAuthComplete);
+                    window.dispatchEvent(new CustomEvent('um-request-token'));
                 }
                 _onAuthComplete(e) {
                     if (!e.detail.rejected) {

@@ -1,4 +1,5 @@
-﻿declare var jwt_decode: any;
+﻿/// <reference path="./LssJwtToken.ts" />
+declare var jwt_decode: any;
 
 @Polymer.decorators.customElement('lss-user-manager')
 class LssUserManager extends Polymer.Element {

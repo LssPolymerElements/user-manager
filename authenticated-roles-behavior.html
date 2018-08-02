@@ -18,10 +18,13 @@
                 ready() {
                     super.ready();
                     window.addEventListener('um-auth-complete', this._onAuthComplete);
+                    window.dispatchEvent(new CustomEvent('um-request-token'));
                 }
                 _onAuthComplete(e) {
                     if (!e.detail.rejected) {
-                        this.roles = e.detail.jwtToken.role;
+                        if (JSON.stringify(this.roles) !== JSON.stringify(e.detail.jwtToken.role)) {
+                            this.roles = e.detail.jwtToken.role;
+                        }
                     }
                 }
             }
