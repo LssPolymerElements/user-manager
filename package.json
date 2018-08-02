@@ -3,7 +3,9 @@
   "version": "6.0.0",
   "description": "",
   "main": "user-manager.html",
-  "dependencies": {},
+  "dependencies": {
+    "babel-polyfill": "^6.26.0"
+  },
   "devDependencies": {
     "tslint": "^4.0.2",
     "browser-sync": "^2.18.2",

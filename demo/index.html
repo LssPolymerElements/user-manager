@@ -11,6 +11,34 @@
     <link rel="import" href="./authenticated-person-id-behavior-demo.html">
     <link rel="import" href="./authenticated-roles-behavior-demo.html">
     <link rel="import" href="./authenticated-person-behavior-demo.html">
+
+    <script>
+        //load babel if browers doesn't have proises polyfills
+        (function () {
+            if (window.navigator.userAgent.indexOf("Edge") > -1 || typeof Promise === "undefined" || Promise.toString()
+                .indexOf("[native code]") === -1) {
+                var e = document.createElement('script');
+                e.src = '/node_modules/babel-polyfill/dist/polyfill.min.js';
+                document.head.appendChild(e);
+                console.log("bable polyfil loaded.");
+            }
+
+        })();
+
+        //load fetch polyfills
+        (function () {
+            if (typeof window.fetch === "function") {
+                // browser has fetch
+            } else {
+                // polyfill fetch
+                var e = document.createElement('script');
+                e.src = '/bower_components/fetch/fetch.js';
+                document.head.appendChild(e);
+                console.log("Fetch Polyfill loaded");
+            }
+        })();
+    </script>
+
 </head>
 
 <body>
