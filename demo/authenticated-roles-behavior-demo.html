@@ -1,0 +1,38 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-styles/typography.html">
+<link rel="import" href="../authenticated-roles-behavior.html">
+
+<dom-module id="authenticated-roles-behavior-demo">
+    <template>
+        <style>
+            h1 {
+                @apply --paper-font-title;
+            }
+
+            um-scope {
+                @apply --layout-horizontal;
+                @apply --layout-center;
+            }
+
+            li {
+                @apply --paper-font-caption;
+            }
+        </style>
+        <h1>Authenticated Roles Behavior Demo Element</h1>
+        <um-prop><b>roles:</b> </um-prop>
+        <ol>
+            <template is="dom-repeat" items="[[roles]]">
+                <li>[[item]]</li>
+            </template>
+        </ol>
+    </template>
+    <script>
+        class AuthenticatedRolesBehaviorDemo extends AuthenticatedRolesBehavior(Polymer.Element) {
+            static get is() {
+                return 'authenticated-roles-behavior-demo';
+            }
+        }
+        customElements.define(AuthenticatedRolesBehaviorDemo.is, AuthenticatedRolesBehaviorDemo);
+    </script>
+</dom-module>

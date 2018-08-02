@@ -1,0 +1,23 @@
+<dom-module id="authenticated-token-behavior">
+    <script type="text/javascript">
+        AuthenticatedTokenBehavior = Polymer.dedupingMixin(superClass => {
+            /* @polymerMixin */
+            class AuthenticatedTokenBehavior extends superClass {
+                _getAccessTokenAsync() {
+                    return new Promise((resolve, reject) => {
+                        var handleUpdate = function listener(e) {
+                            window.removeEventListener('um-auth-complete', handleUpdate);
+                            if (e.detail.rejected) {
+                                reject(e.detail.message);
+                            }
+                            resolve(e.detail.accessToken);
+                        }
+                        window.addEventListener('um-auth-complete', handleUpdate);
+                        window.dispatchEvent(new CustomEvent('um-request-token'));
+                    });
+                }
+            }
+            return AuthenticatedTokenBehavior;
+        });
+    </script>
+</dom-module>

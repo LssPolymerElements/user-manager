@@ -1,51 +1,8 @@
-﻿declare var jwt_decode: any;
-
-class HashParameter {
-  constructor(public key: string, public value: string) {
-  }
-}
-
-class UserManagerIssuer {
-  constructor(public issuer: string, public tokenUri: string) {
-  }
-}
-
-class User {
-  constructor(public firstName: string, public lastName: string, public expirationDate: Date, public personId: number, public roles: Array<string>, public refreshToken: string|null, public accessToken: string|null, public username: string, public fullName: string, public refreshTokenId: string) {
-  }
-
-  clearToken() {
-    this.expirationDate = new Date(Date.now());
-    this.refreshToken = null;
-    this.accessToken = null;
-  }
-
-  saveToLocalStorage(localStorageKey: string) {
-    const data = JSON.stringify(this);
-    window.localStorage.setItem(localStorageKey, data);
-  }
-
-  static fromLocalStorage(localStorageKey: string): User|null {
-    const data = JSON.parse(window.localStorage.getItem(localStorageKey) || '{}');
-    if (data == null || data.refreshToken == null) {
-      return null;
-    }
-
-    return new User(data.firstName, data.lastName, data.expirationDate, data.personId, data.roles, data.refreshToken, data.accessToken, data.username, data.fullName, data.refreshTokenId);
-  }
-}
+﻿/// <reference path="./LssJwtToken.ts" />
+declare var jwt_decode: any;
 
 @Polymer.decorators.customElement('lss-user-manager')
 class LssUserManager extends Polymer.Element {
-  @Polymer.decorators.property({type: String})
-  localStorageKey: string = 'LgUser';
-
-  @Polymer.decorators.property({notify: true, type: String})
-  redirectUrl: string = 'https://signin.leavitt.com/';
-
-  @Polymer.decorators.property({notify: true, type: String})
-  redirectDevUrl: string = 'https://devsignin.leavitt.com/';
-
   @Polymer.decorators.property({notify: true, type: Array})
   roles: Array<string>;
 
@@ -55,25 +12,56 @@ class LssUserManager extends Polymer.Element {
   @Polymer.decorators.property({notify: true, type: String})
   firstName: string;
 
-  @Polymer.decorators.property({type: Array})
-  userManagerIssuers: Array<UserManagerIssuer> = [new UserManagerIssuer('https://oauth2.leavitt.com/', 'https://oauth2.leavitt.com/token'), new UserManagerIssuer('https://loginapi.unitedvalley.com/', 'https://loginapi.unitedvalley.com/Token')];
-
-  @Polymer.decorators.property({type: Boolean, notify: true})
-  disableAutoload: boolean = false;
+  @Polymer.decorators.property({notify: true, type: String})
+  lastName: string;
 
   @Polymer.decorators.property({type: Number, notify: true})
   personId: number = 0;
 
-  @Polymer.decorators.property({type: Object})
-  user: User = {} as User;
+  @Polymer.decorators.property({type: String})
+  redirectUrl: string = 'https://signin.leavitt.com/';
+
+  @Polymer.decorators.property({type: String})
+  redirectDevUrl: string = 'https://devsignin.leavitt.com/';
+
+  @Polymer.decorators.property({type: String})
+  tokenUri: string = 'https://oauth2.leavitt.com/token';
+
+  @Polymer.decorators.property({type: Boolean})
+  disableAutoload: boolean = false;
+
+  @Polymer.decorators.property({type: Boolean})
+  isAuthenticating: boolean;
+
+  constructor() {
+    super();
+    this.handleRequestTokenRequest = this.handleRequestTokenRequest.bind(this);
+  }
 
   async connectedCallback() {
     super.connectedCallback();
 
-    window.addEventListener('lss-user-manager-user-changed', this._handleUserChanged.bind(this));
-
-    if (!this.disableAutoload) {
+    if (!this.disableAutoload || this._getTokenfromUrl('refreshToken')) {
       await this.authenticateAsync();
+    }
+
+    window.addEventListener('um-request-token', this.handleRequestTokenRequest);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    window.removeEventListener('um-request-token', this.handleRequestTokenRequest);
+  }
+
+  private handleRequestTokenRequest() {
+    if (this.isAuthenticating) {
+      return;
+    }
+
+    try {
+      this.authenticateAsync();
+    } catch (error) {
     }
   }
 
@@ -87,22 +75,8 @@ class LssUserManager extends Polymer.Element {
     document.location.href = redirectUrl;
   }
 
-  isDevelopment(): boolean {
-    if (document == null || document.location == null || document.location.host == null)
-      return true;
-
-    const host = document.location.host;
-    if (host.indexOf('dev') !== -1)
-      return true;
-
-    if (host.indexOf('localhost') !== -1)
-      return true;
-
-    return false;
-  }
-
-  private _getHashParametersFromUrl(): Array<HashParameter> {
-    const hashParams = new Array<HashParameter>();
+  private _getHashParametersFromUrl(): Array<{key: string, value: string}> {
+    const hashParams = [];
     if (window.location.hash) {
       let hash = window.location.hash.substring(1);
       hash = decodeURIComponent(hash);
@@ -112,7 +86,7 @@ class LssUserManager extends Polymer.Element {
         if (hashArray.hasOwnProperty(i)) {
           const keyValPair = hashArray[i].split('=');
           if (keyValPair.length > 1) {
-            hashParams.push(new HashParameter(keyValPair[0], decodeURIComponent(keyValPair[1])));
+            hashParams.push({key: keyValPair[0], value: decodeURIComponent(keyValPair[1])});
           }
         }
       }
@@ -124,7 +98,7 @@ class LssUserManager extends Polymer.Element {
     try {
       return JSON.parse(window.localStorage.getItem(localStorageKey) || '[]');
     } catch (error) {
-      console.log(`Failed to parse scopes in local storage. ${error}`);
+      console.warn(`Failed to parse scopes in local storage. ${error}`);
       return [];
     }
   }
@@ -144,38 +118,61 @@ class LssUserManager extends Polymer.Element {
     }
   }
 
-  private _decodeAccessToken(accessToken: string): TokenDto {
-    return jwt_decode(accessToken) as TokenDto;
-  }
+  private _decodeAccessToken(accessToken: string): LssJwtToken|null {
+    if (!accessToken) {
+      return null;
+    }
 
-  private lastIssuer = null;
-  private _disableInternalListener = false;
-  private _disablePropertyObservers = false;
-  private _createUserFromToken(refreshToken: string, accessToken: string): User|null {
-    let decodedToken: any;
-
+    let token;
     try {
-      decodedToken = this._decodeAccessToken(accessToken);
+      token = jwt_decode(accessToken) as LssJwtToken;
     } catch (error) {
       // Invalid JWT token format
       return null;
     }
 
-    this.lastIssuer = decodedToken.iss;
-    const expirationDate = new Date(0);
-    expirationDate.setUTCSeconds(decodedToken.exp);
+    if (token) {
+      token.exp = new Date(0).setUTCSeconds(token.exp as number);
+    }
+    return token;
+  }
+
+  private _validateToken(accessToken: LssJwtToken): boolean {
     let currentDate = new Date();
     currentDate.setSeconds(currentDate.getSeconds() + 30);
 
-    if (!(expirationDate > currentDate && this.userManagerIssuers.some((o) => o.issuer === decodedToken.iss))) {
-      // Access token expired or not from a valid issuer
-      return null;
+    if (accessToken.iss !== 'https://oauth2.leavitt.com/') {
+      return false;
     }
 
-    return new User(decodedToken.given_name, decodedToken.family_name, expirationDate, Number(decodedToken.nameid) || 0, decodedToken.role, refreshToken, accessToken, decodedToken.unique_name, decodedToken.unique_name, decodedToken.RefreshTokenId);
+    if (accessToken.exp <= currentDate) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private _getAccessTokenFromLocalStorage(): string {
+    return window.localStorage.getItem('LG-AUTH-AT') || '';
+  }
+
+  private _saveAccessTokenToLocalStorage(accessToken: string): void {
+    window.localStorage.setItem('LG-AUTH-AT', accessToken);
+  }
+
+  private _getRefreshTokenFromLocalStorage(): string {
+    return window.localStorage.getItem('LG-AUTH-RT') || '';
+  }
+
+  private _saveRefreshTokenToLocalStorage(accessToken: string): void {
+    window.localStorage.setItem('LG-AUTH-RT', accessToken);
   }
 
   private async _getAccessTokenFromApiAsync(refreshToken: string, uri: string): Promise<string> {
+    if (!window.navigator.onLine) {
+      return Promise.reject('Computer not connected. Make sure your computer is connected to the internet.');
+    }
+
     const claimScopes = this._getClaimScopes('LgClaimScopes');
     const body = {grant_type: 'refresh_token', refresh_token: refreshToken} as any;
 
@@ -189,7 +186,7 @@ class LssUserManager extends Polymer.Element {
     try {
       json = await response.json();
     } catch (error) {
-      return Promise.reject('The server sent back invalid JSON.');
+      return Promise.reject('Get Auth Token: The server sent back invalid JSON.');
     }
 
     if (response.status === 200 && json.access_token) {
@@ -206,145 +203,90 @@ class LssUserManager extends Polymer.Element {
     return Promise.reject('Not authenticated');
   }
 
-  @Polymer
-      .decorators.observe('personId', 'roles.length') protected _rolesChanged(personId: number) {
-    if (!this.roles || !this.personId || this._disablePropertyObservers)
-      return;
-
-    this.user.roles = this.roles;
-    this.user.personId = personId;
-    this.notifyUserChanged(this.user);
+  private _setLocalProperties(jwtToken: LssJwtToken) {
+    this.personId = Number(jwtToken.nameid);
+    this.fullname = jwtToken.unique_name;
+    this.firstName = jwtToken.given_name;
+    this.lastName = jwtToken.family_name;
+    this.roles = jwtToken.role;
   }
 
-  private _updateElementPropertiesFromUser(user: User) {
-    this._disablePropertyObservers = true;  // We dont want to internally observe this change.
-    this.user = JSON.parse(JSON.stringify(user));
-    this.roles = this.user.roles;
-    this.fullname = this.user.fullName;
-    this.firstName = this.user.firstName;
-    this.personId = this.user.personId;
-    this._disablePropertyObservers = false;
-  }
-
-  private async _getUserAsync(): Promise<User> {
-    let accessToken: any = this._getTokenfromUrl('accessToken');
-    let refreshToken = this._getTokenfromUrl('refreshToken');
-
-    if (!accessToken && !refreshToken) {
-      // Fallback get tokens from localstorage if the tokens are not in the URL
-      const user = User.fromLocalStorage(this.localStorageKey);
-      if (user != null) {
-        accessToken = user.accessToken;
-        refreshToken = user.refreshToken;
-        if (this._createUserFromToken(user.refreshToken || '', user.accessToken || '')) {  //_createUserFromToken also validates access token. TODO: split logic out
-          this._clearHashFromUrl();
-          return Promise.resolve(user);
-        }
-      }
-    }
+  private async _getTokenAsync(): Promise<LssJwtToken> {
+    let accessToken = this._getAccessTokenFromLocalStorage();
+    let refreshToken = this._getTokenfromUrl('refreshToken') || this._getRefreshTokenFromLocalStorage();
+    this._clearHashFromUrl();
 
     // validate uri access token
-    if (accessToken != null) {
-      let user = this._createUserFromToken(refreshToken || '', accessToken);
-      if (user != null) {
-        user.saveToLocalStorage(this.localStorageKey);
-        this._clearHashFromUrl();
-        return Promise.resolve(user);
-      }
+    const jwtToken = this._decodeAccessToken(accessToken);
+    if (jwtToken && this._validateToken(jwtToken)) {
+      this._saveAccessTokenToLocalStorage(accessToken);
+      this._saveRefreshTokenToLocalStorage(refreshToken);
+      this._setLocalProperties(jwtToken);
+      return Promise.resolve(jwtToken);
     }
 
     if (refreshToken != null) {
-      try {
-        let hasToken = false;
-        let issuers = this.userManagerIssuers;
-        if (this.lastIssuer != null) {
-          issuers = issuers.filter(o => o.issuer === this.lastIssuer);
-        }
-
-        if (!window.navigator.onLine) {
-          return Promise.reject('Computer not connected. Make sure your computer is connected to the internet.');
-        }
-
-        for (let issuer of issuers) {
-          if (hasToken)
-            break;
-          try {
-            accessToken = await this._getAccessTokenFromApiAsync(refreshToken, issuer.tokenUri);
-            hasToken = true;
-          } catch (error) {
-            console.warn(error);
-          }
-        }
-
-        let user = this._createUserFromToken(refreshToken || '', accessToken);
-        if (user != null) {
-          user.saveToLocalStorage(this.localStorageKey);
-          this._clearHashFromUrl();
-          return Promise.resolve(user);
-        }
-        return Promise.reject('Not authenticated');
-
-      } catch (error) {
-        return Promise.reject(error);
+      accessToken = await this._getAccessTokenFromApiAsync(refreshToken, this.tokenUri);
+      const jwtToken = this._decodeAccessToken(accessToken);
+      if (jwtToken && this._validateToken(jwtToken)) {
+        this._saveAccessTokenToLocalStorage(accessToken);
+        this._saveRefreshTokenToLocalStorage(refreshToken);
+        this._setLocalProperties(jwtToken);
+        return Promise.resolve(jwtToken);
       }
     }
+
     return Promise.reject('Not authenticated');
   }
 
-  logoutAsync(): Promise<void> {
-    localStorage.removeItem(this.localStorageKey);
-    this._redirectToSignOut(document.location.href);
-    return Promise.resolve();
-  }
-
-  private _handleUserChanged(e: any) {
-    if (this._disableInternalListener)
-      return;
-
-    this._updateElementPropertiesFromUser(e.detail.user);
-  }
-
-  async authenticateAsync(): Promise<User> {
-    return new Promise<User>((resolve, reject) => {
-      const _window = window as any;
-      if (_window.__lss_user_manager_resolving) {
-        const self = this;
-        this._disableInternalListener = true;  // This listener is active so disable the outer to prevent notifications
-        _window.addEventListener('lss-user-manager-user-changed', function listener(e: any) {
-          _window.removeEventListener('lss-user-manager-user-changed', listener);
-          self._disableInternalListener = false;
-          const user = e.detail.user;
-          self.user = user;
-          self._updateElementPropertiesFromUser(user);
-          resolve(user);
-        });
-      } else {
-        _window.__lss_user_manager_resolving = true;
-        this._getUserAsync()
-            .then((user) => {
-              _window.__lss_user_manager_resolving = false;
-              this.notifyUserChanged(user);
-              this._updateElementPropertiesFromUser(user);
-              resolve(user);
-            })
-            .catch((error) => {
-              if (error === 'Not authenticated') {
-                this._redirectToLogin(document.location.href);
-                return;  // Wait for the redirect to happen with a unreturned promise
-              }
-              reject(error);
-            });
+  async authenticateAsync(): Promise<LssJwtToken> {
+    return new Promise<LssJwtToken>(async (resolve, reject) => {
+      let jwtToken;
+      try {
+        this.isAuthenticating = true;
+        jwtToken = await this._getTokenAsync();
+      } catch (error) {
+        if (error === 'Not authenticated') {
+          this._redirectToLogin(document.location.href);
+          this.isAuthenticating = false;
+          return;  // Wait for the redirect to happen with a unreturned promise
+        }
+        window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {rejected: true, message: error}}));
+        this.isAuthenticating = false;
+        reject(error);
       }
+      window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {jwtToken: jwtToken, accessToken: this._getAccessTokenFromLocalStorage()}}));
+      this.isAuthenticating = false;
+      resolve(jwtToken);
     });
   }
 
-  notifyUserChanged(user: User) {
-    this._disableInternalListener = true;
-    window.dispatchEvent(new CustomEvent('lss-user-manager-user-changed', {detail: {user: user}}));
-    this._disableInternalListener = false;
+  logout() {
+    localStorage.removeItem('LG-AUTH-AT');
+    localStorage.removeItem('LG-AUTH-RT');
+
+    window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {jwtToken: {given_name: '', unique_name: '', family_name: '', nameid: 0, role: []}}}));
+
+    this.personId = 0;
+    this.fullname = '';
+    this.firstName = '';
+    this.lastName = '';
+    this.roles = [];
+    this._redirectToSignOut(document.location.href);
+    return;
   }
 
-  async authenticateAndGetUserAsync(): Promise<User> {
-    return await this.authenticateAsync();
+  isDevelopment(): boolean {
+    if (document == null || document.location == null || document.location.host == null)
+      return true;
+
+    const host = document.location.host;
+    if (host.indexOf('dev') !== -1)
+      return true;
+
+    if (host.indexOf('localhost') !== -1)
+      return true;
+
+    return false;
   }
 }
