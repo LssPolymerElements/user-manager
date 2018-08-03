@@ -6,5 +6,5 @@ interface AuthenticatedRolesBehaviorConstructor {
 
 interface AuthenticatedRolesBehavior {
   roles: Array<string>;
-  _onAuthComplete(e: Event)
+  _getRolesAsync(): Promise<Array<string>>;
 }

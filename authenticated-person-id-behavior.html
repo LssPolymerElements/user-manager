@@ -12,19 +12,27 @@
                         }
                     }
                 }
-                constructor() {
-                    super();
-                    this._onAuthComplete = this._onAuthComplete.bind(this);
-                }
                 ready() {
                     super.ready();
-                    window.addEventListener('um-auth-complete', this._onAuthComplete);
+                    window.addEventListener('um-auth-complete', () => {
+                        if (!e.detail.rejected) {
+                            this.personId = Number(e.detail.jwtToken.nameid);
+                        }
+                    });
                     window.dispatchEvent(new CustomEvent('um-request-token'));
                 }
-                _onAuthComplete(e) {
-                    if (!e.detail.rejected) {
-                        this.personId = Number(e.detail.jwtToken.nameid);
-                    }
+                _getPersonIdAsync() {
+                    return new Promise((resolve, reject) => {
+                        var handleUpdate = function listener(e) {
+                            window.removeEventListener('um-auth-complete', handleUpdate);
+                            if (e.detail.rejected) {
+                                reject(e.detail.message);
+                            }
+                            resolve(Number(e.detail.jwtToken.nameid));
+                        }
+                        window.addEventListener('um-auth-complete', handleUpdate);
+                        window.dispatchEvent(new CustomEvent('um-request-token'));
+                    });
                 }
             }
             return AuthenticatedPersonIdBehavior;

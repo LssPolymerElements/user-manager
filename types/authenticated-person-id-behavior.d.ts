@@ -6,5 +6,5 @@ interface AuthenticatedPersonIdBehaviorConstructor {
 
 interface AuthenticatedPersonIdBehavior {
   personId: number;
-  _onAuthComplete(e: Event)
+  _getPersonIdAsync(): Promise<number>;
 }

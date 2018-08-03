@@ -24,22 +24,35 @@
                         }
                     }
                 }
-                constructor() {
-                    super();
-                    this._onAuthComplete = this._onAuthComplete.bind(this);
-                }
                 ready() {
                     super.ready();
-                    window.addEventListener('um-auth-complete', this._onAuthComplete);
+                    window.addEventListener('um-auth-complete', (e) => {
+                        if (!e.detail.rejected) {
+                            this.personId = Number(e.detail.jwtToken.nameid);
+                            this.fullname = e.detail.jwtToken.unique_name;
+                            this.firstName = e.detail.jwtToken.given_name;
+                            this.lastName = e.detail.jwtToken.family_name;
+                        }
+                    });
                     window.dispatchEvent(new CustomEvent('um-request-token'));
                 }
-                _onAuthComplete(e) {
-                    if (!e.detail.rejected) {
-                        this.personId = Number(e.detail.jwtToken.nameid);
-                        this.fullname = e.detail.jwtToken.unique_name;
-                        this.firstName = e.detail.jwtToken.given_name;
-                        this.lastName = e.detail.jwtToken.family_name;
-                    }
+                _getPersonAsync() {
+                    return new Promise((resolve, reject) => {
+                        var handleUpdate = function listener(e) {
+                            window.removeEventListener('um-auth-complete', handleUpdate);
+                            if (e.detail.rejected) {
+                                reject(e.detail.message);
+                            }
+                            resolve({
+                                personId: Number(e.detail.jwtToken.nameid),
+                                fullname: e.detail.jwtToken.unique_name,
+                                firstName: e.detail.jwtToken.given_name,
+                                lastName: e.detail.jwtToken.family_name
+                            });
+                        }
+                        window.addEventListener('um-auth-complete', handleUpdate);
+                        window.dispatchEvent(new CustomEvent('um-request-token'));
+                    });
                 }
             }
             return AuthenticatedPersonBehavior;
