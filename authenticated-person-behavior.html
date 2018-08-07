@@ -24,22 +24,45 @@
                         }
                     }
                 }
-                constructor() {
-                    super();
-                    this._onAuthComplete = this._onAuthComplete.bind(this);
-                }
-                ready() {
+                async ready() {
                     super.ready();
-                    window.addEventListener('um-auth-complete', this._onAuthComplete);
-                    window.dispatchEvent(new CustomEvent('um-request-token'));
+                    window.addEventListener('um-person-updated', (e) => {
+                        this.setProperties({
+                            personId: e.detail.personId,
+                            fullname: e.detail.fullname,
+                            firstName: e.detail.firstName,
+                            lastName: e.detail.lastName
+                        });
+                        this.personId = e.detail.personId;
+                        this.fullname = e.detail.fullname;
+                        this.firstName = e.detail.firstName;
+                        this.lastName = e.detail.lastName;
+                    });
+                    try {
+                        let person = await this._getPersonAsync();
+                        this.setProperties({
+                            personId: person.personId,
+                            fullname: person.fullname,
+                            firstName: person.firstName,
+                            lastName: person.lastName
+                        });
+                    } catch (e) {}
                 }
-                _onAuthComplete(e) {
-                    if (!e.detail.rejected) {
-                        this.personId = Number(e.detail.jwtToken.nameid);
-                        this.fullname = e.detail.jwtToken.unique_name;
-                        this.firstName = e.detail.jwtToken.given_name;
-                        this.lastName = e.detail.jwtToken.family_name;
-                    }
+                _getPersonAsync() {
+                    return new Promise((resolve, reject) => {
+                        var handleUpdate = function listener(e) {
+                            window.removeEventListener('um-person', handleUpdate);
+                            if (e.detail.rejected) {
+                                console.log('rejected token in behavior.');
+                                reject(e.detail.message);
+                            }
+                            console.log('got token in behavior.');
+                            resolve(e.detail);
+                        }
+                        console.log('requesting person...');
+                        window.addEventListener('um-person', handleUpdate);
+                        window.dispatchEvent(new CustomEvent('um-request-person'));
+                    });
                 }
             }
             return AuthenticatedPersonBehavior;

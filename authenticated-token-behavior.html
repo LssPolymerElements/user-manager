@@ -6,13 +6,14 @@
                 _getAccessTokenAsync() {
                     return new Promise((resolve, reject) => {
                         var handleUpdate = function listener(e) {
-                            window.removeEventListener('um-auth-complete', handleUpdate);
+                            window.removeEventListener('um-token', handleUpdate);
                             if (e.detail.rejected) {
                                 reject(e.detail.message);
                             }
                             resolve(e.detail.accessToken);
                         }
-                        window.addEventListener('um-auth-complete', handleUpdate);
+                        window.addEventListener('um-token', handleUpdate);
+                        console.log('requesting token...');
                         window.dispatchEvent(new CustomEvent('um-request-token'));
                     });
                 }

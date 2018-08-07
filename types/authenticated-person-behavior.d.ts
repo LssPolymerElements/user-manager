@@ -9,5 +9,5 @@ interface AuthenticatedPersonBehavior {
   fullname: string;
   firstName: string;
   lastName: string;
-  _onAuthComplete(e: Event)
+  _getPersonAsync(): Promise<{personId: number, fullname: string, firstName: string, lastName: string}>;
 }

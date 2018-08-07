@@ -12,21 +12,36 @@
                         }
                     }
                 }
-                constructor() {
-                    super();
-                    this._onAuthComplete = this._onAuthComplete.bind(this);
-                }
-                ready() {
+                async ready() {
                     super.ready();
-                    window.addEventListener('um-auth-complete', this._onAuthComplete);
-                    window.dispatchEvent(new CustomEvent('um-request-token'));
-                }
-                _onAuthComplete(e) {
-                    if (!e.detail.rejected) {
-                        if (JSON.stringify(this.roles) !== JSON.stringify(e.detail.jwtToken.role)) {
-                            this.roles = e.detail.jwtToken.role;
+                    window.addEventListener('um-role-added', (e) => {
+                        this.push('roles', e.detail.role);
+                    });
+
+                    window.addEventListener('um-role-removed', (e) => {
+                        var index = this.roles.indexOf(e.detail.role);
+                        if (index !== -1) {
+                            this.splice('roles', index, 1);
                         }
-                    }
+                    });
+
+                    try {
+                        this.roles = await this._getRolesAsync();
+                    } catch (e) {}
+                }
+                _getRolesAsync() {
+                    return new Promise((resolve, reject) => {
+                        var handleUpdate = function listener(e) {
+                            window.removeEventListener('um-roles', handleUpdate);
+                            if (e.detail.rejected) {
+                                reject(e.detail.message);
+                            }
+                            resolve(e.detail.roles);
+                        }
+                        window.addEventListener('um-roles', handleUpdate);
+                        console.log('requesting roles...');
+                        window.dispatchEvent(new CustomEvent('um-request-roles'));
+                    });
                 }
             }
             return AuthenticatedRolesBehavior;
