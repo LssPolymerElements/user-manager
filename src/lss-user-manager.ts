@@ -4,7 +4,7 @@ declare var jwt_decode: any;
 @Polymer.decorators.customElement('lss-user-manager')
 class LssUserManager extends Polymer.Element {
   @Polymer.decorators.property({notify: true, type: Array})
-  roles: Array<string>;
+  roles: Array<string> = [];
 
   @Polymer.decorators.property({notify: true, type: String})
   fullname: string;
@@ -33,36 +33,57 @@ class LssUserManager extends Polymer.Element {
   @Polymer.decorators.property({type: Boolean})
   isAuthenticating: boolean;
 
-  constructor() {
-    super();
-    this.handleRequestTokenRequest = this.handleRequestTokenRequest.bind(this);
-  }
+  private _hasAuthenticated = false;
 
-  async connectedCallback() {
-    super.connectedCallback();
+  async ready() {
+    console.log('user manager ready');
+    super.ready();
+
+    window.addEventListener('um-request-token', async () => {
+      try {
+        const token = await this.authenticateAsync();
+        window.dispatchEvent(new CustomEvent('um-token', {detail: {jwtToken: token, accessToken: this._getAccessTokenFromLocalStorage()}}));
+
+      } catch (error) {
+        window.dispatchEvent(new CustomEvent('um-token', {detail: {rejected: true, message: error}}));
+      }
+    });
+
+    window.addEventListener('um-request-roles', async () => {
+      if (!this._hasAuthenticated) {
+        try {
+          await this.authenticateAsync();
+        } catch (error) {
+          window.dispatchEvent(new CustomEvent('um-roles', {detail: {rejected: true, message: error}}));
+        }
+      }
+
+      window.dispatchEvent(new CustomEvent('um-roles', {detail: {roles: this._clone(this.roles)}}));
+    });
+
+    window.addEventListener('um-request-person', async () => {
+      if (!this._hasAuthenticated) {
+        try {
+          await this.authenticateAsync();
+        } catch (error) {
+          window.dispatchEvent(new CustomEvent('um-person', {detail: {rejected: true, message: error}}));
+        }
+      }
+      window.dispatchEvent(new CustomEvent('um-person', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName}}));
+    });
 
     if (!this.disableAutoload || this._getTokenfromUrl('refreshToken')) {
       await this.authenticateAsync();
     }
-
-    window.addEventListener('um-request-token', this.handleRequestTokenRequest);
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-
-    window.removeEventListener('um-request-token', this.handleRequestTokenRequest);
+  @Polymer
+      .decorators.observe('personId', 'fullname', 'firstName', 'lastName') protected _handlePersonChange() {
+    window.dispatchEvent(new CustomEvent('um-person-updated', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName}}));
   }
 
-  private handleRequestTokenRequest() {
-    if (this.isAuthenticating) {
-      return;
-    }
-
-    try {
-      this.authenticateAsync();
-    } catch (error) {
-    }
+  private _clone(obj: any) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
   private _redirectToLogin(continueUrl: string) {
@@ -164,8 +185,8 @@ class LssUserManager extends Polymer.Element {
     return window.localStorage.getItem('LG-AUTH-RT') || '';
   }
 
-  private _saveRefreshTokenToLocalStorage(accessToken: string): void {
-    window.localStorage.setItem('LG-AUTH-RT', accessToken);
+  private _saveRefreshTokenToLocalStorage(accessToken: string|null): void {
+    window.localStorage.setItem('LG-AUTH-RT', accessToken || '');
   }
 
   private async _getAccessTokenFromApiAsync(refreshToken: string, uri: string): Promise<string> {
@@ -204,34 +225,61 @@ class LssUserManager extends Polymer.Element {
   }
 
   private _setLocalProperties(jwtToken: LssJwtToken) {
-    this.personId = Number(jwtToken.nameid);
-    this.fullname = jwtToken.unique_name;
-    this.firstName = jwtToken.given_name;
-    this.lastName = jwtToken.family_name;
-    this.roles = jwtToken.role;
+    // Batch set local properties.
+    this.setProperties({personId: Number(jwtToken.nameid), fullname: jwtToken.unique_name, firstName: jwtToken.given_name, lastName: jwtToken.family_name});
+
+    // Sync roles to local array and notifiy behaviors.
+    // Add new roles
+    jwtToken.role.forEach(o => {
+      if (this.roles.indexOf(o) === -1) {
+        this.push('roles', o);
+        window.dispatchEvent(new CustomEvent('um-role-added', {detail: {role: o}}));
+      }
+    });
+
+    // Remove old roles
+    this.roles.forEach((o, i) => {
+      if (jwtToken.role.indexOf(o) === -1) {
+        this.splice('roles', i, 1);
+        window.dispatchEvent(new CustomEvent('um-role-removed', {detail: {role: o}}));
+      }
+    });
   }
 
   private async _getTokenAsync(): Promise<LssJwtToken> {
     let accessToken = this._getAccessTokenFromLocalStorage();
-    let refreshToken = this._getTokenfromUrl('refreshToken') || this._getRefreshTokenFromLocalStorage();
+    let refreshToken = this._getTokenfromUrl('refreshToken') || this._getRefreshTokenFromLocalStorage() || null;
+    console.log('refresh token:', refreshToken);
+
     this._clearHashFromUrl();
 
     // validate uri access token
     const jwtToken = this._decodeAccessToken(accessToken);
     if (jwtToken && this._validateToken(jwtToken)) {
+      console.log('valid token!');
+      this.dispatchEvent(new CustomEvent('token', {detail: accessToken}));
       this._saveAccessTokenToLocalStorage(accessToken);
       this._saveRefreshTokenToLocalStorage(refreshToken);
       this._setLocalProperties(jwtToken);
+      this._hasAuthenticated = true;
       return Promise.resolve(jwtToken);
     }
 
     if (refreshToken != null) {
-      accessToken = await this._getAccessTokenFromApiAsync(refreshToken, this.tokenUri);
+      try {
+        accessToken = await this._getAccessTokenFromApiAsync(refreshToken, this.tokenUri);
+      } catch (error) {
+        this.dispatchEvent(new CustomEvent('token', {detail: {rejected: true, message: error}}));
+        return Promise.reject(error);
+      }
+
       const jwtToken = this._decodeAccessToken(accessToken);
       if (jwtToken && this._validateToken(jwtToken)) {
+        this.dispatchEvent(new CustomEvent('token', {detail: accessToken}));
         this._saveAccessTokenToLocalStorage(accessToken);
         this._saveRefreshTokenToLocalStorage(refreshToken);
         this._setLocalProperties(jwtToken);
+        this._hasAuthenticated = true;
         return Promise.resolve(jwtToken);
       }
     }
@@ -240,22 +288,37 @@ class LssUserManager extends Polymer.Element {
   }
 
   async authenticateAsync(): Promise<LssJwtToken> {
+    if (this.isAuthenticating) {
+      console.log('waiting for first promise');
+      return new Promise<LssJwtToken>((resolve, reject) => {
+        let listener = (e: any) => {
+          this.removeEventListener('token', e);
+          if (e.detail.rejected) {
+            console.log('rejected!');
+            reject(e.detail.message);
+          }
+          resolve(e.detail.accessToken);
+          console.log('resolved!');
+        };
+        this.addEventListener('token', listener);
+      });
+    }
+
     return new Promise<LssJwtToken>(async (resolve, reject) => {
       let jwtToken;
       try {
         this.isAuthenticating = true;
         jwtToken = await this._getTokenAsync();
+
       } catch (error) {
         if (error === 'Not authenticated') {
           this._redirectToLogin(document.location.href);
           this.isAuthenticating = false;
           return;  // Wait for the redirect to happen with a unreturned promise
         }
-        window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {rejected: true, message: error}}));
         this.isAuthenticating = false;
         reject(error);
       }
-      window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {jwtToken: jwtToken, accessToken: this._getAccessTokenFromLocalStorage()}}));
       this.isAuthenticating = false;
       resolve(jwtToken);
     });
@@ -265,12 +328,11 @@ class LssUserManager extends Polymer.Element {
     localStorage.removeItem('LG-AUTH-AT');
     localStorage.removeItem('LG-AUTH-RT');
 
-    window.dispatchEvent(new CustomEvent('um-auth-complete', {detail: {jwtToken: {given_name: '', unique_name: '', family_name: '', nameid: 0, role: []}}}));
+    this.setProperties({personId: 0, fullname: '', firstName: '', lastName: ''});
 
-    this.personId = 0;
-    this.fullname = '';
-    this.firstName = '';
-    this.lastName = '';
+    this.roles.forEach(o => {
+      window.dispatchEvent(new CustomEvent('um-role-removed', {detail: {role: o}}));
+    });
     this.roles = [];
     this._redirectToSignOut(document.location.href);
     return;

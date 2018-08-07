@@ -11,10 +11,10 @@ declare class LssUserManager extends Polymer.Element {
     tokenUri: string;
     disableAutoload: boolean;
     isAuthenticating: boolean;
-    constructor();
-    connectedCallback(): Promise<void>;
-    disconnectedCallback(): void;
-    private handleRequestTokenRequest;
+    private _hasAuthenticated;
+    ready(): Promise<void>;
+    protected _handlePersonChange(): void;
+    private _clone;
     private _redirectToLogin;
     private _redirectToSignOut;
     private _getHashParametersFromUrl;
