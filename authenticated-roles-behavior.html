@@ -39,6 +39,7 @@
                             resolve(e.detail.roles);
                         }
                         window.addEventListener('um-roles', handleUpdate);
+                        console.log('requesting roles...');
                         window.dispatchEvent(new CustomEvent('um-request-roles'));
                     });
                 }

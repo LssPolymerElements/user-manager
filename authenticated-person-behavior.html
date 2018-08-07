@@ -59,6 +59,7 @@
                             console.log('got token in behavior.');
                             resolve(e.detail);
                         }
+                        console.log('requesting person...');
                         window.addEventListener('um-person', handleUpdate);
                         window.dispatchEvent(new CustomEvent('um-request-person'));
                     });

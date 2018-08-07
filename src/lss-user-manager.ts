@@ -249,8 +249,6 @@ class LssUserManager extends Polymer.Element {
   private async _getTokenAsync(): Promise<LssJwtToken> {
     let accessToken = this._getAccessTokenFromLocalStorage();
     let refreshToken = this._getTokenfromUrl('refreshToken') || this._getRefreshTokenFromLocalStorage() || null;
-    console.log('refresh token:', refreshToken);
-
     this._clearHashFromUrl();
 
     // validate uri access token
@@ -291,8 +289,9 @@ class LssUserManager extends Polymer.Element {
     if (this.isAuthenticating) {
       console.log('waiting for first promise');
       return new Promise<LssJwtToken>((resolve, reject) => {
-        let listener = (e: any) => {
-          this.removeEventListener('token', e);
+        const self = this;
+        let listener = function listener(e: any) {
+          self.removeEventListener('token', listener);
           if (e.detail.rejected) {
             console.log('rejected!');
             reject(e.detail.message);
