@@ -53,13 +53,10 @@
                         var handleUpdate = function listener(e) {
                             window.removeEventListener('um-person', handleUpdate);
                             if (e.detail.rejected) {
-                                console.log('rejected token in behavior.');
                                 reject(e.detail.message);
                             }
-                            console.log('got token in behavior.');
                             resolve(e.detail);
                         }
-                        console.log('requesting person...');
                         window.addEventListener('um-person', handleUpdate);
                         window.dispatchEvent(new CustomEvent('um-request-person'));
                     });

@@ -13,7 +13,6 @@
                             resolve(e.detail.accessToken);
                         }
                         window.addEventListener('um-token', handleUpdate);
-                        console.log('requesting token...');
                         window.dispatchEvent(new CustomEvent('um-request-token'));
                     });
                 }
