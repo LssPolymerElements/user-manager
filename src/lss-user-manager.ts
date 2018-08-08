@@ -36,8 +36,12 @@ class LssUserManager extends Polymer.Element {
   private _hasAuthenticated = false;
 
   async ready() {
-    console.log('user manager ready');
+    console.log('UserManager Ready.');
     super.ready();
+
+    window.addEventListener('um-logout', () => {
+      this.logout();
+    });
 
     window.addEventListener('um-request-token', async () => {
       try {
@@ -254,7 +258,6 @@ class LssUserManager extends Polymer.Element {
     // validate uri access token
     const jwtToken = this._decodeAccessToken(accessToken);
     if (jwtToken && this._validateToken(jwtToken)) {
-      console.log('valid token!');
       this.dispatchEvent(new CustomEvent('token', {detail: accessToken}));
       this._saveAccessTokenToLocalStorage(accessToken);
       this._saveRefreshTokenToLocalStorage(refreshToken);
@@ -287,17 +290,14 @@ class LssUserManager extends Polymer.Element {
 
   async authenticateAsync(): Promise<LssJwtToken> {
     if (this.isAuthenticating) {
-      console.log('waiting for first promise');
       return new Promise<LssJwtToken>((resolve, reject) => {
         const self = this;
         let listener = function listener(e: any) {
           self.removeEventListener('token', listener);
           if (e.detail.rejected) {
-            console.log('rejected!');
             reject(e.detail.message);
           }
           resolve(e.detail.accessToken);
-          console.log('resolved!');
         };
         this.addEventListener('token', listener);
       });
