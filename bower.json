@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "polymer-decorators": "Polymer/polymer-decorators#^1.0.2",
+    "polymer-decorators": "Polymer/polymer-decorators#^2.1.0",
     "lss-user-manager": "^6.0.0"
   },
   "devDependencies": {
