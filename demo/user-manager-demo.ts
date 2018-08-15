@@ -2,6 +2,7 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-styles/paper-styles';
 import 'lss-user-manager/lib/lss-user-manager';
+import './authenticated-token-behavior-demo';
 
 import {customElement, property, query} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
