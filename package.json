@@ -1,22 +1,22 @@
 {
-  "name": "user-manager",
-  "version": "6.0.0",
+  "name": "lss-user-manager",
+  "version": "7.0.0",
   "description": "",
-  "main": "user-manager.html",
+  "main": "lss-user-manager.html",
   "dependencies": {
-    "babel-polyfill": "^6.26.0"
+    "@polymer/decorators": "^3.0.0",
+    "@polymer/polymer": "^3.0.5",
+    "jwt-decode": "^2.2.0"
   },
   "devDependencies": {
+    "@types/jwt-decode": "^2.2.1",
+    "clang-format": "^1.2.2",
     "tslint": "4.0.2",
-    "browser-sync": "^2.18.2",
-    "gulp": "^3.9.1",
-    "typescript": "^2.4.1",
-    "bower": "*",
-    "clang-format": "^1.2.2"
+    "typescript": "^3.0.1"
   },
   "scripts": {
+    "start": "npm run build && cd demo && npm start",
     "prepublish": "npm run build",
-    "postinstall": "bower install",
     "lint": "tslint \"/*.ts\"",
     "build": "tsc",
     "test": "npm run lint && npm run build"

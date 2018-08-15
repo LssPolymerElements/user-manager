@@ -1,4 +1,4 @@
-interface LssJwtToken {
+export interface LssJwtToken {
   IsActiveEmployee: string;
   RefreshTokenId: string;
   aud: string;
