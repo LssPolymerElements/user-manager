@@ -5,17 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
     <title>User Manager Demo</title>
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="./user-manager-demo.html">
-
-
     <script>
         //load babel if browers doesn't have proises polyfills
         (function () {
             if (window.navigator.userAgent.indexOf("Edge") > -1 || typeof Promise === "undefined" || Promise.toString()
                 .indexOf("[native code]") === -1) {
                 var e = document.createElement('script');
-                e.src = '/node_modules/babel-polyfill/dist/polyfill.min.js';
+                e.src = 'node_modules/babel-polyfill/dist/polyfill.min.js';
                 document.head.appendChild(e);
                 console.log("bable polyfil loaded.");
             }
@@ -29,7 +25,7 @@
             } else {
                 // polyfill fetch
                 var e = document.createElement('script');
-                e.src = '/bower_components/fetch/fetch.js';
+                e.src = 'node_modules/whatwg-fetch/fetch.js';
                 document.head.appendChild(e);
                 console.log("Fetch Polyfill loaded");
             }
@@ -41,8 +37,15 @@
 <body>
     <div class="vertical-section-container centered">
         <user-manager-demo></user-manager-demo>
-
     </div>
+    <noscript>
+        Please enable JavaScript to view this website.
+    </noscript>
+    <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <!-- Built with love using PWA Starter Kit -->
+    <script type="module" src="user-manager-demo.js" crossorigin></script>
+
 </body>
 
 </html>
