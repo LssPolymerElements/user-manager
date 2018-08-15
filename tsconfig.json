@@ -1,12 +1,14 @@
 ﻿{
   "compilerOptions": {
     "target": "es6",
+    "module": "es2015",
+    "moduleResolution": "node",
     "lib": [
-      "es2016",
+      "esnext",
       "dom"
     ],
     "experimentalDecorators": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "declaration": true,
     "sourceMap": true,
     "noImplicitReturns": true,
@@ -18,11 +20,9 @@
     "strictNullChecks": true,
     "outDir": "lib",
     "rootDir": "src",
-    "declarationDir": "types"
+    "declarationDir": "lib"
   },
   "include": [
-    "bower_components/polymer/types/polymer-element.d.ts",
-    "bower_components/polymer-decorators/polymer-decorators.d.ts",
     "src/**/*.ts"
   ]
 }
