@@ -18,7 +18,10 @@ test_script:
   - npm --version
   # run tests
   - npm run lint
+  - git config user.email "builds@leavitt.com"
+  - git config user.name "AppVeyor"
   - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
+  
 
 # Don't actually build.
 build: off
