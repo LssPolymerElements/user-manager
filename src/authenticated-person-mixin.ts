@@ -15,17 +15,11 @@ export const authenticatedPersonMixin = <T extends Constructable>(superClass: T)
   async ready() {
     super.ready();
     window.addEventListener('um-person-updated', (e: any) => {
-      this.personId = e.detail.personId;
-      this.fullname = e.detail.fullname;
-      this.firstName = e.detail.firstName;
-      this.lastName = e.detail.lastName;
+      this.setProperties({personId: e.detail.personId, fullname: e.detail.fullname, firstName: e.detail.firstName, lastName: e.detail.lastName});
     });
     try {
       let person: any = await this._getPersonAsync();
-      this.personId = person.personId;
-      this.fullname = person.fullname;
-      this.firstName = person.firstName;
-      this.lastName = person.lastName;
+      this.setProperties({personId: person.personId, fullname: person.fullname, firstName: person.firstName, lastName: person.lastName});
     } catch (e) {
     }
   }
