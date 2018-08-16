@@ -10,6 +10,7 @@ import '@polymer/paper-styles/paper-styles';
 import 'lss-user-manager/lib/lss-user-manager';
 import './authenticated-token-mixin-demo';
 import './authenticated-person-mixin-demo';
+import './authenticated-roles-mixin-demo';
 import { customElement, property, query } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element';
 let UserManagerDemo = class UserManagerDemo extends PolymerElement {
