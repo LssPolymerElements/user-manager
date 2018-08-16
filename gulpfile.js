@@ -47,23 +47,37 @@ gulp.task('serve', (done) => {
     })
 });
 
-// gulp.task('watch', function () {
-//     var directoriesToWatch = ["lib/**/*.js"]
+gulp.task('watch-demo', function () {
+    var directoriesToWatch = ["demo/*.html"]
+    directoriesToWatch.forEach(function (directory) {
+        console.log(`Listening for changes, ${directory}`);
+        gulp.watch(directory, {
+            read: false,
+            verbose: true
+        }).on('change', (_e) => {
+            browserSync.reload();
+        });
+    });
+});
 
-//     directoriesToWatch.forEach(function (directory) {
-//         console.log(`Listening for changes, ${directory}`);
-//         gulp.watch(directory, {
-//             read: false,
-//             verbose: true
-//         }).on('change', (_e) => {
-//             update();
-//         });
-//     });
-// });
+gulp.task('compile-demo', function (done) {
+    var tsc = exec("cd demo && tsc --watch");
+    tsc.stderr.on('close', console.log);
+    tsc.stdout.on('data', o => {
+        //Prevent tsc from clearing the console with \033c
+        console.info(o.replace('\033c', ''));
+        if (o.indexOf('Watching for file changes') > -1) {
+            if (!firstCompile) {
+                browserSync.reload();
+            }
+            firstCompile = false;
+        }
+    })
+});
 
 gulp.task('browser-sync', () => {
     console.log('Start browser sync...');
 
 });
 
-gulp.task('default', ['compile', 'serve']);
+gulp.task('default', ['compile', 'serve', 'watch-demo', 'compile-demo']);

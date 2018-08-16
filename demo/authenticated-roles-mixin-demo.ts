@@ -1,9 +1,9 @@
 
 import '@polymer/paper-button/paper-button';
 
+import {authenticatedRolesMixin} from '@leavittsoftware/lss-user-manager/lib/authenticated-roles-mixin';
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
-import {authenticatedRolesMixin} from 'lss-user-manager/lib/authenticated-roles-mixin';
 
 @customElement('authenticated-roles-mixin-demo')
 export default class AuthenticatedRolesMixinDemo extends authenticatedRolesMixin

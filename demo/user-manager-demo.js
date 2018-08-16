@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-styles/paper-styles';
-import 'lss-user-manager/lib/lss-user-manager';
+import '@leavittsoftware/lss-user-manager/lib/lss-user-manager';
 import './authenticated-token-mixin-demo';
 import './authenticated-person-mixin-demo';
 import './authenticated-roles-mixin-demo';

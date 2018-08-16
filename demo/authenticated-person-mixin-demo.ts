@@ -1,9 +1,9 @@
 
 import '@polymer/paper-button/paper-button';
 
+import {authenticatedPersonMixin} from '@leavittsoftware/lss-user-manager/lib/authenticated-person-mixin';
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
-import {authenticatedPersonMixin} from 'lss-user-manager/lib/authenticated-person-mixin';
 
 @customElement('authenticated-person-mixin-demo')
 export default class AuthenticatedPersonMixinDemo extends authenticatedPersonMixin
