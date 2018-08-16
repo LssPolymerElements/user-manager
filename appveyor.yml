@@ -21,6 +21,9 @@ test_script:
   - git config user.email "builds@leavitt.com"
   - git config user.name "AppVeyor"
  
+deploy_script:
+  - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
+  - npm publish --access public
 
 # Don't actually build.
 build: off
@@ -53,9 +56,5 @@ deploy:
   on:
     branch: master
 
-deploy_script:
-   - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
-   - npm publish --access public
-   on:
-    branch: master
+
  
