@@ -1,6 +1,6 @@
 {
-  "name": "lss-user-manager",
-  "version": "7.0.1",
+  "name": "@leavittsoftware/lss-user-manager",
+  "version": "7.0.2",
   "description": "",
   "main": "lss-user-manager.html",
   "dependencies": {
@@ -19,15 +19,14 @@
   "scripts": {
     "start": "tsc && cd demo && npm start",
     "update-demo": "cd demo && npm run update:local-package",
-    "lint": "tslint \"/*.ts\"",
-    "test": "npm run lint && npm run build"
+    "lint": "tslint \"/*.ts\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LssPolymerElements/user-manager.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Leavitt Software",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/LssPolymerElements/user-manager/issues"
   },
