@@ -1,10 +1,10 @@
 import { ElementMixin } from '@polymer/polymer/lib/mixins/element-mixin';
 declare type Constructable = new (...args: any[]) => ElementMixin;
-export interface AuthenticatedPersonBehaviorConstructor {
-    new (...args: any[]): AuthenticatedPersonBehavior;
+export interface AuthenticatedPersonMixinConstructor {
+    new (...args: any[]): AuthenticatedPersonMixin;
 }
-export interface AuthenticatedPersonBehavior {
+export interface AuthenticatedPersonMixin {
     _getPersonAsync(): Promise<any>;
 }
-export declare const authenticatedPersonMixin: <T extends Constructable>(superClass: T) => T & AuthenticatedPersonBehaviorConstructor;
+export declare const authenticatedPersonMixin: <T extends Constructable>(superClass: T) => T & AuthenticatedPersonMixinConstructor;
 export {};

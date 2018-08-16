@@ -238,7 +238,7 @@ export class LssUserManager extends PolymerElement implements UserManager {
     // Batch set local properties.
     this.setProperties({personId: Number(jwtToken.nameid), fullname: jwtToken.unique_name, firstName: jwtToken.given_name, lastName: jwtToken.family_name});
 
-    // Sync roles to local array and notifiy behaviors.
+    // Sync roles to local array and notifiy mixins.
     // Add new roles
     jwtToken.role.forEach(o => {
       if (this.roles.indexOf(o) === -1) {
