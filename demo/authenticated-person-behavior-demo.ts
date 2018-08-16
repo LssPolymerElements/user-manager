@@ -11,21 +11,25 @@ export default class AuthenticatedPersonBehaviorDemo extends authenticatedPerson
   static get template() {
     return html`
          <style>
-             h1 {
-                 @apply --paper-font-title;
-             }
-         </style>
-         <h1>Authenticated Token Behavior Demo Element</h1>
-         <paper-button raised on-tap="onTap">call _getAccessTokenAsync()</paper-button>`;
-  }
-  onTap() {
-    this._getAccessTokenAsync()
-        .then(function(token) {
-          console.log(token);
-        })
-        .catch(function(error) {
-          console.warn(error);
-        });
+            h1 {
+                @apply --paper-font-title;
+            }
+
+            um-prop {
+                display: block;
+                @apply --paper-font-body1;
+            }
+
+            um-scope {
+                @apply --layout-horizontal;
+                @apply --layout-center;
+            }
+        </style>
+        <h1>Authenticated Person Behavior Demo Element</h1>
+        <um-prop><b>personId:</b> [[personId]]</um-prop>
+        <um-prop><b>firstName:</b> [[firstName]]</um-prop>
+        <um-prop><b>lastName:</b> [[lastName]]</um-prop>
+        <um-prop><b>fullname:</b> [[fullname]]</um-prop>`;
   }
 }
 

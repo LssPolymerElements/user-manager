@@ -1,4 +1,5 @@
-declare type Constructable = new (...args: any[]) => any;
+import { ElementMixin } from '@polymer/polymer/lib/mixins/element-mixin';
+declare type Constructable = new (...args: any[]) => ElementMixin;
 export interface AuthenticatedPersonBehaviorConstructor {
     new (...args: any[]): AuthenticatedPersonBehavior;
 }
