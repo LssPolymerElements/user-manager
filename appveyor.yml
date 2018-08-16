@@ -21,10 +21,6 @@ test_script:
   - git config user.email "builds@leavitt.com"
   - git config user.name "AppVeyor"
  
-deploy_script:
-  - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
-  - npm publish --access public
-
 # Don't actually build.
 build: off
 
@@ -46,15 +42,16 @@ notifications:
   on_build_status_changed: false
   template: "<{{buildUrl}}|Build [{{projectName}}] {{buildVersion}} {{status}}> Commit <{{commitUrl}}|{{commitId}}> by {{commitAuthor}} on {{commitDate}}: _{{commitMessage}}_"
   
-  
 skip_tags: true
 version: 7.0.{build}
+
+deploy_script:
+  - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
+  - npm publish --access public
+
 deploy:
 - provider: GitHub
   auth_token:
     secure: 73BMyeWNs+Y0cyNA2FzsPiO4b93zn8pBdSO/oPc9GvT+znZj4vZAWF0bIu0G6G3i
   on:
     branch: master
-
-
- 
