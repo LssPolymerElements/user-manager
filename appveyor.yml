@@ -20,8 +20,7 @@ test_script:
   - npm run lint
   - git config user.email "builds@leavitt.com"
   - git config user.name "AppVeyor"
-  - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
-  - npm publish --access public
+ 
 
 # Don't actually build.
 build: off
@@ -53,3 +52,10 @@ deploy:
     secure: 73BMyeWNs+Y0cyNA2FzsPiO4b93zn8pBdSO/oPc9GvT+znZj4vZAWF0bIu0G6G3i
   on:
     branch: master
+
+deploy_script:
+   - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
+   - npm publish --access public
+   on:
+    branch: master
+ 
