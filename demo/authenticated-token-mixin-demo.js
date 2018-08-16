@@ -15,18 +15,31 @@ let AuthenticatedTokenMixinDemo = class AuthenticatedTokenMixinDemo extends Auth
              h1 {
                  @apply --paper-font-title;
              }
+
+             paper-button {
+               display:block;
+               margin-bottom:4px;
+             }
+
+             um-token {
+              word-break: break-all;
+             }
          </style>
          <h1>Authenticated Token Mixin Demo Element</h1>
-         <paper-button raised on-tap="onTap">call _getAccessTokenAsync()</paper-button>`;
+         <paper-button raised on-tap="onTap">call _getAccessTokenAsync()</paper-button>
+         <um-prop><b>token:</b><um-token>[[token]]</um-token</um-prop>`;
     }
     onTap() {
         this._getAccessTokenAsync()
-            .then(function (token) {
-            console.log(token);
+            .then((token) => {
+            this.token = token;
         })
             .catch(function (error) {
             console.warn(error);
         });
+    }
+    static get properties() {
+        return { token: { type: String, value: '' } };
     }
 };
 AuthenticatedTokenMixinDemo = __decorate([
