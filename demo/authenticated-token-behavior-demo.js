@@ -5,9 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import '@polymer/paper-button/paper-button';
+import { authenticatedTokenMixin as AuthToken } from '@leavittsoftware/lss-user-manager/lib/authenticated-token-mixin';
 import { customElement } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element';
-import { authenticatedTokenMixin as AuthToken } from 'lss-user-manager/lib/authenticated-token-mixin';
 let AuthenticatedTokenBehaviorDemo = class AuthenticatedTokenBehaviorDemo extends AuthToken(PolymerElement) {
     static get template() {
         return html `
