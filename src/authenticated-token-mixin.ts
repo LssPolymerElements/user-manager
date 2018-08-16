@@ -1,6 +1,6 @@
+import {ElementMixin} from '@polymer/polymer/lib/mixins/element-mixin';
 
-
-type Constructable = new (...args: any[]) => object;
+type Constructable = new (...args: any[]) => ElementMixin;
 
 export interface AuthenticatedTokenBehaviorConstructor { new(...args: any[]): AuthenticatedTokenBehavior; }
 export interface AuthenticatedTokenBehavior { _getAccessTokenAsync(): Promise<string>; }
