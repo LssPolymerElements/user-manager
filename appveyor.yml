@@ -50,4 +50,7 @@ after_test:
 - ps: >-
         if($env:APPVEYOR_REPO_BRANCH -eq 'master') {
           npm publish --access public
-        }    
+        }
+
+deploy:
+    
