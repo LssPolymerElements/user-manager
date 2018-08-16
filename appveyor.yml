@@ -1,18 +1,15 @@
 # Test against the latest version of this Node.js version
 environment:
   nodejs_version: "6"
-  npm_auth_token:
-    secure: MTxaJAzwhthjx8jui1hA/Q2RXK2wah6YZ24T2cvebm4ZgIjh8ucLLvLR6pn09Mdm
 
 # Install scripts. (runs after repo cloning)
 install:
-- ps: >-
-    Install-Product node $env:nodejs_version
-    npm install --loglevel=error
-
-    "//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII
-after_deploy:
-- ps: npm publish --access public 
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node $env:nodejs_version
+  # install modules
+  - npm install
+  - ps: '"//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII'
+  - npm whoami
 
 # Post-install test scripts.
 test_script:
