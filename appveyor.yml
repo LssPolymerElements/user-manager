@@ -48,7 +48,7 @@ version: 7.0.{build}
 after_test:
 - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
 - ps: >-
-        if($env:APPVEYOR_REPO_BRANCH -eq 'polymer-3') {
+        if($env:APPVEYOR_REPO_BRANCH -eq 'master') {
           npm publish --access public
         }
 
@@ -57,6 +57,6 @@ deploy:
     auth_token:
       secure: 73BMyeWNs+Y0cyNA2FzsPiO4b93zn8pBdSO/oPc9GvT+znZj4vZAWF0bIu0G6G3i
     on:
-      branch: polymer-3
+      branch: master
 
     
