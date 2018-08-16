@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "preinstall": "npm pack ../ | tail -1",
+    "update:local-package": "npm pack ../ | tail -1 && npm uninstall lss-user-manager && npm install --save file:lss-user-manager-7.0.1.tgz",
+    "preinstall": "npm run update:local-package",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && polymer serve"
+    "start": "npm run update:local-package && tsc && cd .. && gulp"
   },
   "author": "",
   "license": "ISC",
@@ -18,7 +19,7 @@
     "@polymer/polymer": "^3.0.5",
     "@webcomponents/webcomponentsjs": "^2.0.0",
     "babel-polyfill": "^6.26.0",
-    "lss-user-manager": "file:lss-user-manager-7.0.0.tgz",
+    "lss-user-manager": "file:lss-user-manager-7.0.1.tgz",
     "whatwg-fetch": "^2.0.4"
   }
 }
