@@ -1,23 +1,32 @@
-﻿
-@Polymer.decorators.customElement('lss-api-service') class LssApiService extends AuthenticatedTokenBehavior
-(Polymer.Element) {
-  @Polymer.decorators.property({notify: true, type: Boolean}) isDev: boolean;
+﻿import {authenticatedTokenMixin} from '@leavittsoftware/user-manager/lib/authenticated-token-mixin';
+import {customElement, observe, property} from '@polymer/decorators';
+import {PolymerElement} from '@polymer/polymer/polymer-element';
+import {isDevelopment} from './lss-environment';
 
-  @Polymer.decorators.property({notify: true, type: String}) baseUrl: string;
+@customElement('api-service') export class ApiService extends authenticatedTokenMixin
+(PolymerElement) {
+  @property({notify: true, type: Boolean}) isDev: boolean;
 
-  @Polymer.decorators.property({type: Boolean}) isLoading: boolean;
+  @property({notify: true, type: String}) baseUrl: string;
 
-  @Polymer.decorators.property({notify: true, type: String}) baseProductionUri: string = 'https://api2.leavitt.com/';
+  @property({type: Boolean}) isLoading: boolean;
 
-  @Polymer.decorators.property({notify: true, type: String}) baseDevUri: string = 'https://devapi2.leavitt.com/';
+  @property({notify: true, type: String}) baseProductionUri: string = 'https://api2.leavitt.com/';
 
-  @Polymer.decorators.property({notify: true, type: String}) appNameKey: string = 'X-LGAppName';
+  @property({notify: true, type: String}) baseDevUri: string = 'https://devapi2.leavitt.com/';
 
-  @Polymer.decorators.property({notify: true, type: String}) appName: string = 'General';
+  @property({notify: true, type: String}) appNameKey: string = 'X-LGAppName';
 
-  @Polymer
-      .decorators.observe('isDev') _environmentHandler(isDev: boolean) {
+  @property({notify: true, type: String}) appName: string = 'General';
+
+  @observe('isDev')
+  _environmentHandler(isDev: boolean) {
     this.baseUrl = isDev ? this.baseDevUri : this.baseProductionUri;
+  }
+
+  constructor() {
+    super();
+    this.isDev = isDevelopment();
   }
 
   private _createUri(urlPath: string): string {
@@ -241,9 +250,9 @@
 
     return Promise.resolve(new GetResult<T>(json));
   }
-}
+};
 
-class GetResult<T extends ODataDto> {
+export class GetResult<T extends ODataDto> {
   private data: Array<T>;
   public odataCount: number;
   constructor(json: any) {
@@ -291,23 +300,23 @@ class GetResult<T extends ODataDto> {
   }
 }
 
-interface ODataDto {
+export interface ODataDto {
   _odataInfo: ODataModelInfo;
 }
 
-class ODataDto implements ODataDto {
+export class ODataDto implements ODataDto {
   constructor(modelInfo = new ODataModelInfo()) {
     this._odataInfo = modelInfo;
   }
   _odataInfo: ODataModelInfo;
 }
 
-interface ODataModelInfo {
+export interface ODataModelInfo {
   type: string|null;
   shortType: string|null;
 }
 
-class ODataModelInfo implements ODataModelInfo {
+export class ODataModelInfo implements ODataModelInfo {
   type: string|null = null;
   shortType: string|null = null;
 }
