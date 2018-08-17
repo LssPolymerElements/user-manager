@@ -1,36 +1,41 @@
-﻿/// <reference path="./LssJwtToken.ts" />
+﻿import 'jwt-decode/build/jwt-decode';
 declare var jwt_decode: any;
 
-@Polymer.decorators.customElement('lss-user-manager')
-class LssUserManager extends Polymer.Element {
-  @Polymer.decorators.property({notify: true, type: Array})
+import {customElement, observe, property} from '@polymer/decorators';
+import {PolymerElement} from '@polymer/polymer/polymer-element';
+
+import {LssJwtToken} from './LssJwtToken';
+
+@customElement('user-manager')
+export class UserManager extends PolymerElement {
+  @property({notify: true, type: Array})
   roles: Array<string> = [];
 
-  @Polymer.decorators.property({notify: true, type: String})
+  @property({notify: true, type: String})
   fullname: string;
 
-  @Polymer.decorators.property({notify: true, type: String})
+  @property({notify: true, type: String})
   firstName: string;
 
-  @Polymer.decorators.property({notify: true, type: String})
+  @property({notify: true, type: String})
   lastName: string;
 
-  @Polymer.decorators.property({type: Number, notify: true})
+  @property({type: Number, notify: true})
   personId: number = 0;
 
-  @Polymer.decorators.property({type: String})
+  @property({type: String})
   redirectUrl: string = 'https://signin.leavitt.com/';
 
-  @Polymer.decorators.property({type: String})
+  @property({type: String})
   redirectDevUrl: string = 'https://devsignin.leavitt.com/';
 
-  @Polymer.decorators.property({type: String})
+  @property({type: String})
   tokenUri: string = 'https://oauth2.leavitt.com/token';
 
-  @Polymer.decorators.property({type: Boolean})
+  @property({type: Boolean})
   disableAutoload: boolean = false;
 
-  @Polymer.decorators.property({type: Boolean})
+  @property({type: Boolean})
   isAuthenticating: boolean;
 
   private _hasAuthenticated = false;
@@ -81,8 +86,8 @@ class LssUserManager extends Polymer.Element {
     }
   }
 
-  @Polymer
-      .decorators.observe('personId', 'fullname', 'firstName', 'lastName') protected _handlePersonChange() {
+  @observe('personId', 'fullname', 'firstName', 'lastName')
+  protected _handlePersonChange() {
     window.dispatchEvent(new CustomEvent('um-person-updated', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName}}));
   }
 
@@ -101,7 +106,7 @@ class LssUserManager extends Polymer.Element {
   }
 
   private _getHashParametersFromUrl(): Array<{key: string, value: string}> {
-    const hashParams = [];
+    const hashParams = [] as Array<{key: string, value: string}>;
     if (window.location.hash) {
       let hash = window.location.hash.substring(1);
       hash = decodeURIComponent(hash);
@@ -232,9 +237,11 @@ class LssUserManager extends Polymer.Element {
     // Batch set local properties.
     this.setProperties({personId: Number(jwtToken.nameid), fullname: jwtToken.unique_name, firstName: jwtToken.given_name, lastName: jwtToken.family_name});
 
-    // Sync roles to local array and notifiy behaviors.
+    const jwtRole = jwtToken.role || [];
+
+    // Sync roles to local array and notifiy mixins.
     // Add new roles
-    jwtToken.role.forEach(o => {
+    jwtRole.forEach(o => {
       if (this.roles.indexOf(o) === -1) {
         this.push('roles', o);
         window.dispatchEvent(new CustomEvent('um-role-added', {detail: {role: o}}));
@@ -243,7 +250,7 @@ class LssUserManager extends Polymer.Element {
 
     // Remove old roles
     this.roles.forEach((o, i) => {
-      if (jwtToken.role.indexOf(o) === -1) {
+      if (jwtRole.indexOf(o) === -1) {
         this.splice('roles', i, 1);
         window.dispatchEvent(new CustomEvent('um-role-removed', {detail: {role: o}}));
       }

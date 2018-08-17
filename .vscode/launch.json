@@ -5,7 +5,7 @@
             "name": "Launch Chrome against localhost, with sourcemaps",
             "type": "chrome",
             "request": "launch",
-            "url": "http://localhost:3000/components/lss-user-manager/demo/",
+            "url": "http://localhost:3000/demo/",
             "sourceMaps": true,
             "webRoot": "${workspaceRoot}"
         },

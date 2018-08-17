@@ -1,6 +1,8 @@
-/// <reference path="LssJwtToken.d.ts" />
-declare var jwt_decode: any;
-declare class LssUserManager extends Polymer.Element {
+import 'jwt-decode/build/jwt-decode';
+import { PolymerElement } from '@polymer/polymer/polymer-element';
+import { LssJwtToken } from './LssJwtToken';
+import { UserManager } from './UserManager';
+export declare class LssUserManager extends PolymerElement implements UserManager {
     roles: Array<string>;
     fullname: string;
     firstName: string;
