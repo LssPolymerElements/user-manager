@@ -5,10 +5,9 @@ import {customElement, observe, property} from '@polymer/decorators';
 import {PolymerElement} from '@polymer/polymer/polymer-element';
 
 import {LssJwtToken} from './LssJwtToken';
-import {UserManager} from './UserManager';
 
-@customElement('lss-user-manager')
-export class LssUserManager extends PolymerElement implements UserManager {
+@customElement('user-manager')
+export class UserManager extends PolymerElement {
   @property({notify: true, type: Array})
   roles: Array<string> = [];
 

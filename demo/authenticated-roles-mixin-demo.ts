@@ -1,7 +1,7 @@
 
 import '@polymer/paper-button/paper-button';
 
-import {authenticatedRolesMixin} from '@leavittsoftware/lss-user-manager/lib/authenticated-roles-mixin';
+import {authenticatedRolesMixin} from '@leavittsoftware/user-manager/lib/authenticated-roles-mixin';
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 

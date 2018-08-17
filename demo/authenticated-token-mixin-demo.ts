@@ -1,7 +1,7 @@
 
 import '@polymer/paper-button/paper-button';
 
-import {authenticatedTokenMixin as AuthToken} from '@leavittsoftware/lss-user-manager/lib/authenticated-token-mixin';
+import {authenticatedTokenMixin as AuthToken} from '@leavittsoftware/user-manager/lib/authenticated-token-mixin';
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 

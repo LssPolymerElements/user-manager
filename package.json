@@ -1,8 +1,8 @@
 {
-  "name": "@leavittsoftware/lss-user-manager",
+  "name": "@leavittsoftware/user-manager",
   "version": "7.0.2",
   "description": "",
-  "main": "lss-user-manager.html",
+  "main": "user-manager.html",
   "dependencies": {
     "@polymer/decorators": "^3.0.0",
     "@polymer/polymer": "^3.0.5",

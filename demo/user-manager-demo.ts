@@ -1,7 +1,7 @@
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-styles/paper-styles';
-import '@leavittsoftware/lss-user-manager/lib/lss-user-manager';
+import '@leavittsoftware/user-manager/lib/user-manager';
 import './authenticated-token-mixin-demo';
 import './authenticated-person-mixin-demo';
 import './authenticated-roles-mixin-demo';
@@ -17,7 +17,7 @@ export default class UserManagerDemo extends PolymerElement {
   @property({type: String})
   claimScopes: string;
 
-  @query('lss-user-manager') userManager: any;
+  @query('user-manager') userManager: any;
 
   static get template() {
     return html`
@@ -44,8 +44,8 @@ export default class UserManagerDemo extends PolymerElement {
                 @apply --paper-font-caption;
             }
         </style>
-        <lss-user-manager id="manager" person-id="{{personId}}" last-name="{{lastName}}" fullname="{{fullname}}" first-name="{{firstName}}"
-            roles="{{roles}}"></lss-user-manager>
+        <user-manager id="manager" person-id="{{personId}}" last-name="{{lastName}}" fullname="{{fullname}}" first-name="{{firstName}}"
+            roles="{{roles}}"></user-manager>
 
         <h1>User Manager Actions</h1>
         <paper-button raised on-tap="logoutClicked">logout()</paper-button>
