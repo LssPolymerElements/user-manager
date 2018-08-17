@@ -9,7 +9,7 @@ install:
   # install modules
   - npm install
   - ps: '"//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII'
-  - echo %APPVEYOR_REPO_BRANCH%
+  - echo %APPVEYOR_REPO_BRANCH% %APPVEYOR_PULL_REQUEST_NUMBER%
 
 # Post-install test scripts.
 test_script:
@@ -49,7 +49,7 @@ version: 7.0.{build}
 after_test:
 - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
 - ps: >-
-        if($env:APPVEYOR_REPO_BRANCH -eq 'master') {
+        if($env:APPVEYOR_REPO_BRANCH -eq 'master' –AND $env:APPVEYOR_PULL_REQUEST_NUMBER is less than 1) {
           npm whoami  
           npm publish --access public
         }
