@@ -70,7 +70,7 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
       this.error = error;
       return;
     }
-    (this as any).push('fruits', fruit);
+    this.push('fruits', fruit);
   }
 
   async deleteFruit(e: any) {
@@ -87,7 +87,7 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
       let fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
       if (fruit.length === 1) {
         let index = this.fruits.indexOf(fruit[0]);
-        (this as any).splice('fruits', index, 1);
+        this.splice('fruits', index, 1);
       }
     }
   }
@@ -110,11 +110,7 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
       let fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
       if (fruit.length === 1) {
         let index = this.fruits.indexOf(fruit[0]);
-        (this as any)
-            .set(
-                ` fruits.${index}
-            .Name`,
-                name);
+        this.set(`fruits.${index}.Name`, name);
       }
     }
   }
@@ -138,11 +134,7 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
       let fruit = this.fruits.filter(o => o.Id === parseInt(id) || 0);
       if (fruit.length === 1) {
         let index = this.fruits.indexOf(fruit[0]);
-        (this as any)
-            .set(
-                ` fruits.${index}
-            .Name`,
-                returnFruit.Name);
+        this.set(`fruits.${index}.Name`, returnFruit.Name);
       }
     }
   }
