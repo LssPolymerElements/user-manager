@@ -9,7 +9,7 @@ install:
   # install modules
   - npm install
   - ps: '"//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII'
-  - echo 'Branch %APPVEYOR_REPO_BRANCH%'
+  - echo  %APPVEYOR_REPO_BRANCH%
 
 # Post-install test scripts.
 test_script:
