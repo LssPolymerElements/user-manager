@@ -44,7 +44,7 @@ notifications:
   
   
 skip_tags: true
-version: 9.0.{build}
+version: 1.0.{build}
 
 after_test:
 - npm version %APPVEYOR_BUILD_VERSION% -m 'v%APPVEYOR_BUILD_VERSION%'
