@@ -41,7 +41,16 @@ gulp.task('serve', (done) => {
         if (o.indexOf('Files in this directory are available under the following URLs') > -1) {
             browserSync.init({
                 proxy: "localhost:8000",
-                startPath: "/"
+                startPath: "/",
+                snippetOptions: {
+                    // just append the snippet to the end of the file
+                    rule: {
+                        match: /$/i,
+                        fn: function (snippet, match) {
+                            return snippet + match;
+                        }
+                    }
+                }
             });
         }
     })
