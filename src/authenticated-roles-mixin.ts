@@ -5,7 +5,10 @@ import {ElementMixin} from '@polymer/polymer/lib/mixins/element-mixin';
 type Constructable = new (...args: any[]) => ElementMixin;
 
 export interface AuthenticatedRolesMixinConstructor { new(...args: any[]): AuthenticatedRolesMixin; }
-export interface AuthenticatedRolesMixin { _getRolesAsync(): Promise<Array<string>>; }
+export interface AuthenticatedRolesMixin {
+  _getRolesAsync(): Promise<Array<string>>;
+  roles: Array<string>;
+}
 export const authenticatedRolesMixin = <T extends Constructable>(superClass: T): T&AuthenticatedRolesMixinConstructor => class extends superClass {
   roles: Array<string>;
 

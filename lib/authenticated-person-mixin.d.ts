@@ -5,6 +5,10 @@ export interface AuthenticatedPersonMixinConstructor {
 }
 export interface AuthenticatedPersonMixin {
     _getPersonAsync(): Promise<any>;
+    personId: number;
+    fullname: string;
+    firstName: string;
+    lastName: string;
 }
 export declare const authenticatedPersonMixin: <T extends Constructable>(superClass: T) => T & AuthenticatedPersonMixinConstructor;
 export {};

@@ -5,6 +5,7 @@ export interface AuthenticatedRolesMixinConstructor {
 }
 export interface AuthenticatedRolesMixin {
     _getRolesAsync(): Promise<Array<string>>;
+    roles: Array<string>;
 }
 export declare const authenticatedRolesMixin: <T extends Constructable>(superClass: T) => T & AuthenticatedRolesMixinConstructor;
 export {};
