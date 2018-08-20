@@ -1,11 +1,42 @@
 ﻿
-@Polymer.decorators.customElement('api2-service-demo') class Api2ServiceDemo extends Polymer.DeclarativeEventListeners
-(Polymer.Element) {
-  @Polymer.decorators.property({type: Array}) fruits: Array<Fruit> = [];
+import '@polymer/paper-button/paper-button';
+import '@leavittsoftware/user-manager/lib/user-manager';
 
-  @Polymer.decorators.property({type: String}) error: string = 'none';
+import {ApiService, ODataDto} from '@leavittsoftware/api-service/lib/api-service';
+import {customElement, listen, property, query} from '@polymer/decorators';
+import {DeclarativeEventListeners} from '@polymer/decorators/lib/declarative-event-listeners.js';
+import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
-  @Polymer.decorators.query('lss-api-service') lssApiService: LssApiService;
+@customElement('api-service-demo') export class Api2ServiceDemo extends DeclarativeEventListeners
+(PolymerElement) {
+  @property({type: Array}) fruits: Array<Fruit> = [];
+
+  @property({type: String}) error: string = 'none';
+
+  @query('api-service') lssApiService: ApiService;
+
+  static get template() {
+    return html`
+        <user-manager></user-manager>
+        <api-service app-name="Testing" id="service"></api-service>
+
+        <h2>lss-api-service Fruits CRUD Demo</h2>
+        <paper-button id="getButton" raised>Get Top 5 Fruits</paper-button>
+        <paper-button id="createButton" raised>Post a new random fruit</paper-button>
+        <div style="color:red;margin:16px">Errors: [[error]]</div>
+
+        <template is="dom-repeat" items="[[fruits]]">
+            <div style="margin:16px;padding:8px;border:1px dashed green;width:350px; display: inline-block;">
+                <pre>
+                  [[item.Name]]
+                  [[item.Id]]
+                </pre>
+                <paper-button object-id$="[[item.Id]]" on-tap="deleteFruit" raised>Delete</paper-button>
+                <paper-button object-id$="[[item.Id]]" on-tap="patchFruit" raised>Patch Random Name</paper-button>
+                <paper-button object-id$="[[item.Id]]" on-tap="patchReturnDtoFruit" raised>Patch and return dto</paper-button>
+
+            </div>`;
+  }
 
   private names = ['Apple', 'Banana', 'Apricot', 'Blackcurrant', 'Blueberry', 'Orange', 'Strawberry', 'Tomato', 'Redcurrant'];
 
@@ -13,13 +44,13 @@
     return this.names[Math.floor(Math.random() * this.names.length)];
   }
 
-  @Polymer
-      .decorators.listen('tap', 'getButton') public async getFruits() {
+  @listen('tap', 'getButton')
+  public async getFruits() {
     this.error = 'none';
 
     let result;
     try {
-      result = await this.lssApiService.getAsync<Fruit>('Fruits/?$top=5&$orderby=Id desc', 'Testing');
+      result = await this.lssApiService.getAsync<Fruit>('Fruits/?$top=5&$orderby=Id desc', ' Testing');
     } catch (error) {
       this.error = error;
       return;
@@ -27,8 +58,8 @@
     this.fruits = result.toList();
   }
 
-  @Polymer
-      .decorators.listen('tap', 'createButton') async createFruit() {
+  @listen('tap', 'createButton')
+  async createFruit() {
     this.error = 'none';
     let dto = new Fruit();
     dto.Name = this.getRandomFruitName();
@@ -48,7 +79,7 @@
 
     if (id > 0) {
       try {
-        await this.lssApiService.deleteAsync(`Fruits(${id})`);
+        await this.lssApiService.deleteAsync(`Fruits(${id}) `);
       } catch (error) {
         this.error = error;
         return;

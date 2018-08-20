@@ -1,12 +1,14 @@
 ﻿{
   "compilerOptions": {
     "target": "es6",
+    "module": "es2015",
+    "moduleResolution": "node",
     "lib": [
-      "es2016",
+      "esnext",
       "dom"
     ],
     "experimentalDecorators": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "declaration": false,
     "sourceMap": true,
     "noImplicitReturns": true,
@@ -15,16 +17,9 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strictNullChecks": true,
+    "strictNullChecks": true
   },
   "include": [
-    "../bower_components/polymer/types/polymer-element.d.ts",
-    "../bower_components/polymer-decorators/polymer-decorators.d.ts",
-    "../bower_components/polymer-decorators/mixins/declarative-event-listeners.d.ts",
-    "../bower_components/lss-user-manager/types/lss-user-manager.d.ts",
-    "../bower_components/titanium-dependency-injection/types/titanium-dependency-resolver-mixin.d.ts",
-    "../bower_components/titanium-dependency-injection/types/titanium-provider-mixin.d.ts",
-    "../types/lss-api-service.d.ts",
     "*.ts"
   ]
 }

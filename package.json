@@ -1,24 +1,33 @@
 {
-  "name": "lss-api-service",
-  "version": "6.0.0",
+  "name": "@leavittsoftware/api-service",
+  "version": "1.0.0",
   "description": "",
   "main": "lss-api-service.html",
   "dependencies": {
-    "babel-polyfill": "^6.26.0"
+    "@leavittsoftware/user-manager": "^7.0.44",
+    "@polymer/decorators": "^3.0.0",
+    "@polymer/polymer": "^3.0.5"
   },
   "devDependencies": {
-    "bower": "*",
+    "gulp": "^3.9.1",
     "browser-sync": "^2.18.2",
     "clang-format": "^1.2.2",
-    "gulp": "^3.9.1",
-    "tslint": "^4.0.2",
-    "typescript": "^2.6.1"
+    "tslint": "4.0.2",
+    "typescript": "^3.0.1"
   },
   "scripts": {
-    "prepublish": "npm run build",
-    "postinstall": "bower install",
-    "lint": "tslint \"*.ts\"",
-    "build": "tsc",
-    "test": "npm run lint && npm run build"
-  }
+    "start": "tsc && cd demo && npm start",
+    "update-demo": "cd demo && npm run update:local-package",
+    "lint": "tslint \"/*.ts\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LssPolymerElements/api-service.git"
+  },
+  "author": "Leavitt Software",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LssPolymerElements/api-service/issues"
+  },
+  "homepage": "https://github.com/LssPolymerElements/api-service#readme"
 }

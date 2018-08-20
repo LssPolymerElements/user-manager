@@ -7,8 +7,8 @@
 
     <title>LSS API Service Demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script>
+        window.localStorage.setItem('LgClaimScopes', '["Unit Testing App"]');
         //load babel if browers doesn't have proises polyfills
         (function () {
             if (window.navigator.userAgent.indexOf("Edge") > -1 || typeof Promise === "undefined" || Promise.toString()
@@ -28,23 +28,25 @@
             } else {
                 // polyfill fetch
                 var e = document.createElement('script');
-                e.src = '/bower_components/fetch/fetch.js';
+                e.src = 'node_modules/whatwg-fetch/fetch.js';
                 document.head.appendChild(e);
                 console.log("Fetch Polyfill loaded");
             }
         })();
     </script>
-
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="./api2-service-demo.html">
-
-
 </head>
 
 <body>
-    <h1>Api2 Service Demo</h1>
-    <api2-service-demo></api2-service-demo>
+    <div class="vertical-section-container centered">
+        <api-service-demo></api-service-demo>
+    </div>
+    <noscript>
+        Please enable JavaScript to view this website.
+    </noscript>
+    <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <!-- Built with love using PWA Starter Kit -->
+    <script type="module" src="api-service-demo.js" crossorigin></script>
 </body>
 
 </html>
