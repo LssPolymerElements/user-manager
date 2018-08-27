@@ -17,12 +17,13 @@ test_script:
   - node --version
   - npm --version
   # run tests
+  - npm run build
   - npm run lint
   - git config user.email "builds@leavitt.com"
   - git config user.name "AppVeyor"
  
 # Don't actually build.
-build: off 
+build: off
 
 notifications:
 - provider: Slack

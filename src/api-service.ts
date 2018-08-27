@@ -1,10 +1,10 @@
-﻿import {authenticatedTokenMixin} from '@leavittsoftware/user-manager/lib/authenticated-token-mixin';
+﻿import {titaniumDevDetectionMixin} from '@leavittsoftware/titanium-elements/lib/titanium-dev-detection-mixin.js';
+import {authenticatedTokenMixin} from '@leavittsoftware/user-manager/lib/authenticated-token-mixin';
 import {customElement, observe, property} from '@polymer/decorators';
 import {PolymerElement} from '@polymer/polymer/polymer-element';
-import {isDevelopment} from './lss-environment';
 
-@customElement('api-service') export class ApiService extends authenticatedTokenMixin
-(PolymerElement) {
+@customElement('api-service') export class ApiService extends titaniumDevDetectionMixin
+(authenticatedTokenMixin(PolymerElement)) {
   @property({notify: true, type: Boolean}) isDev: boolean;
 
   @property({notify: true, type: String}) baseUrl: string;
@@ -22,11 +22,6 @@ import {isDevelopment} from './lss-environment';
   @observe('isDev')
   _environmentHandler(isDev: boolean) {
     this.baseUrl = isDev ? this.baseDevUri : this.baseProductionUri;
-  }
-
-  constructor() {
-    super();
-    this.isDev = isDevelopment();
   }
 
   private _createUri(urlPath: string): string {

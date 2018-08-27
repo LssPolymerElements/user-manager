@@ -4,6 +4,7 @@
   "description": "",
   "main": "lss-api-service.html",
   "dependencies": {
+    "@leavittsoftware/titanium-elements": "^1.0.22",
     "@leavittsoftware/user-manager": "^7.0.44",
     "@polymer/decorators": "^3.0.0",
     "@polymer/polymer": "^3.0.5"
@@ -16,7 +17,8 @@
     "typescript": "^3.0.1"
   },
   "scripts": {
-    "start": "tsc && cd demo && npm start",
+    "start": "npm run build && cd demo && npm start",
+    "build": "tsc",
     "update-demo": "cd demo && npm run update:local-package",
     "lint": "tslint \"/*.ts\""
   },
