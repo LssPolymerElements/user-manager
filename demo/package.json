@@ -14,11 +14,11 @@
   "dependencies": {
     "@leavittsoftware/user-manager": "file:leavittsoftware-user-manager-7.0.2.tgz",
     "@polymer/decorators": "^3.0.0",
-    "@polymer/paper-button": "^3.0.0-pre.21",
-    "@polymer/paper-input": "^3.0.0-pre.21",
-    "@polymer/paper-styles": "^3.0.0-pre.21",
+    "@polymer/paper-button": "^3.0.0-pre.25",
+    "@polymer/paper-input": "^3.0.0-pre.25",
+    "@polymer/paper-styles": "^3.0.0-pre.25",
     "@polymer/polymer": "^3.0.5",
-    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "@webcomponents/webcomponentsjs": "^2.1.1",
     "babel-polyfill": "^6.26.0",
     "whatwg-fetch": "^2.0.4"
   }

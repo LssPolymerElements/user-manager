@@ -3,6 +3,10 @@
   "version": "7.0.2",
   "description": "",
   "main": "user-manager.html",
+  "files": [
+    "lib",
+    "src"
+  ],
   "dependencies": {
     "@polymer/decorators": "^3.0.0",
     "@polymer/polymer": "^3.0.5",
@@ -11,13 +15,14 @@
   },
   "devDependencies": {
     "@types/jwt-decode": "^2.2.1",
-    "browser-sync": "^2.18.2",
-    "clang-format": "^1.2.2",
+    "browser-sync": "^2.24.7",
+    "clang-format": "^1.2.4",
     "tslint": "4.0.2",
     "typescript": "^3.0.1"
   },
   "scripts": {
-    "start": "tsc && cd demo && npm start",
+    "start": "npm run build && cd demo && npm start",
+    "build": "tsc",
     "update-demo": "cd demo && npm run update:local-package",
     "lint": "tslint \"/*.ts\""
   },
