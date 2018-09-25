@@ -16,6 +16,8 @@ export const authenticatedRolesMixin = <T extends Constructable>(superClass: T):
 
   async ready() {
     super.ready();
+    //ensure roles is initialized to empty array.  We have seen a race condition where roles is undefined when um-role-added is called.
+    this.roles = [];
     window.addEventListener('um-role-added', (e: any) => {
       this.push('roles', e.detail.role);
     });
