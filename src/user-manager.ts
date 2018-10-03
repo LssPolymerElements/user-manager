@@ -100,12 +100,16 @@ export class UserManager extends PolymerElement {
 
   private _redirectToLogin(continueUrl: string) {
     let redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}?continue=${encodeURIComponent(continueUrl)}`;
-    document.location.href = redirectUrl;
+    if (document.location) {
+      document.location.href = redirectUrl;
+    }
   }
 
   private _redirectToSignOut(continueUrl: string) {
     let redirectUrl = `${this.isDevelopment() ? this.redirectDevUrl : this.redirectUrl}sign-out/?continue=${encodeURIComponent(continueUrl)}`;
-    document.location.href = redirectUrl;
+    if (document.location) {
+      document.location.href = redirectUrl;
+    }
   }
 
   private _getHashParametersFromUrl(): Array<{key: string, value: string}> {
@@ -137,7 +141,7 @@ export class UserManager extends PolymerElement {
   }
 
   private _clearHashFromUrl() {
-    if (document.location.hash && document.location.hash.indexOf('refreshToken') > -1)
+    if (document.location && document.location.hash && document.location.hash.indexOf('refreshToken') > -1)
       document.location.hash = '';
   }
 
@@ -321,7 +325,9 @@ export class UserManager extends PolymerElement {
 
       } catch (error) {
         if (error === 'Not authenticated') {
-          this._redirectToLogin(document.location.href);
+          if (document.location) {
+            this._redirectToLogin(document.location.href);
+          }
           this.isAuthenticating = false;
           return;  // Wait for the redirect to happen with a unreturned promise
         }
@@ -343,7 +349,9 @@ export class UserManager extends PolymerElement {
       window.dispatchEvent(new CustomEvent('um-role-removed', {detail: {role: o}}));
     });
     this.roles = [];
-    this._redirectToSignOut(document.location.href);
+    if (document.location) {
+      this._redirectToSignOut(document.location.href);
+    }
     return;
   }
 
