@@ -8,40 +8,29 @@ import {LssJwtToken} from './LssJwtToken';
 
 @customElement('user-manager')
 export class UserManager extends PolymerElement {
-  @property({notify: true, type: Array})
-  roles: Array<string> = [];
+  @property({notify: true, type: Array}) roles: Array<string> = [];
 
-  @property({notify: true, type: String})
-  fullname: string;
+  @property({notify: true, type: String}) fullname: string;
 
-  @property({notify: true, type: String})
-  firstName: string;
+  @property({notify: true, type: String}) firstName: string;
 
-  @property({notify: true, type: String})
-  lastName: string;
+  @property({notify: true, type: String}) lastName: string;
 
-  @property({type: Number, notify: true})
-  personId: number = 0;
+  @property({type: Number, notify: true}) personId: number = 0;
 
-  @property({type: String})
-  redirectUrl: string = 'https://signin.leavitt.com/';
+  @property({type: String}) redirectUrl: string = 'https://signin.leavitt.com/';
 
-  @property({type: String})
-  redirectDevUrl: string = 'https://devsignin.leavitt.com/';
+  @property({type: String}) redirectDevUrl: string = 'https://devsignin.leavitt.com/';
 
-  @property({type: String})
-  tokenUri: string = 'https://oauth2.leavitt.com/token';
+  @property({type: String}) tokenUri: string = 'https://oauth2.leavitt.com/token';
 
-  @property({type: Boolean})
-  disableAutoload: boolean = false;
+  @property({type: Boolean}) disableAutoload: boolean = false;
 
-  @property({type: Boolean})
-  isAuthenticating: boolean;
+  @property({type: Boolean}) isAuthenticating: boolean;
 
   private _hasAuthenticated = false;
 
   async ready() {
-    console.log('UserManager Ready.');
     super.ready();
 
     window.addEventListener('um-logout', () => {
@@ -82,8 +71,22 @@ export class UserManager extends PolymerElement {
     });
 
     if (!this.disableAutoload || this._getTokenfromUrl('refreshToken')) {
-      await this.authenticateAsync();
+      try {
+        const token = await this.authenticateAsync();
+
+        // In the case the user manager was not ready/listening for requests when a component
+        // asked for token, role, or person dispatch the events so their outstanding promises are resolved.
+
+        window.dispatchEvent(new CustomEvent('um-token', {detail: {jwtToken: token, accessToken: this._getAccessTokenFromLocalStorage()}}));
+        window.dispatchEvent(new CustomEvent('um-roles', {detail: {roles: this._clone(this.roles)}}));
+        window.dispatchEvent(new CustomEvent('um-person', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName}}));
+      } catch (error) {
+        window.dispatchEvent(new CustomEvent('um-token', {detail: {rejected: true, message: error}}));
+        window.dispatchEvent(new CustomEvent('um-roles', {detail: {rejected: true, message: error}}));
+        window.dispatchEvent(new CustomEvent('um-person', {detail: {rejected: true, message: error}}));
+      }
     }
+    console.log('UserManager Ready.');
   }
 
   @observe('personId', 'fullname', 'firstName', 'lastName')
