@@ -272,7 +272,6 @@ export class UserManager extends PolymerElement {
     // validate uri access token
     const jwtToken = this._decodeAccessToken(accessToken);
     if (jwtToken && this._validateToken(jwtToken)) {
-      this.dispatchEvent(new CustomEvent('token', {detail: accessToken}));
       this._saveAccessTokenToLocalStorage(accessToken);
       this._saveRefreshTokenToLocalStorage(refreshToken);
       this._setLocalProperties(jwtToken);
@@ -284,13 +283,11 @@ export class UserManager extends PolymerElement {
       try {
         accessToken = await this._getAccessTokenFromApiAsync(refreshToken, this.tokenUri);
       } catch (error) {
-        this.dispatchEvent(new CustomEvent('token', {detail: {rejected: true, message: error}}));
         return Promise.reject(error);
       }
 
       const jwtToken = this._decodeAccessToken(accessToken);
       if (jwtToken && this._validateToken(jwtToken)) {
-        this.dispatchEvent(new CustomEvent('token', {detail: accessToken}));
         this._saveAccessTokenToLocalStorage(accessToken);
         this._saveRefreshTokenToLocalStorage(refreshToken);
         this._setLocalProperties(jwtToken);
@@ -303,9 +300,9 @@ export class UserManager extends PolymerElement {
   }
 
   async authenticateAsync(): Promise<LssJwtToken> {
+    const self = this;
     if (this.isAuthenticating) {
       return new Promise<LssJwtToken>((resolve, reject) => {
-        const self = this;
         let listener = function listener(e: any) {
           self.removeEventListener('token', listener);
           if (e.detail.rejected) {
@@ -329,12 +326,14 @@ export class UserManager extends PolymerElement {
             this._redirectToLogin(document.location.href);
           }
           this.isAuthenticating = false;
+          this.dispatchEvent(new CustomEvent('token', {detail: {rejected: true, message: error}}));
           return;  // Wait for the redirect to happen with a unreturned promise
         }
         this.isAuthenticating = false;
         reject(error);
       }
       this.isAuthenticating = false;
+      self.dispatchEvent(new CustomEvent('token', {detail: jwtToken}));
       resolve(jwtToken);
     });
   }
