@@ -12,4 +12,5 @@ export interface LssJwtToken {
   nbf: number;
   role: Array<string>;
   unique_name: string;
+  email: string;
 }

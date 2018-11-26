@@ -6,30 +6,16 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
     <title>User Manager Demo</title>
     <script>
-        //load babel if browers doesn't have proises polyfills
-        (function () {
-            if (window.navigator.userAgent.indexOf("Edge") > -1 || typeof Promise === "undefined" || Promise.toString()
-                .indexOf("[native code]") === -1) {
-                var e = document.createElement('script');
-                e.src = 'node_modules/babel-polyfill/dist/polyfill.min.js';
-                document.head.appendChild(e);
-                console.log("bable polyfil loaded.");
-            }
+        //load polyfills
+    (function () {
+      if (!window.chrome) {
+        var e = document.createElement('script');
+        e.src = 'https://cdn.polyfill.io/v2/polyfill.js?features=String.prototype.endsWith,String.prototype.startsWith,fetch,Promise,Object.values,Array.prototype.includes';
+        document.head.appendChild(e);
+        console.log("Polyfill Loaded");
+      }
 
-        })();
-
-        //load fetch polyfills
-        (function () {
-            if (typeof window.fetch === "function") {
-                // browser has fetch
-            } else {
-                // polyfill fetch
-                var e = document.createElement('script');
-                e.src = 'node_modules/whatwg-fetch/fetch.js';
-                document.head.appendChild(e);
-                console.log("Fetch Polyfill loaded");
-            }
-        })();
+    })();
     </script>
 
 </head>

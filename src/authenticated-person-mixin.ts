@@ -13,21 +13,24 @@ export interface AuthenticatedPersonMixin {
   fullname: string;
   firstName: string;
   lastName: string;
+  email: string;
 }
 export const authenticatedPersonMixin = <T extends Constructable>(superClass: T): T&AuthenticatedPersonMixinConstructor => class extends superClass {
   personId: number;
   fullname: string;
   firstName: string;
   lastName: string;
+  email: string;
 
   async ready() {
     super.ready();
     window.addEventListener('um-person-updated', (e: any) => {
-      this.setProperties({personId: e.detail.personId, fullname: e.detail.fullname, firstName: e.detail.firstName, lastName: e.detail.lastName});
+      this.setProperties({personId: e.detail.personId, fullname: e.detail.fullname, firstName: e.detail.firstName, lastName: e.detail.lastName, email: e.detail.email});
     });
     try {
       let person: any = await this._getPersonAsync();
-      this.setProperties({personId: person.personId, fullname: person.fullname, firstName: person.firstName, lastName: person.lastName});
+      console.log('here');
+      this.setProperties({personId: person.personId, fullname: person.fullname, firstName: person.firstName, lastName: person.lastName, email: person.email});
     } catch (e) {
     }
   }
@@ -47,6 +50,6 @@ export const authenticatedPersonMixin = <T extends Constructable>(superClass: T)
   }
 
   static get properties() {
-    return {personId: {type: Number, notify: true, value: 0}, fullname: {type: String, notify: true}, firstName: {type: String, notify: true}, lastName: {type: String, notify: true}};
+    return {personId: {type: Number, notify: true, value: 0}, fullname: {type: String, notify: true}, firstName: {type: String, notify: true}, lastName: {type: String, notify: true}, email: {type: String, notify: true}};
   }
 };

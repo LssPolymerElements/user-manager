@@ -5,8 +5,7 @@ import {authenticatedPersonMixin} from '@leavittsoftware/user-manager/lib/authen
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
-@customElement('authenticated-person-mixin-demo')
-export default class AuthenticatedPersonMixinDemo extends authenticatedPersonMixin
+@customElement('authenticated-person-mixin-demo') export default class AuthenticatedPersonMixinDemo extends authenticatedPersonMixin
 (PolymerElement) {
   static get template() {
     return html`
@@ -29,6 +28,7 @@ export default class AuthenticatedPersonMixinDemo extends authenticatedPersonMix
         <um-prop><b>personId:</b> [[personId]]</um-prop>
         <um-prop><b>firstName:</b> [[firstName]]</um-prop>
         <um-prop><b>lastName:</b> [[lastName]]</um-prop>
-        <um-prop><b>fullname:</b> [[fullname]]</um-prop>`;
+        <um-prop><b>fullname:</b> [[fullname]]</um-prop>
+        <um-prop><b>email:</b> [[email]]</um-prop>`;
   }
 }
