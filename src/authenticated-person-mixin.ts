@@ -29,7 +29,6 @@ export const authenticatedPersonMixin = <T extends Constructable>(superClass: T)
     });
     try {
       let person: any = await this._getPersonAsync();
-      console.log('here');
       this.setProperties({personId: person.personId, fullname: person.fullname, firstName: person.firstName, lastName: person.lastName, email: person.email});
     } catch (e) {
     }
