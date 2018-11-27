@@ -5,8 +5,7 @@ import {authenticatedTokenMixin as AuthToken} from '@leavittsoftware/user-manage
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
-@customElement('authenticated-token-mixin-demo')
-export default class AuthenticatedTokenMixinDemo extends AuthToken
+@customElement('authenticated-token-mixin-demo') export default class AuthenticatedTokenMixinDemo extends AuthToken
 (PolymerElement) {
   token: string;
 
@@ -28,7 +27,7 @@ export default class AuthenticatedTokenMixinDemo extends AuthToken
          </style>
          <h1>Authenticated Token Mixin Demo Element</h1>
          <paper-button raised on-tap="onTap">call _getAccessTokenAsync()</paper-button>
-         <um-prop><b>token:</b><um-token>[[token]]</um-token</um-prop>`;
+         <um-prop><b>token:</b><um-token>[[token]]</um-token></um-prop>`;
   }
   onTap() {
     this._getAccessTokenAsync()

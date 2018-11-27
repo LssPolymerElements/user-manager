@@ -5,8 +5,7 @@ import {authenticatedRolesMixin} from '@leavittsoftware/user-manager/lib/authent
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
-@customElement('authenticated-roles-mixin-demo')
-export default class AuthenticatedRolesMixinDemo extends authenticatedRolesMixin
+@customElement('authenticated-roles-mixin-demo') export default class AuthenticatedRolesMixinDemo extends authenticatedRolesMixin
 (PolymerElement) {
   static get template() {
     return html`

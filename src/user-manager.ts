@@ -16,6 +16,8 @@ export class UserManager extends PolymerElement {
 
   @property({notify: true, type: String}) lastName: string;
 
+  @property({notify: true, type: String}) email: string;
+
   @property({type: Number, notify: true}) personId: number = 0;
 
   @property({type: String}) redirectUrl: string = 'https://signin.leavitt.com/';
@@ -67,7 +69,7 @@ export class UserManager extends PolymerElement {
           window.dispatchEvent(new CustomEvent('um-person', {detail: {rejected: true, message: error}}));
         }
       }
-      window.dispatchEvent(new CustomEvent('um-person', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName}}));
+      window.dispatchEvent(new CustomEvent('um-person', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName, email: this.email}}));
     });
 
     if (!this.disableAutoload || this._getTokenfromUrl('refreshToken')) {
@@ -79,7 +81,7 @@ export class UserManager extends PolymerElement {
 
         window.dispatchEvent(new CustomEvent('um-token', {detail: {jwtToken: token, accessToken: this._getAccessTokenFromLocalStorage()}}));
         window.dispatchEvent(new CustomEvent('um-roles', {detail: {roles: this._clone(this.roles)}}));
-        window.dispatchEvent(new CustomEvent('um-person', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName}}));
+        window.dispatchEvent(new CustomEvent('um-person', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName, email: this.email}}));
       } catch (error) {
         window.dispatchEvent(new CustomEvent('um-token', {detail: {rejected: true, message: error}}));
         window.dispatchEvent(new CustomEvent('um-roles', {detail: {rejected: true, message: error}}));
@@ -89,9 +91,9 @@ export class UserManager extends PolymerElement {
     console.log('UserManager Ready.');
   }
 
-  @observe('personId', 'fullname', 'firstName', 'lastName')
+  @observe('personId', 'fullname', 'firstName', 'lastName', 'email')
   protected _handlePersonChange() {
-    window.dispatchEvent(new CustomEvent('um-person-updated', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName}}));
+    window.dispatchEvent(new CustomEvent('um-person-updated', {detail: {personId: this.personId, fullname: this.fullname, firstName: this.firstName, lastName: this.lastName, email: this.email}}));
   }
 
   private _clone(obj: any) {
@@ -242,7 +244,7 @@ export class UserManager extends PolymerElement {
 
   private _setLocalProperties(jwtToken: LssJwtToken) {
     // Batch set local properties.
-    this.setProperties({personId: Number(jwtToken.nameid), fullname: jwtToken.unique_name, firstName: jwtToken.given_name, lastName: jwtToken.family_name});
+    this.setProperties({personId: Number(jwtToken.nameid), fullname: jwtToken.unique_name, firstName: jwtToken.given_name, lastName: jwtToken.family_name, email: jwtToken.email});
 
     const jwtRole = jwtToken.role || [];
 
@@ -342,7 +344,7 @@ export class UserManager extends PolymerElement {
     localStorage.removeItem('LG-AUTH-AT');
     localStorage.removeItem('LG-AUTH-RT');
 
-    this.setProperties({personId: 0, fullname: '', firstName: '', lastName: ''});
+    this.setProperties({personId: 0, fullname: '', firstName: '', lastName: '', email: ''});
 
     this.roles.forEach(o => {
       window.dispatchEvent(new CustomEvent('um-role-removed', {detail: {role: o}}));
