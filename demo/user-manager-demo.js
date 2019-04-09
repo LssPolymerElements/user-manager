@@ -4,14 +4,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import '@polymer/paper-input/paper-input';
+// import '@polymer/paper-input/paper-input';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-styles/paper-styles';
 import '@leavittsoftware/user-manager/lib/user-manager';
-import './authenticated-token-mixin-demo';
-import './authenticated-person-mixin-demo';
-import './authenticated-roles-mixin-demo';
-import { customElement, property, query } from '@polymer/decorators';
+import './access-token-demo';
+import './authenticated-person-data-demo';
+import { GetUserManagerInstace } from '@leavittsoftware/user-manager/lib/user-manager';
+import { customElement, property } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element';
 let UserManagerDemo = class UserManagerDemo extends PolymerElement {
     static get template() {
@@ -39,8 +39,7 @@ let UserManagerDemo = class UserManagerDemo extends PolymerElement {
                 @apply --paper-font-caption;
             }
         </style>
-        <user-manager id="manager" person-id="{{personId}}" last-name="{{lastName}}" fullname="{{fullname}}" first-name="{{firstName}}"
-            roles="{{roles}}"></user-manager>
+        <user-manager></user-manager>
 
         <h1>User Manager Actions</h1>
         <paper-button raised on-tap="logoutClicked">logout()</paper-button>
@@ -49,41 +48,22 @@ let UserManagerDemo = class UserManagerDemo extends PolymerElement {
             <paper-input placeholder="Token Scopes (ex. General, Home)" value="{{claimScopes}}"> </paper-input>
             <paper-button raised on-tap="setScopes">Set Scopes</paper-button>
         </um-scope>
-
-        <h1>User Manager Properties</h1>
-        <um-prop>
-            <b>fullname:</b> [[fullname]]</um-prop>
-        <um-prop>
-            <b>first-name:</b> [[firstName]]</um-prop>
-        <um-prop>
-            <b>last-name:</b> [[lastName]]</um-prop>
-        <um-prop>
-            <b>person-id:</b> [[personId]]</um-prop>
-        <um-prop>
-            <b>roles:</b>
-        </um-prop>
-        <ol>
-            <template is="dom-repeat" items="[[roles]]">
-                <li>[[item]]</li>
-            </template>
-        </ol>
         <hr/>
-        <authenticated-token-mixin-demo></authenticated-token-mixin-demo>
+        <access-token-demo></access-token-demo>
         <hr/>
-        <authenticated-roles-mixin-demo></authenticated-roles-mixin-demo>
-        <hr/>
-        <authenticated-person-mixin-demo></authenticated-person-mixin-demo>
+        <authenticated-person-data-demo></authenticated-person-data-demo>
     </template>
 
 </dom-module>`;
     }
     logoutClicked() {
         console.log('logout clicked');
-        this.userManager.logout();
+        GetUserManagerInstace().logout();
         location.reload();
     }
     authenticateAsync() {
-        this.userManager.authenticateAsync()
+        GetUserManagerInstace()
+            .authenticateAsync()
             .then(function (token) {
             console.log(token);
         })
@@ -110,9 +90,6 @@ __decorate([
 __decorate([
     property({ type: String })
 ], UserManagerDemo.prototype, "claimScopes", void 0);
-__decorate([
-    query('user-manager')
-], UserManagerDemo.prototype, "userManager", void 0);
 UserManagerDemo = __decorate([
     customElement('user-manager-demo')
 ], UserManagerDemo);
