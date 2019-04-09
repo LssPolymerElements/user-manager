@@ -7,7 +7,7 @@ import {customElement, property} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
 @customElement('authenticated-person-data-demo')
-export default class AuthenticatedPersonMixinDemo extends PolymerElement {
+export default class AuthenticatedPersonDataDemo extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     GetUserManagerInstance().addEventListener(UserManagerUpdatedEvent.eventName, () => this.updateProps());
@@ -53,7 +53,7 @@ export default class AuthenticatedPersonMixinDemo extends PolymerElement {
                 @apply --layout-center;
             }
         </style>
-        <h1>Authenticated Person Mixin Demo Element</h1>
+        <h1>Authenticated Person Data Demo Element</h1>
         <um-prop><b>personId:</b> [[personId]]</um-prop>
         <um-prop><b>firstName:</b> [[firstName]]</um-prop>
         <um-prop><b>lastName:</b> [[lastName]]</um-prop>

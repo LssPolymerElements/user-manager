@@ -3,7 +3,7 @@ declare var jwt_decode: any;
 
 import {customElement, LitElement, property} from 'lit-element';
 import {LssJwtToken} from './LssJwtToken';
-import {determineIsDevelopment} from '@leavittsoftware/titanium-elements/lib/titanium-dev-detection-mixin'
+import {determineIsDevelopment} from '@leavittsoftware/titanium-elements/lib/titanium-dev-detection-mixin';
 import {UserManagerUpdatedEvent} from './user-manager-events';
 
 let instance: null|UserManager = null;
