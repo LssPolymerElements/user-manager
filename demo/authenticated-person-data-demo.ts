@@ -11,7 +11,7 @@ export default class AuthenticatedPersonMixinDemo extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     GetUserManagerInstance().addEventListener(UserManagerUpdatedEvent.eventName, () => this.updateProps());
-    this.updateProps()
+    this.updateProps();
   }
 
   private updateProps() {
