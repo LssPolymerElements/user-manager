@@ -5,7 +5,7 @@ import '@leavittsoftware/user-manager/lib/user-manager';
 import './access-token-demo';
 import './authenticated-person-data-demo';
 
-import {GetUserManagerInstace} from '@leavittsoftware/user-manager/lib/user-manager';
+import {GetUserManagerInstance} from '@leavittsoftware/user-manager/lib/user-manager';
 import {customElement, property} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
@@ -60,11 +60,11 @@ export default class UserManagerDemo extends PolymerElement {
 
   logoutClicked() {
     console.log('logout clicked');
-    GetUserManagerInstace().logout();
+    GetUserManagerInstance().logout();
     location.reload();
   }
   authenticateAsync() {
-    GetUserManagerInstace()
+    GetUserManagerInstance()
         .authenticateAsync()
         .then(function(token) {
           console.log(token);

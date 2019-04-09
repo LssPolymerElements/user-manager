@@ -1,7 +1,7 @@
 
 import '@polymer/paper-button/paper-button';
 
-import {GetUserManagerInstace} from '@leavittsoftware/user-manager/lib/user-manager';
+import {GetUserManagerInstance} from '@leavittsoftware/user-manager/lib/user-manager';
 import {customElement, property} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
@@ -9,18 +9,18 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 export default class AuthenticatedPersonMixinDemo extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
-    GetUserManagerInstace().addEventListener('um-updated', () => this.updateProps());
+    GetUserManagerInstance().addEventListener('um-updated', () => this.updateProps());
     this.updateProps()
   }
 
   private updateProps() {
-    this.personId = GetUserManagerInstace().personId;
-    this.fullname = GetUserManagerInstace().fullname;
-    this.lastName = GetUserManagerInstace().lastName;
-    this.firstName = GetUserManagerInstace().firstName;
-    this.email = GetUserManagerInstace().email;
-    this.personId = GetUserManagerInstace().personId;
-    this.roles = GetUserManagerInstace().roles;
+    this.personId = GetUserManagerInstance().personId;
+    this.fullname = GetUserManagerInstance().fullname;
+    this.lastName = GetUserManagerInstance().lastName;
+    this.firstName = GetUserManagerInstance().firstName;
+    this.email = GetUserManagerInstance().email;
+    this.personId = GetUserManagerInstance().personId;
+    this.roles = GetUserManagerInstance().roles;
   }
 
   @property({type: Array}) roles: Array<string> = [];

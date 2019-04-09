@@ -7,12 +7,12 @@ import {determineIsDevelopment} from '@leavittsoftware/titanium-elements/lib/tit
 
 let instance: null|UserManager = null;
 
-export let GetUserManagerInstace =
+export let GetUserManagerInstance =
     () => {
       if (instance) {
         return instance;
       }
-      throw (`GetUserManagerInstace requested before an instance was created. Did you forget to add the user-manager element to your project?`);
+      throw (`GetUserManagerInstance requested before an instance was created. Did you forget to add the user-manager element to your project?`);
     }
 
 @customElement('user-manager') export class UserManager extends LitElement {
