@@ -4,6 +4,7 @@ declare var jwt_decode: any;
 import {customElement, LitElement, property} from 'lit-element';
 import {LssJwtToken} from './LssJwtToken';
 import {determineIsDevelopment} from '@leavittsoftware/titanium-elements/lib/titanium-dev-detection-mixin'
+import {UserManagerUpdatedEvent} from './user-manager-events';
 
 let instance: null|UserManager = null;
 
@@ -207,7 +208,7 @@ export let GetUserManagerInstance =
     this.lastName = _jwtToken.family_name;
     this.email = _jwtToken.email;
     this.roles = _jwtToken.role || [];
-    this.dispatchEvent(new CustomEvent('um-updated'));
+    this.dispatchEvent(new UserManagerUpdatedEvent());
   }
 
   private async _getTokenAsync(): Promise<LssJwtToken> {
@@ -297,7 +298,7 @@ export let GetUserManagerInstance =
     this.lastName = '';
     this.email = '';
     this.roles = [];
-    this.dispatchEvent(new CustomEvent('um-updated'));
+    this.dispatchEvent(new UserManagerUpdatedEvent());
 
     this.roles.forEach(o => {
       window.dispatchEvent(new CustomEvent('um-role-removed', {detail: {role: o}}));

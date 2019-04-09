@@ -2,6 +2,7 @@
 import '@polymer/paper-button/paper-button';
 
 import {GetUserManagerInstance} from '@leavittsoftware/user-manager/lib/user-manager';
+import {UserManagerUpdatedEvent} from '@leavittsoftware/user-manager/lib/user-manager-events';
 import {customElement, property} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
@@ -9,7 +10,7 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 export default class AuthenticatedPersonMixinDemo extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
-    GetUserManagerInstance().addEventListener('um-updated', () => this.updateProps());
+    GetUserManagerInstance().addEventListener(UserManagerUpdatedEvent.eventName, () => this.updateProps());
     this.updateProps()
   }
 
