@@ -1,12 +1,12 @@
 
 import '@polymer/paper-button/paper-button';
 
-import {authenticatedTokenMixin as AuthToken} from '@leavittsoftware/user-manager/lib/authenticated-token-mixin';
+import {GetUserManagerInstance} from '@leavittsoftware/user-manager/lib/user-manager';
 import {customElement} from '@polymer/decorators';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 
-@customElement('authenticated-token-mixin-demo') export default class AuthenticatedTokenMixinDemo extends AuthToken
-(PolymerElement) {
+@customElement('access-token-demo')
+export default class AccessTokenDemo extends PolymerElement {
   token: string;
 
   static get template() {
@@ -25,18 +25,14 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
               word-break: break-all;
              }
          </style>
-         <h1>Authenticated Token Mixin Demo Element</h1>
+         <h1>Access Token Demo Element</h1>
          <paper-button raised on-tap="onTap">call _getAccessTokenAsync()</paper-button>
          <um-prop><b>token:</b><um-token>[[token]]</um-token></um-prop>`;
   }
   onTap() {
-    this._getAccessTokenAsync()
-        .then((token) => {
-          this.token = token;
-        })
-        .catch(function(error) {
-          console.warn(error);
-        });
+    GetUserManagerInstance().getAccessTokenAsync().then((token) => {this.token = token}).catch(function(error) {
+      console.warn(error);
+    });
   }
 
   static get properties() {

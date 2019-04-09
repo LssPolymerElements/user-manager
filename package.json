@@ -8,23 +8,23 @@
     "src"
   ],
   "dependencies": {
-    "@polymer/decorators": "^3.0.0",
-    "@polymer/polymer": "^3.0.5",
+    "@leavittsoftware/titanium-elements": "^1.0.249",
     "gulp": "^3.9.1",
-    "jwt-decode": "^2.2.0"
+    "jwt-decode": "^2.2.0",
+    "lit-element": "^2.1.0"
   },
   "devDependencies": {
     "@types/jwt-decode": "^2.2.1",
-    "browser-sync": "^2.24.7",
+    "browser-sync": "^2.26.3",
     "clang-format": "^1.2.4",
-    "tslint": "4.0.2",
-    "typescript": "^3.0.1"
+    "tslint": "5.15.0",
+    "typescript": "^3.4.2"
   },
   "scripts": {
     "start": "npm run build && cd demo && npm start",
     "build": "tsc",
     "update-demo": "cd demo && npm run update:local-package",
-    "lint": "tslint \"/*.ts\""
+    "lint": "tslint \"/src/*.ts\""
   },
   "repository": {
     "type": "git",
