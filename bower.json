@@ -2,14 +2,8 @@
   "name": "lss-user-manager",
   "version": "4.0.0",
   "description": "A polymer 2 user manager for Leavitt OAuth2",
-  "authors": [
-    "Leavitt Software Solutions"
-  ],
-  "keywords": [
-    "polymer",
-    "leavitt software",
-    "lss"
-  ],
+  "authors": ["Leavitt Software Solutions"],
+  "keywords": ["polymer", "leavitt software", "lss"],
   "main": "lss-user-manager.html",
   "repository": {
     "type": "git",
@@ -25,11 +19,6 @@
     ".gitignore",
     ".vscode"
   ],
-  "dependencies": {
-    "polymer": "Polymer/polymer#^2.4.0",
-    "polymer-decorators": "Polymer/polymer-decorators#^2.1.0",
-    "fetch": "^2.0.1"
-  },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
